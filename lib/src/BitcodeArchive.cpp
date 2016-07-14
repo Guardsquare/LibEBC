@@ -77,6 +77,7 @@ std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles() const {
   xi = xar_iter_new();
   if (!xi) {
     std::cerr << "Error creating xar iterator" << std::endl;
+    xar_close(x);
     return files;
   }
 
@@ -118,7 +119,8 @@ std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles() const {
     while ((ret = xar_extract_tostream(&xs)) != XAR_STREAM_END) {
       if (ret == XAR_STREAM_ERR) {
         std::cerr << "Error extracting stream" << std::endl;
-        return files;
+        free(path);
+        break;
       }
       std::fwrite(buffer, sizeof(char), sizeof(buffer) - xs.avail_out, output);
 
@@ -142,6 +144,8 @@ std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles() const {
 
     free(path);
   }
+  xar_iter_free(xi);
+  xar_close(x);
 
   return files;
 }
@@ -151,15 +155,14 @@ const BitcodeMetadata &BitcodeArchive::GetMetadata() const {
 }
 
 std::string BitcodeArchive::GetMetadataXml() const {
-  // Write archive to filesystem and read xar
-  xar_t x;
   std::string xarFile = WriteXarToFile();
-  x = xar_open(xarFile.c_str(), READ);
-  std::remove(xarFile.c_str());
-
-  // Write metadata to temporary file
   std::string metadataXmlFile = _name + "_metadata.xar";
+
+  // Write archive to filesystem and read xar
+  xar_t x = xar_open(xarFile.c_str(), READ);
   xar_serialize(x, metadataXmlFile.c_str());
+  xar_close(x);
+  std::remove(xarFile.c_str());
 
   // Read Metadata to string and remove temporary file
   std::ifstream t(metadataXmlFile);
