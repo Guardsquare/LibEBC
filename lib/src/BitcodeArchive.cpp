@@ -39,11 +39,11 @@ std::string BitcodeArchive::GetName() const {
 }
 
 std::string BitcodeArchive::GetUUID() const {
-  auto u = _uuid;
-  char buf[256];
-  sprintf(buf, "%2.2X%2.2X%2.2X%2.2X-%2.2X%2.2X-%2.2X%2.2X-%2.2X%2.2X-%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X", u[0], u[1], u[2],
-          u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15]);
-  return std::string(buf);
+  char buffer[UUID_ASCII_LENGTH];
+  sprintf(buffer, "%2.2X%2.2X%2.2X%2.2X-%2.2X%2.2X-%2.2X%2.2X-%2.2X%2.2X-%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X", _uuid[0],
+          _uuid[1], _uuid[2], _uuid[3], _uuid[4], _uuid[5], _uuid[6], _uuid[7], _uuid[8], _uuid[9], _uuid[10],
+          _uuid[11], _uuid[12], _uuid[13], _uuid[14], _uuid[15]);
+  return std::string(buffer);
 }
 
 std::string BitcodeArchive::WriteXarToFile(std::string fileName) const {
@@ -136,8 +136,14 @@ std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles() const {
 
     // Create bitcode file
     auto bitcodeFile = BitcodeFile(filePath);
+
+    // Add clang commands
     auto clangCommands = _metadata->GetClangCommands(path);
     bitcodeFile.SetClangCommands(clangCommands);
+
+    // Add swift commands
+    auto swiftCommands = _metadata->GetSwiftCommands(path);
+    bitcodeFile.SetSwiftCommands(swiftCommands);
 
     // Add to list of bitcode files
     files.push_back(bitcodeFile);

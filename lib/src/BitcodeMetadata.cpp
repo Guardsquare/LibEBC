@@ -35,12 +35,20 @@ std::vector<std::string> BitcodeMetadata::GetLinkOptions() const {
   return std::vector<std::string>();
 }
 
-std::vector<std::string> BitcodeMetadata::GetClangCommands(std::string fileName) const {
+std::vector<std::string> BitcodeMetadata::GetCommands(std::string fileName, std::string nodeName) const {
   auto node = xml::FindNodeWithNameAndContent(_root, "name", fileName);
   if (node != nullptr) {
-    node = xml::FindNodeWithName(node, "clang");
-    return xml::GetTextFromNodesWithName(node->children, "cmd");
+    node = xml::FindNodeWithName(node, nodeName);
+    if (node != nullptr) return xml::GetTextFromNodesWithName(node->children, "cmd");
   }
   return std::vector<std::string>();
+}
+
+std::vector<std::string> BitcodeMetadata::GetClangCommands(std::string fileName) const {
+  return GetCommands(fileName, "clang");
+}
+
+std::vector<std::string> BitcodeMetadata::GetSwiftCommands(std::string fileName) const {
+  return GetCommands(fileName, "swift");
 }
 }
