@@ -18,7 +18,7 @@ inline std::string GetContent(xmlNode* node) {
   return contentStr;
 }
 
-xmlNode* FindNodeWithName(xmlNode* root, std::string name) {
+static xmlNode* FindNodeWithName(xmlNode* root, std::string name) {
   for (auto node = root; node != nullptr; node = node->next) {
     if (node->type == XML_ELEMENT_NODE) {
       if (std::string(reinterpret_cast<const char*>(node->name)) == name) {
@@ -32,7 +32,7 @@ xmlNode* FindNodeWithName(xmlNode* root, std::string name) {
   return nullptr;
 }
 
-xmlNode* FindNodeWithNameAndContent(xmlNode* root, std::string name, std::string content) {
+static xmlNode* FindNodeWithNameAndContent(xmlNode* root, std::string name, std::string content) {
   for (auto node = root; node != nullptr; node = node->next) {
     if (node->type == XML_ELEMENT_NODE) {
       if (std::string(reinterpret_cast<const char*>(node->name)) == name && GetContent(node) == content) {
@@ -46,7 +46,7 @@ xmlNode* FindNodeWithNameAndContent(xmlNode* root, std::string name, std::string
   return nullptr;
 }
 
-std::vector<std::string> GetTextFromNodesWithName(xmlNode* root, std::string name) {
+static std::vector<std::string> GetTextFromNodesWithName(xmlNode* root, std::string name) {
   std::vector<std::string> contents;
   for (auto node = root; node != nullptr; node = node->next) {
     if (node->type == XML_ELEMENT_NODE && std::string(reinterpret_cast<const char*>(node->name)) == name) {
