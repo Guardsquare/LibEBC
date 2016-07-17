@@ -1,5 +1,6 @@
 #include "XmlHelper.h"
-#include "gtest/gtest.h"
+
+#include "catch.hpp"
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -7,59 +8,38 @@
 #include <string>
 #include <vector>
 
-class XmlHelperTest : public ::testing::Test {
- protected:
-  virtual void SetUp() {
-    _doc = xmlNewDoc(BAD_CAST "1.0");
-    _root = xmlNewNode(nullptr, BAD_CAST "root");
-    _node1 = xmlNewChild(_root, nullptr, BAD_CAST "node1", BAD_CAST "content1");
+TEST_CASE("Xml Helper", "[XmlHelper]") {
+  xmlDoc* doc = xmlNewDoc(BAD_CAST "1.0");
+  xmlNode* root = xmlNewNode(nullptr, BAD_CAST "root");
 
-    _node2 = xmlNewNode(NULL, BAD_CAST "node2");
-    xmlAddChild(_root, _node2);
-    _child1 = xmlNewChild(_node2, nullptr, BAD_CAST "child", BAD_CAST "child1");
-    _child2 = xmlNewChild(_node2, nullptr, BAD_CAST "child", BAD_CAST "child2");
-    _child3 = xmlNewChild(_node2, nullptr, BAD_CAST "child", BAD_CAST "child3");
+  xmlNode* node1 = xmlNewChild(root, nullptr, BAD_CAST "node1", BAD_CAST "content1");
+
+  SECTION("GetContent") {
+    REQUIRE("content1" == ebc::xml::GetContent(node1));
   }
 
-  virtual void TearDown() {
-    xmlFreeDoc(_doc);
+  xmlNode* node2 = xmlNewNode(NULL, BAD_CAST "node2");
+  xmlAddChild(root, node2);
+
+  SECTION("FindNodeWithName") {
+    REQUIRE(node1 == ebc::xml::FindNodeWithName(root, "node1"));
+    REQUIRE(node2 == ebc::xml::FindNodeWithName(root, "node2"));
   }
 
-  xmlDoc* _doc;
-  xmlNode* _root;
-  xmlNode* _node1;
-  xmlNode* _node2;
-  xmlNode* _child1;
-  xmlNode* _child2;
-  xmlNode* _child3;
-};
+  xmlNode* child1 = xmlNewChild(node2, nullptr, BAD_CAST "child", BAD_CAST "child1");
+  xmlNode* child2 = xmlNewChild(node2, nullptr, BAD_CAST "child", BAD_CAST "child2");
+  xmlNode* child3 = xmlNewChild(node2, nullptr, BAD_CAST "child", BAD_CAST "child3");
 
-TEST_F(XmlHelperTest, GetContent) {
-  auto content = ebc::xml::GetContent(_node1);
-  ASSERT_EQ("content1", content);
-}
+  SECTION("FindNodeWithNameAndContent") {
+    REQUIRE(child1 == ebc::xml::FindNodeWithNameAndContent(root, "child", "child1"));
+    REQUIRE(child2 == ebc::xml::FindNodeWithNameAndContent(root, "child", "child2"));
+    REQUIRE(child3 == ebc::xml::FindNodeWithNameAndContent(root, "child", "child3"));
+  }
 
-TEST_F(XmlHelperTest, FindNodeWithName) {
-  auto node1 = ebc::xml::FindNodeWithName(_root, "node1");
-  ASSERT_EQ(_node1, node1);
+  SECTION("GetTextFromNodesWithName") {
+    std::vector<std::string> expected = {"child1", "child2", "child3"};
+    REQUIRE(expected == ebc::xml::GetTextFromNodesWithName(node2->children, "child"));
+  }
 
-  auto node2 = ebc::xml::FindNodeWithName(_root, "node2");
-  ASSERT_EQ(_node2, node2);
-}
-
-TEST_F(XmlHelperTest, FindNodeWithNameAndContent) {
-  auto child1 = ebc::xml::FindNodeWithNameAndContent(_root, "child", "child1");
-  ASSERT_EQ(_child1, child1);
-
-  auto child2 = ebc::xml::FindNodeWithNameAndContent(_root, "child", "child2");
-  ASSERT_EQ(_child2, child2);
-
-  auto child3 = ebc::xml::FindNodeWithNameAndContent(_root, "child", "child3");
-  ASSERT_EQ(_child3, child3);
-}
-
-TEST_F(XmlHelperTest, GetTextFromNodesWithName) {
-  auto nodeList = ebc::xml::GetTextFromNodesWithName(_node2->children, "child");
-  std::vector<std::string> expected = {"child1", "child2", "child3"};
-  ASSERT_EQ(expected, nodeList);
+  xmlFreeDoc(doc);
 }

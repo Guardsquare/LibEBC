@@ -9,4 +9,5 @@ script:
   - mkdir build
   - cd build
   - cmake .. && make
-  - ./test/ebctest
+  - cd test
+  - ctest
