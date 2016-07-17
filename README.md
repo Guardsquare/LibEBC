@@ -1,5 +1,7 @@
 # LibEBC
 
+[![Build Status](https://travis-ci.org/JDevlieghere/LibEBC.svg?branch=master)](https://travis-ci.org/JDevlieghere/LibEBC)
+
 Library for working with embedded bitcode.
 
 ## Build

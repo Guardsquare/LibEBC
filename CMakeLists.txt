@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
 
 project (EmbeddedBC)
 
@@ -7,7 +7,8 @@ set(VERSION_MINOR 0)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-find_package(LLVM REQUIRED CONFIG)
+find_package(LLVM REQUIRED CONFIG HINTS /usr/local/opt/llvm)
+message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 include_directories(${LLVM_INCLUDE_DIRS})
 
 # Explicitly select components to link against
