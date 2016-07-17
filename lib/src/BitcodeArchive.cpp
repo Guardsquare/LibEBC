@@ -14,9 +14,13 @@ namespace ebc {
 
 BitcodeArchive::BitcodeArchive(std::string name, const std::uint8_t *uuid, const char *data, std::uint32_t size)
     : _name(name), _uuid(), _data(nullptr), _size(size), _metadata(nullptr) {
-  std::copy(uuid, uuid + 16, _uuid);
-  _data = reinterpret_cast<char *>(std::malloc(size * sizeof(char)));
-  std::copy(data, data + size, _data);
+  if (uuid != nullptr) {
+    std::copy(uuid, uuid + UUID_BYTE_LENGTH, _uuid);
+  }
+  if (size > 0) {
+    _data = reinterpret_cast<char *>(std::malloc(size * sizeof(char)));
+    std::copy(data, data + size, _data);
+  }
   _metadata = std::make_unique<BitcodeMetadata>(GetMetadataXml());
 }
 
@@ -26,12 +30,15 @@ BitcodeArchive::BitcodeArchive(BitcodeArchive &&bitcodeArchive)
     , _data(bitcodeArchive._data)
     , _size(bitcodeArchive._size)
     , _metadata(std::move(bitcodeArchive._metadata)) {
-  std::copy(bitcodeArchive._uuid, bitcodeArchive._uuid + 16, _uuid);
+  std::copy(bitcodeArchive._uuid, bitcodeArchive._uuid + UUID_BYTE_LENGTH, _uuid);
   bitcodeArchive._data = nullptr;
 }
 
 BitcodeArchive::~BitcodeArchive() {
-  delete _data;
+  if (_data != nullptr) {
+    delete _data;
+    _data = nullptr;
+  }
 }
 
 std::string BitcodeArchive::GetName() const {
@@ -39,7 +46,7 @@ std::string BitcodeArchive::GetName() const {
 }
 
 std::string BitcodeArchive::GetUUID() const {
-  char buffer[UUID_ASCII_LENGTH];
+  char buffer[UUID_ASCII_LENGTH + 1];
   sprintf(buffer, "%2.2X%2.2X%2.2X%2.2X-%2.2X%2.2X-%2.2X%2.2X-%2.2X%2.2X-%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X", _uuid[0],
           _uuid[1], _uuid[2], _uuid[3], _uuid[4], _uuid[5], _uuid[6], _uuid[7], _uuid[8], _uuid[9], _uuid[10],
           _uuid[11], _uuid[12], _uuid[13], _uuid[14], _uuid[15]);
@@ -161,6 +168,10 @@ const BitcodeMetadata &BitcodeArchive::GetMetadata() const {
 }
 
 std::string BitcodeArchive::GetMetadataXml() const {
+  if (_data == nullptr) {
+    return std::string();
+  }
+
   std::string xarFile = WriteXarToFile();
   std::string metadataXmlFile = _name + "_metadata.xar";
 
