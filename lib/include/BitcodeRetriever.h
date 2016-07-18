@@ -13,6 +13,7 @@ class BitcodeRetriever {
   std::vector<BitcodeArchive> GetBitcodeArchives();
 
  private:
+  static std::string TripleToArch(unsigned arch);
   std::string _objectPath;
 };
 }

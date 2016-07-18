@@ -1,5 +1,6 @@
 #include "BitcodeRetriever.h"
 
+#include "llvm/ADT/Triple.h"
 #include "llvm/Object/MachO.h"
 #include "llvm/Object/MachOUniversal.h"
 
@@ -42,12 +43,29 @@ std::vector<BitcodeArchive> BitcodeRetriever::GetBitcodeArchives() {
           const char *sect = reinterpret_cast<const char *>(bytesStr.data());
           uint32_t sect_size = bytesStr.size();
 
-          auto uuid = machOObj->getUuid();
-          bitcodeArchives.push_back(BitcodeArchive(name, uuid.data(), sect, sect_size));
+          auto bitcodeArchive = BitcodeArchive(sect, sect_size);
+          bitcodeArchive.SetName(name);
+          bitcodeArchive.SetArch(TripleToArch(machOObj->getArch()));
+          bitcodeArchive.SetUuid(machOObj->getUuid().data());
+          bitcodeArchives.push_back(std::move(bitcodeArchive));
         }
       }
     }
   }
   return bitcodeArchives;
+}
+
+std::string BitcodeRetriever::TripleToArch(unsigned arch) {
+  switch (arch) {
+    case Triple::x86:
+      return "x86";
+    case Triple::x86_64:
+      return "x86_64";
+    case Triple::arm:
+      return "arm";
+    case Triple::aarch64:
+      return "arm64";
+  }
+  return "unknown";
 }
 }

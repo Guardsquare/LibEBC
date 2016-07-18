@@ -12,25 +12,21 @@ extern "C" {
 
 namespace ebc {
 
-BitcodeArchive::BitcodeArchive(std::string name, const std::uint8_t *uuid, const char *data, std::uint32_t size)
-    : _name(name), _uuid(), _data(nullptr), _size(size), _metadata(nullptr) {
-  if (uuid != nullptr) {
-    std::copy(uuid, uuid + UUID_BYTE_LENGTH, _uuid);
-  }
-  if (size > 0) {
-    _data = reinterpret_cast<char *>(std::malloc(size * sizeof(char)));
-    std::copy(data, data + size, _data);
-  }
-  _metadata = std::make_unique<BitcodeMetadata>(GetMetadataXml());
+BitcodeArchive::BitcodeArchive(const char *data, std::uint32_t size)
+    : _name(), _arch(), _uuid(), _data(nullptr), _size(size), _metadata(nullptr) {
+  SetData(data, size);
+  SetMetadata();
 }
 
 BitcodeArchive::BitcodeArchive(BitcodeArchive &&bitcodeArchive)
     : _name(bitcodeArchive._name)
-    , _uuid()
-    , _data(bitcodeArchive._data)
+    , _arch(bitcodeArchive._arch)
+    , _uuid(bitcodeArchive._uuid)
+    , _data(nullptr)
     , _size(bitcodeArchive._size)
     , _metadata(std::move(bitcodeArchive._metadata)) {
-  std::copy(bitcodeArchive._uuid, bitcodeArchive._uuid + UUID_BYTE_LENGTH, _uuid);
+  SetData(bitcodeArchive._data, bitcodeArchive._size);
+  SetMetadata();
   bitcodeArchive._data = nullptr;
 }
 
@@ -43,6 +39,35 @@ BitcodeArchive::~BitcodeArchive() {
 
 std::string BitcodeArchive::GetName() const {
   return _name;
+}
+
+void BitcodeArchive::SetName(std::string name) {
+  _name = name;
+}
+
+std::string BitcodeArchive::GetArch() const {
+  return _arch;
+}
+
+void BitcodeArchive::SetArch(std::string arch) {
+  _arch = arch;
+}
+
+void BitcodeArchive::SetUuid(const std::uint8_t *uuid) {
+  if (uuid != nullptr) {
+    std::copy_n(uuid, _uuid.size(), _uuid.begin());
+  }
+}
+
+void BitcodeArchive::SetData(const char *data, std::uint32_t size) {
+  if (size > 0) {
+    _data = reinterpret_cast<char *>(std::malloc(size * sizeof(char)));
+    std::copy(data, data + size, _data);
+  }
+}
+
+void BitcodeArchive::SetMetadata() {
+  _metadata = std::make_unique<BitcodeMetadata>(GetMetadataXml());
 }
 
 std::string BitcodeArchive::GetUUID() const {

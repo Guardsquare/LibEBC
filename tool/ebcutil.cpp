@@ -17,6 +17,8 @@ int main(int argc, char* argv[]) {
     std::cout << bitcodeArchive.GetName() << std::endl;
     std::cout << std::setw(WIDTH) << "UUID:"
               << " " << bitcodeArchive.GetUUID() << std::endl;
+    std::cout << std::setw(WIDTH) << "Arch:"
+              << " " << bitcodeArchive.GetArch() << std::endl;
 
     std::cout << std::setw(WIDTH) << "Dylibs:";
     for (auto& dylib : bitcodeArchive.GetMetadata().GetDylibs()) {

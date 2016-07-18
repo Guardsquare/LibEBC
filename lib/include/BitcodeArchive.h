@@ -3,6 +3,7 @@
 #include "BitcodeFile.h"
 #include "BitcodeMetadata.h"
 
+#include <array>
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -11,9 +12,7 @@
 namespace ebc {
 class BitcodeArchive {
  public:
-  /// Create a bitcode archive from the name and UUID associated with the
-  /// embedding MachO object, together with a buffer containing the XAR archive.
-  BitcodeArchive(std::string name, const std::uint8_t* uuid, const char* data, std::uint32_t size);
+  BitcodeArchive(const char* data, std::uint32_t size);
 
   BitcodeArchive(BitcodeArchive&& bitcodeArchive);
 
@@ -21,9 +20,15 @@ class BitcodeArchive {
 
   /// Returns the name associated with the MachO embedding this bitcode archive.
   std::string GetName() const;
+  void SetName(std::string name);
+
+  /// Returns the architecture of the MachO embedding this bitcode archive.
+  std::string GetArch() const;
+  void SetArch(std::string arch);
 
   /// Returns the UUID associated with the MachO embedding this bitcode archive.
   std::string GetUUID() const;
+  void SetUuid(const std::uint8_t* uuid);
 
   /// Write data to file. If no file name is provided, the name of this
   /// BitcodeArchive will be used, followed by the xar extension.
@@ -39,6 +44,8 @@ class BitcodeArchive {
   std::vector<BitcodeFile> GetBitcodeFiles() const;
 
  private:
+  void SetData(const char* data, std::uint32_t size);
+  void SetMetadata();
   /// Serializes XAR metadata to XML. Beware that this operation is expensive as
   /// both the archive and the metadata XML are intermediately written to disk.
   std::string GetMetadataXml() const;
@@ -47,9 +54,12 @@ class BitcodeArchive {
   static constexpr int UUID_ASCII_LENGTH = 36;
 
   std::string _name;
-  std::uint8_t _uuid[UUID_BYTE_LENGTH];
+  std::string _arch;
+  std::array<std::uint8_t, 16> _uuid;
+
   char* _data;
   std::uint32_t _size;
+
   std::unique_ptr<BitcodeMetadata> _metadata;
 };
 }
