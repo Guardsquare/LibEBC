@@ -14,25 +14,25 @@ int main(int argc, char* argv[]) {
 
   BitcodeRetriever bitcodeRetriever(argv[1]);
   for (auto& bitcodeArchive : bitcodeRetriever.GetBitcodeArchives()) {
-    std::cout << bitcodeArchive.GetName() << std::endl;
+    std::cout << bitcodeArchive->GetName() << std::endl;
     std::cout << std::setw(WIDTH) << "UUID:"
-              << " " << bitcodeArchive.GetUUID() << std::endl;
+              << " " << bitcodeArchive->GetUUID() << std::endl;
     std::cout << std::setw(WIDTH) << "Arch:"
-              << " " << bitcodeArchive.GetArch() << std::endl;
+              << " " << bitcodeArchive->GetArch() << std::endl;
 
     std::cout << std::setw(WIDTH) << "Dylibs:";
-    for (auto& dylib : bitcodeArchive.GetMetadata().GetDylibs()) {
+    for (auto& dylib : bitcodeArchive->GetMetadata().GetDylibs()) {
       std::cout << " " << dylib;
     }
     std::cout << std::endl;
 
     std::cout << std::setw(WIDTH) << "Link opts:";
-    for (auto& option : bitcodeArchive.GetMetadata().GetLinkOptions()) {
+    for (auto& option : bitcodeArchive->GetMetadata().GetLinkOptions()) {
       std::cout << " " << option;
     }
     std::cout << std::endl;
 
-    for (auto& bitcodeFile : bitcodeArchive.GetBitcodeFiles()) {
+    for (auto& bitcodeFile : bitcodeArchive->GetBitcodeFiles()) {
       std::cout << std::setw(WIDTH) << "File:"
                 << " " << bitcodeFile.GetName() << std::endl;
 
