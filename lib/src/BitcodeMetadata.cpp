@@ -1,6 +1,9 @@
 #include "BitcodeMetadata.h"
 #include "XmlHelper.h"
 
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+
 namespace ebc {
 
 BitcodeMetadata::BitcodeMetadata(std::string xml) : _xml(xml), _doc(nullptr), _root(nullptr) {

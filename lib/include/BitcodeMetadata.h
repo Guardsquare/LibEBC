@@ -1,12 +1,12 @@
 #pragma once
 
-#include <libxml/parser.h>
-#include <libxml/tree.h>
-
 #include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
+
+struct _xmlDoc;
+struct _xmlNode;
 
 namespace ebc {
 class BitcodeMetadata {
@@ -35,7 +35,7 @@ class BitcodeMetadata {
   std::vector<std::string> GetCommands(std::string fileName, std::string nodeName) const;
 
   std::string _xml;
-  xmlDoc* _doc;
-  xmlNode* _root;
+  _xmlDoc* _doc;
+  _xmlNode* _root;
 };
 }
