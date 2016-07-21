@@ -1,7 +1,6 @@
 #pragma once
 
 #include "BitcodeFile.h"
-#include "BitcodeMetadata.h"
 
 #include <array>
 #include <cstdint>
@@ -10,6 +9,7 @@
 #include <vector>
 
 namespace ebc {
+class BitcodeMetadata;
 class BitcodeArchive {
  public:
   BitcodeArchive(const char* data, std::uint32_t size);
@@ -46,6 +46,7 @@ class BitcodeArchive {
  private:
   void SetData(const char* data, std::uint32_t size);
   void SetMetadata();
+
   /// Serializes XAR metadata to XML. Beware that this operation is expensive as
   /// both the archive and the metadata XML are intermediately written to disk.
   std::string GetMetadataXml() const;

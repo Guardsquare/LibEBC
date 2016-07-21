@@ -1,9 +1,7 @@
 #pragma once
 
-extern "C" {
 #include <libxml/parser.h>
 #include <libxml/tree.h>
-}
 
 #include <string>
 #include <vector>

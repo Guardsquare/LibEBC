@@ -1,5 +1,7 @@
 #include "BitcodeRetriever.h"
 
+#include "BitcodeArchive.h"
+
 #include "llvm/ADT/Triple.h"
 #include "llvm/Object/MachO.h"
 #include "llvm/Object/MachOUniversal.h"
@@ -8,6 +10,7 @@
 #include <string>
 
 using namespace llvm;
+using namespace llvm::object;
 
 namespace ebc {
 
@@ -15,15 +18,15 @@ BitcodeRetriever::BitcodeRetriever(std::string objectPath) : _objectPath(objectP
 
 std::vector<std::unique_ptr<BitcodeArchive>> BitcodeRetriever::GetBitcodeArchives() {
   auto bitcodeArchives = std::vector<std::unique_ptr<BitcodeArchive>>();
-  auto memoryBuffer = MemoryBuffer::getFile(_objectPath);
-  if (!memoryBuffer) return bitcodeArchives;
+  auto binaryOrErr = createBinary(_objectPath);
 
-  std::error_code error;
+  if (!binaryOrErr) {
+    return bitcodeArchives;
+  }
 
-  // Try Universal MachO
-  auto machOUniversalBinary = std::make_unique<object::MachOUniversalBinary>((*memoryBuffer)->getMemBufferRef(), error);
-  if (!error) {
-    for (auto object : machOUniversalBinary->objects()) {
+  auto &binary = *binaryOrErr.get().getBinary();
+  if (MachOUniversalBinary *universalBinary = dyn_cast<MachOUniversalBinary>(&binary)) {
+    for (auto object : universalBinary->objects()) {
       if (auto machOObject = object.getAsObjectFile()) {
         auto bitcodeArchive = GetBitcodeArchive(machOObject->get());
         if (bitcodeArchive) {
@@ -31,17 +34,12 @@ std::vector<std::unique_ptr<BitcodeArchive>> BitcodeRetriever::GetBitcodeArchive
         }
       }
     }
-    return bitcodeArchives;
-  }
-
-  // Try regular, thin MachO
-  if (auto machOObject = object::ObjectFile::createMachOObjectFile((*memoryBuffer)->getMemBufferRef())) {
-    auto bitcodeArchive = GetBitcodeArchive(machOObject->get());
+  } else if (auto machOObjectFile = dyn_cast<MachOObjectFile>(&binary)) {
+    auto bitcodeArchive = GetBitcodeArchive(machOObjectFile);
     if (bitcodeArchive) {
       bitcodeArchives.push_back(std::move(bitcodeArchive));
     }
   }
-
   return bitcodeArchives;
 }
 
@@ -49,11 +47,11 @@ std::unique_ptr<BitcodeArchive> BitcodeRetriever::GetBitcodeArchive(
     llvm::object::MachOObjectFile *machOObjectFile) const {
   std::string name = machOObjectFile->getFileFormatName().str();
 
-  for (const object::SectionRef &section : machOObjectFile->sections()) {
+  for (const SectionRef &section : machOObjectFile->sections()) {
     StringRef sectName;
     section.getName(sectName);
 
-    object::DataRefImpl dataRef = section.getRawDataRefImpl();
+    DataRefImpl dataRef = section.getRawDataRefImpl();
     StringRef segName = machOObjectFile->getSectionFinalSegmentName(dataRef);
 
     if (segName == "__LLVM" && sectName == "__bundle") {

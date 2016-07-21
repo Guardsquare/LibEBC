@@ -1,5 +1,7 @@
 #include "BitcodeArchive.h"
 
+#include "BitcodeMetadata.h"
+
 extern "C" {
 #include <xar/xar.h>
 }

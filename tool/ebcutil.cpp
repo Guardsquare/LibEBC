@@ -1,3 +1,5 @@
+#include "BitcodeArchive.h"
+#include "BitcodeMetadata.h"
 #include "BitcodeRetriever.h"
 
 #include <iomanip>
