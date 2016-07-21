@@ -7,3 +7,4 @@ install_manifest.txt
 CTestTestfile.cmake
 build
 compile_commands.json
+doc
