@@ -1,4 +1,4 @@
-#include "BitcodeMetadata.h"
+#include "ebc/BitcodeMetadata.h"
 
 #include "catch.hpp"
 

@@ -1,5 +1,5 @@
-#include "BitcodeMetadata.h"
-#include "XmlHelper.h"
+#include "ebc/BitcodeMetadata.h"
+#include "ebc/XmlHelper.h"
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>

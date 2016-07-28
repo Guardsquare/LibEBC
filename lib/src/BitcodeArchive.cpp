@@ -1,14 +1,16 @@
-#include "BitcodeArchive.h"
+#include "ebc/BitcodeArchive.h"
 
-#include "BitcodeMetadata.h"
+#include "ebc/BitcodeMetadata.h"
+#include "ebc/Config.h"
 
+#ifdef HAVE_LIBXAR
 extern "C" {
 #include <xar/xar.h>
 }
+#endif
 
 #include <cstdio>
 #include <cstring>
-#include <fstream>
 #include <fstream>
 #include <iostream>
 #include <streambuf>
@@ -16,78 +18,30 @@ extern "C" {
 namespace ebc {
 
 BitcodeArchive::BitcodeArchive(const char *data, std::uint32_t size)
-    : _name(), _arch(), _uuid(), _data(nullptr), _size(size), _metadata(nullptr) {
-  SetData(data, size);
+    : BitcodeContainer(data, size), _metadata(nullptr) {
   SetMetadata();
 }
 
-BitcodeArchive::BitcodeArchive(BitcodeArchive &&bitcodeArchive)
-    : _name(bitcodeArchive._name)
-    , _arch(bitcodeArchive._arch)
-    , _uuid(bitcodeArchive._uuid)
-    , _data(nullptr)
-    , _size(bitcodeArchive._size)
-    , _metadata(std::move(bitcodeArchive._metadata)) {
-  SetData(bitcodeArchive._data, bitcodeArchive._size);
+BitcodeArchive::BitcodeArchive(BitcodeArchive &&bitcodeArchive) : BitcodeContainer(std::move(bitcodeArchive)) {
   SetMetadata();
-  bitcodeArchive._data = nullptr;
 }
 
-BitcodeArchive::~BitcodeArchive() {
-  if (_data != nullptr) {
-    delete _data;
-    _data = nullptr;
-  }
-}
-
-std::string BitcodeArchive::GetName() const {
-  return _name;
-}
-
-void BitcodeArchive::SetName(std::string name) {
-  _name = name;
-}
-
-std::string BitcodeArchive::GetArch() const {
-  return _arch;
-}
-
-void BitcodeArchive::SetArch(std::string arch) {
-  _arch = arch;
-}
-
-void BitcodeArchive::SetUuid(const std::uint8_t *uuid) {
-  if (uuid != nullptr) {
-    std::copy(uuid, uuid + _uuid.size(), _uuid.begin());
-  }
-}
-
-void BitcodeArchive::SetData(const char *data, std::uint32_t size) {
-  if (size > 0) {
-    _data = reinterpret_cast<char *>(std::malloc(size * sizeof(char)));
-    std::copy(data, data + size, _data);
-  }
+bool BitcodeArchive::IsArchive() const {
+  return true;
 }
 
 void BitcodeArchive::SetMetadata() {
   _metadata = std::make_unique<BitcodeMetadata>(GetMetadataXml());
 }
 
-std::string BitcodeArchive::GetUUID() const {
-  char buffer[UUID_ASCII_LENGTH + 1];
-  sprintf(buffer, "%2.2X%2.2X%2.2X%2.2X-%2.2X%2.2X-%2.2X%2.2X-%2.2X%2.2X-%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X", _uuid[0],
-          _uuid[1], _uuid[2], _uuid[3], _uuid[4], _uuid[5], _uuid[6], _uuid[7], _uuid[8], _uuid[9], _uuid[10],
-          _uuid[11], _uuid[12], _uuid[13], _uuid[14], _uuid[15]);
-  return std::string(buffer);
-}
-
 std::string BitcodeArchive::WriteXarToFile(std::string fileName) const {
   if (fileName.empty()) {
-    fileName = _name + ".xar";
+    fileName = GetName() + ".xar";
   }
 
+  auto data = GetData();
   std::ofstream outfile(fileName, std::ofstream::binary);
-  outfile.write(_data, _size);
+  outfile.write(data.first, data.second);
   outfile.close();
   return fileName;
 }
@@ -95,6 +49,7 @@ std::string BitcodeArchive::WriteXarToFile(std::string fileName) const {
 std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles() const {
   auto files = std::vector<BitcodeFile>();
 
+#ifdef HAVE_LIBXAR
   xar_t x;
   xar_iter_t xi;
   xar_file_t xf;
@@ -140,7 +95,7 @@ std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles() const {
     }
 
     // Write bitcode to file
-    auto filePath = _name + "_" + std::to_string(i++) + ".bc";
+    auto filePath = GetName() + "_" + std::to_string(i++) + ".bc";
     std::FILE *output = std::fopen(filePath.c_str(), "wb");
     if (!output) {
       std::cerr << "Error opening output file" << std::endl;
@@ -187,6 +142,7 @@ std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles() const {
   }
   xar_iter_free(xi);
   xar_close(x);
+#endif
 
   return files;
 }
@@ -196,15 +152,21 @@ const BitcodeMetadata &BitcodeArchive::GetMetadata() const {
 }
 
 std::string BitcodeArchive::GetMetadataXml() const {
-  if (_data == nullptr) {
+  auto data = GetData();
+  if (data.first == nullptr) {
     return std::string();
   }
 
   std::string xarFile = WriteXarToFile();
-  std::string metadataXmlFile = _name + "_metadata.xar";
+  std::string metadataXmlFile = GetName() + "_metadata.xar";
 
+#ifdef HAVE_LIBXAR
   // Write archive to filesystem and read xar
   xar_t x = xar_open(xarFile.c_str(), READ);
+  if (x == nullptr) {
+    return std::string();
+  }
+
   xar_serialize(x, metadataXmlFile.c_str());
   xar_close(x);
   std::remove(xarFile.c_str());
@@ -215,5 +177,8 @@ std::string BitcodeArchive::GetMetadataXml() const {
   std::remove(metadataXmlFile.c_str());
 
   return xml;
+#else
+  return std::string();
+#endif
 }
 }

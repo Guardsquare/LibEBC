@@ -1,4 +1,4 @@
-#include "BitcodeFile.h"
+#include "ebc/BitcodeFile.h"
 
 #include <cstdio>
 
