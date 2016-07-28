@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstdio>
 #include <string>
 #include <vector>
 
@@ -27,4 +26,8 @@ class BitcodeFile {
   std::vector<std::string> _clangCommands;
   std::vector<std::string> _swiftCommands;
 };
+
+inline bool operator==(const BitcodeFile& lhs, const BitcodeFile& rhs) {
+  return lhs.GetName() == rhs.GetName();
+}
 }
