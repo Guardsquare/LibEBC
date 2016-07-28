@@ -1,5 +1,5 @@
-# LibXML2 Dependency
-find_package(LIBXML2 REQUIRED)
+# LibXml2 Dependency
+find_package(LibXml2 REQUIRED)
 include_directories(${LIBXML2_INCLUDE_DIR})
 
 # Catch
