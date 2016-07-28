@@ -8,7 +8,6 @@ extern "C" {
 
 #include <cstdio>
 #include <fstream>
-#include <fstream>
 #include <iostream>
 #include <streambuf>
 
@@ -204,6 +203,10 @@ std::string BitcodeArchive::GetMetadataXml() const {
 
   // Write archive to filesystem and read xar
   xar_t x = xar_open(xarFile.c_str(), READ);
+  if (x == nullptr) {
+    return std::string();
+  }
+
   xar_serialize(x, metadataXmlFile.c_str());
   xar_close(x);
   std::remove(xarFile.c_str());
