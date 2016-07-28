@@ -1,10 +1,13 @@
 #include "BitcodeArchive.h"
 
 #include "BitcodeMetadata.h"
+#include "Config.h"
 
+#ifdef HAVE_LIBXAR
 extern "C" {
 #include <xar/xar.h>
 }
+#endif
 
 #include <cstdio>
 #include <fstream>
@@ -45,6 +48,7 @@ std::string BitcodeArchive::WriteXarToFile(std::string fileName) const {
 std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles() const {
   auto files = std::vector<BitcodeFile>();
 
+#ifdef HAVE_LIBXAR
   xar_t x;
   xar_iter_t xi;
   xar_file_t xf;
@@ -137,6 +141,7 @@ std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles() const {
   }
   xar_iter_free(xi);
   xar_close(x);
+#endif
 
   return files;
 }
@@ -154,6 +159,7 @@ std::string BitcodeArchive::GetMetadataXml() const {
   std::string xarFile = WriteXarToFile();
   std::string metadataXmlFile = GetName() + "_metadata.xar";
 
+#ifdef HAVE_LIBXAR
   // Write archive to filesystem and read xar
   xar_t x = xar_open(xarFile.c_str(), READ);
   if (x == nullptr) {
@@ -170,5 +176,8 @@ std::string BitcodeArchive::GetMetadataXml() const {
   std::remove(metadataXmlFile.c_str());
 
   return xml;
+#else
+  return std::string();
+#endif
 }
 }
