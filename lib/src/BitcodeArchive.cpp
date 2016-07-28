@@ -1,7 +1,7 @@
-#include "BitcodeArchive.h"
+#include "ebc/BitcodeArchive.h"
 
-#include "BitcodeMetadata.h"
-#include "Config.h"
+#include "ebc/BitcodeMetadata.h"
+#include "ebc/Config.h"
 
 #ifdef HAVE_LIBXAR
 extern "C" {

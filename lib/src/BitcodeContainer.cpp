@@ -1,4 +1,4 @@
-#include "BitcodeContainer.h"
+#include "ebc/BitcodeContainer.h"
 
 #include <cstdio>
 #include <fstream>

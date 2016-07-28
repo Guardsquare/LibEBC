@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BitcodeFile.h"
+#include "ebc/BitcodeFile.h"
 
 #include <array>
 #include <cstdint>

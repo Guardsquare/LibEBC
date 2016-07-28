@@ -1,7 +1,7 @@
-#include "BitcodeRetriever.h"
+#include "ebc/BitcodeRetriever.h"
 
-#include "BitcodeArchive.h"
-#include "BitcodeContainer.h"
+#include "ebc/BitcodeArchive.h"
+#include "ebc/BitcodeContainer.h"
 
 #include "llvm/ADT/Triple.h"
 #include "llvm/Object/ELFObjectFile.h"

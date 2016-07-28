@@ -1,8 +1,8 @@
 include(CheckLibraryExists)
 
 configure_file (
-  "${PROJECT_SOURCE_DIR}/lib/include/Config.h.in"
-  "${PROJECT_BINARY_DIR}/Config.h")
+  "${PROJECT_SOURCE_DIR}/lib/include/ebc/Config.h.in"
+  "${PROJECT_BINARY_DIR}/ebc/Config.h")
 
 # LibXml2 Dependency
 find_package(LibXml2 REQUIRED)

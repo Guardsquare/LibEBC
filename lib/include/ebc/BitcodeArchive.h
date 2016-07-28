@@ -1,8 +1,8 @@
 #pragma once
 
-#include "BitcodeContainer.h"
-#include "BitcodeFile.h"
-#include "BitcodeMetadata.h"
+#include "ebc/BitcodeContainer.h"
+#include "ebc/BitcodeFile.h"
+#include "ebc/BitcodeMetadata.h"
 
 #include <array>
 #include <cstdint>

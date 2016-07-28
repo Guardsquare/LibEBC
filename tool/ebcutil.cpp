@@ -1,7 +1,7 @@
-#include "BitcodeArchive.h"
-#include "BitcodeContainer.h"
-#include "BitcodeMetadata.h"
-#include "BitcodeRetriever.h"
+#include "ebc/BitcodeArchive.h"
+#include "ebc/BitcodeContainer.h"
+#include "ebc/BitcodeMetadata.h"
+#include "ebc/BitcodeRetriever.h"
 
 #include <iomanip>
 #include <iostream>

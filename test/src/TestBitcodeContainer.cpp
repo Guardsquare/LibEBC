@@ -1,5 +1,5 @@
-#include "BitcodeContainer.h"
-#include "BitcodeFile.h"
+#include "ebc/BitcodeContainer.h"
+#include "ebc/BitcodeFile.h"
 
 #include "catch.hpp"
 
