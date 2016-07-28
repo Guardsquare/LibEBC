@@ -1,4 +1,5 @@
 #include "BitcodeArchive.h"
+#include "BitcodeContainer.h"
 #include "BitcodeMetadata.h"
 #include "BitcodeRetriever.h"
 
@@ -11,30 +12,34 @@ constexpr int WIDTH_NESTED = 14;
 
 int main(int argc, char* argv[]) {
   if (argc < 2) {
-    std::cout << "Usage: ebcutil <macho> [options]" << std::endl;
+    std::cout << "Usage: ebcutil <binary>" << std::endl;
   }
 
   BitcodeRetriever bitcodeRetriever(argv[1]);
-  for (auto& bitcodeArchive : bitcodeRetriever.GetBitcodeArchives()) {
-    std::cout << bitcodeArchive->GetName() << std::endl;
+  for (auto& bitcodeContainer : bitcodeRetriever.GetBitcodeContainers()) {
+    std::cout << bitcodeContainer->GetName() << std::endl;
     std::cout << std::setw(WIDTH) << "UUID:"
-              << " " << bitcodeArchive->GetUUID() << std::endl;
+              << " " << bitcodeContainer->GetUUID() << std::endl;
     std::cout << std::setw(WIDTH) << "Arch:"
-              << " " << bitcodeArchive->GetArch() << std::endl;
+              << " " << bitcodeContainer->GetArch() << std::endl;
 
-    std::cout << std::setw(WIDTH) << "Dylibs:";
-    for (auto& dylib : bitcodeArchive->GetMetadata().GetDylibs()) {
-      std::cout << " " << dylib;
+    if (bitcodeContainer->IsArchive()) {
+      auto bitcodeArchive = static_cast<BitcodeArchive*>(bitcodeContainer.get());
+
+      std::cout << std::setw(WIDTH) << "Dylibs:";
+      for (auto& dylib : bitcodeArchive->GetMetadata().GetDylibs()) {
+        std::cout << " " << dylib;
+      }
+      std::cout << std::endl;
+
+      std::cout << std::setw(WIDTH) << "Link opts:";
+      for (auto& option : bitcodeArchive->GetMetadata().GetLinkOptions()) {
+        std::cout << " " << option;
+      }
+      std::cout << std::endl;
     }
-    std::cout << std::endl;
 
-    std::cout << std::setw(WIDTH) << "Link opts:";
-    for (auto& option : bitcodeArchive->GetMetadata().GetLinkOptions()) {
-      std::cout << " " << option;
-    }
-    std::cout << std::endl;
-
-    for (auto& bitcodeFile : bitcodeArchive->GetBitcodeFiles()) {
+    for (auto& bitcodeFile : bitcodeContainer->GetBitcodeFiles()) {
       std::cout << std::setw(WIDTH) << "File:"
                 << " " << bitcodeFile.GetName() << std::endl;
 
@@ -56,7 +61,5 @@ int main(int argc, char* argv[]) {
         std::cout << std::endl;
       }
     }
-
-    std::cout << std::endl;
   }
 }

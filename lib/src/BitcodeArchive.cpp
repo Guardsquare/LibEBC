@@ -22,6 +22,10 @@ BitcodeArchive::BitcodeArchive(BitcodeArchive &&bitcodeArchive) : BitcodeContain
   SetMetadata();
 }
 
+bool BitcodeArchive::IsArchive() const {
+  return true;
+}
+
 void BitcodeArchive::SetMetadata() {
   _metadata = std::make_unique<BitcodeMetadata>(GetMetadataXml());
 }

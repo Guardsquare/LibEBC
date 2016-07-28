@@ -8,13 +8,13 @@
 namespace ebc {
 
 BitcodeContainer::BitcodeContainer(const char *data, std::uint32_t size)
-    : _name(), _cmd(), _arch(), _uuid(), _data(nullptr), _size(size) {
+    : _name(), _commands(), _arch(), _uuid(), _data(nullptr), _size(size) {
   SetData(data, size);
 }
 
 BitcodeContainer::BitcodeContainer(BitcodeContainer &&bitcodeContainer)
     : _name(bitcodeContainer._name)
-    , _cmd(bitcodeContainer._cmd)
+    , _commands(bitcodeContainer._commands)
     , _arch(bitcodeContainer._arch)
     , _uuid(bitcodeContainer._uuid)
     , _data(nullptr)
@@ -30,6 +30,10 @@ BitcodeContainer::~BitcodeContainer() {
   }
 }
 
+bool BitcodeContainer::IsArchive() const {
+  return false;
+}
+
 std::string BitcodeContainer::GetName() const {
   return _name;
 }
@@ -38,12 +42,12 @@ void BitcodeContainer::SetName(std::string name) {
   _name = name;
 }
 
-std::string BitcodeContainer::GetCmd() const {
-  return _cmd;
+const std::vector<std::string> &BitcodeContainer::GetCommands() const {
+  return _commands;
 }
 
-void BitcodeContainer::SetCmd(std::string cmd) {
-  _cmd = cmd;
+void BitcodeContainer::SetCommands(const std::vector<std::string> &commands) {
+  _commands = commands;
 }
 
 std::string BitcodeContainer::GetArch() const {
@@ -80,8 +84,32 @@ std::pair<const char *, std::uint32_t> BitcodeContainer::GetData() const {
 }
 
 std::vector<BitcodeFile> BitcodeContainer::GetBitcodeFiles() const {
-  auto files = std::vector<BitcodeFile>();
-  // FIXME
+  std::vector<std::size_t> fileOffsets;
+  fileOffsets.push_back(0);
+  for (int i = 2; i < _size - 1; ++i) {
+    if (_data[i] == 'B' && _data[i + 1] == 'C') {
+      fileOffsets.push_back(i);
+    }
+  }
+  fileOffsets.push_back(_size + 1);
+
+  std::vector<BitcodeFile> files;
+  for (int i = 0; i < fileOffsets.size() - 1; ++i) {
+    auto begin = fileOffsets[i];
+    auto end = fileOffsets[i + 1];
+    auto fileName = GetName() + "_" + std::to_string(i) + ".bc";
+    WriteFile(begin, end, fileName);
+    files.push_back(fileName);
+  }
+
   return files;
+}
+
+void BitcodeContainer::WriteFile(std::size_t begin, std::size_t end, std::string name) const {
+  if (begin < end) {
+    std::ofstream outfile(name, std::ofstream::binary);
+    outfile.write(_data + begin, end - begin - 1);
+    outfile.close();
+  }
 }
 }

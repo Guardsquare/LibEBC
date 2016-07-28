@@ -17,6 +17,8 @@ class BitcodeArchive : public BitcodeContainer {
 
   BitcodeArchive(BitcodeArchive&& bitcodeArchive);
 
+  virtual bool IsArchive() const override;
+
   /// Write data to file. If no file name is provided, the name of this
   /// BitcodeArchive will be used, followed by the xar extension.
   std::string WriteXarToFile(std::string fileName = "") const;

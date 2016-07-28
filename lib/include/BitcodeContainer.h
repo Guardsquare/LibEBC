@@ -18,13 +18,15 @@ class BitcodeContainer {
 
   virtual ~BitcodeContainer();
 
+  virtual bool IsArchive() const;
+
   /// Returns the name associated with the Object embedding this bitcode archive.
   std::string GetName() const;
   void SetName(std::string name);
 
   /// Returns the commands associated with the embedded bitcode.
-  std::string GetCmd() const;
-  void SetCmd(std::string cmd);
+  const std::vector<std::string>& GetCommands() const;
+  void SetCommands(const std::vector<std::string>& cmd);
 
   /// Returns the architecture of the Object embedding this bitcode archive.
   std::string GetArch() const;
@@ -46,8 +48,9 @@ class BitcodeContainer {
   static constexpr int UUID_ASCII_LENGTH = 36;
 
  private:
+  void WriteFile(std::size_t begin, std::size_t end, std::string name) const;
   std::string _name;
-  std::string _cmd;
+  std::vector<std::string> _commands;
   std::string _arch;
   std::array<std::uint8_t, 16> _uuid;
 
