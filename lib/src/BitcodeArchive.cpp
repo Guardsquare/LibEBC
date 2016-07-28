@@ -7,6 +7,7 @@ extern "C" {
 }
 
 #include <cstdio>
+#include <cstring>
 #include <fstream>
 #include <fstream>
 #include <iostream>
@@ -57,7 +58,7 @@ void BitcodeArchive::SetArch(std::string arch) {
 
 void BitcodeArchive::SetUuid(const std::uint8_t *uuid) {
   if (uuid != nullptr) {
-    std::copy_n(uuid, _uuid.size(), _uuid.begin());
+    std::copy(uuid, uuid + _uuid.size(), _uuid.begin());
   }
 }
 
@@ -127,7 +128,7 @@ std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles() const {
       continue;
     }
 
-    if (strcmp(type, "file") != 0) {
+    if (std::strcmp(type, "file") != 0) {
       free(path);
       continue;
     }
