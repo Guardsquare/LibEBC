@@ -86,8 +86,8 @@ std::pair<const char *, std::uint32_t> BitcodeContainer::GetData() const {
 std::vector<BitcodeFile> BitcodeContainer::GetBitcodeFiles() const {
   std::vector<std::size_t> fileOffsets;
   fileOffsets.push_back(0);
-  for (int i = 2; i < _size - 1; ++i) {
-    if (_data[i] == 'B' && _data[i + 1] == 'C') {
+  for (int i = 2; i < _size - 3; ++i) {
+    if (IsBitcode(_data + i)) {
       fileOffsets.push_back(i);
     }
   }
@@ -103,6 +103,11 @@ std::vector<BitcodeFile> BitcodeContainer::GetBitcodeFiles() const {
   }
 
   return files;
+}
+
+bool BitcodeContainer::IsBitcode(const char *data) const {
+  return static_cast<unsigned char>(data[0]) == 0x42 && static_cast<unsigned char>(data[1]) == 0x43 &&
+         static_cast<unsigned char>(data[2]) == 0xC0 && static_cast<unsigned char>(data[3]) == 0xDE;
 }
 
 void BitcodeContainer::WriteFile(std::size_t begin, std::size_t end, std::string name) const {
