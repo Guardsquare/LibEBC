@@ -1,9 +1,5 @@
 include(CheckLibraryExists)
 
-configure_file (
-  "${PROJECT_SOURCE_DIR}/lib/include/ebc/Config.h.in"
-  "${PROJECT_BINARY_DIR}/ebc/Config.h")
-
 # LibXml2 Dependency
 find_package(LibXml2 REQUIRED)
 include_directories(${LIBXML2_INCLUDE_DIR})
@@ -35,6 +31,11 @@ check_library_exists(xar xar_open "" HAVE_LIBXAR)
 if(HAVE_LIBXAR)
   set(XAR_LIB xar)
 endif()
+
+# Configure header
+configure_file (
+  "${PROJECT_SOURCE_DIR}/lib/include/ebc/Config.h.in"
+  "${PROJECT_BINARY_DIR}/ebc/Config.h")
 
 # LibEBC
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
