@@ -2,16 +2,14 @@
 
 [![Build Status](https://travis-ci.org/JDevlieghere/LibEBC.svg?branch=master)](https://travis-ci.org/JDevlieghere/LibEBC)
 
-Library for working with embedded bitcode.
+Library for obtaining bitcode embedded in object files. In theory it should
+work with all types of objects files (MachO, ELF, COFF, ...) as well as with
+MachO universal binaries.
 
-## Build
-
-```
-$ git clone https://github.com/JDevlieghere/LibEBC.git && cd LibEBC
-$ mkdir build && cd build
-$ cmake ..
-$ cmake --build .
-```
+Embedded bitcode was originally added by Apple for MachO binaries and later
+[upstreamed to clang](http://lists.llvm.org/pipermail/llvm-dev/2016-February/094851.html).
+More information can be found in [this blogpost](https://jonasdevlieghere.com/embedded-bitcode/)
+I wrote.
 
 ## Usage
 
@@ -34,4 +32,13 @@ Mach-O 64-bit x86-64
           Clang: -triple x86_64-apple-macosx10.11.0 -emit-obj -disable-llvm-optzns)
        File: Mach-O 64-bit x86-64_1.bc
           Clang: -triple x86_64-apple-macosx10.11.0 -emit-obj -disable-llvm-optzns)
+```
+
+## Build
+
+```
+$ git clone https://github.com/JDevlieghere/LibEBC.git && cd LibEBC
+$ mkdir build && cd build
+$ cmake ..
+$ cmake --build .
 ```

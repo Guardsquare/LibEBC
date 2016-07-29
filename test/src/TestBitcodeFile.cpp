@@ -7,26 +7,14 @@ TEST_CASE("Bitcode File Name", "[BitcodeFile]") {
   REQUIRE("Name" == bitcodeFile.GetName());
 }
 
-TEST_CASE("Bitcode File No Clang Commands", "[BitcodeFile]") {
+TEST_CASE("Bitcode File No  Commands", "[BitcodeFile]") {
   auto bitcodeFile = ebc::BitcodeFile("Name");
-  REQUIRE(bitcodeFile.GetClangCommands().empty());
+  REQUIRE(bitcodeFile.GetCommands().empty());
 }
 
-TEST_CASE("Bitcode File Clang Commands", "[BitcodeFile]") {
+TEST_CASE("Bitcode File Commands", "[BitcodeFile]") {
   auto bitcodeFile = ebc::BitcodeFile("Name");
   std::vector<std::string> commands = {"a", "b", "c"};
-  bitcodeFile.SetClangCommands(commands);
-  REQUIRE(commands == bitcodeFile.GetClangCommands());
-}
-
-TEST_CASE("Bitcode File No Swift Commands", "[BitcodeFile]") {
-  auto bitcodeFile = ebc::BitcodeFile("Name");
-  REQUIRE(bitcodeFile.GetSwiftCommands().empty());
-}
-
-TEST_CASE("Bitcode File Swift Commands", "[BitcodeFile]") {
-  auto bitcodeFile = ebc::BitcodeFile("Name");
-  std::vector<std::string> commands = {"a", "b", "c"};
-  bitcodeFile.SetClangCommands(commands);
-  REQUIRE(commands == bitcodeFile.GetClangCommands());
+  bitcodeFile.SetCommands(commands);
+  REQUIRE(commands == bitcodeFile.GetCommands());
 }

@@ -103,7 +103,7 @@ std::unique_ptr<BitcodeContainer> BitcodeRetriever::GetBitcodeContainerFromMachO
         bitcodeContainer = new BitcodeContainer(data.first, data.second);
         bitcodeContainer->SetName(name);
         bitcodeContainer->SetArch(TripleToArch(machOObjectFile->getArch()));
-      } else if (sectName == "__cmd") {
+      } else if (sectName == "__cmd" || sectName == "__cmdline") {
         commands = GetCommands(section);
       }
     }

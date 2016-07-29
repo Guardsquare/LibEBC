@@ -43,20 +43,11 @@ int main(int argc, char* argv[]) {
       std::cout << std::setw(WIDTH) << "File:"
                 << " " << bitcodeFile.GetName() << std::endl;
 
-      auto clangCommands = bitcodeFile.GetClangCommands();
-      if (!clangCommands.empty()) {
+      auto commands = bitcodeFile.GetCommands();
+      if (!commands.empty()) {
         std::cout << std::setw(WIDTH_NESTED) << "Clang:";
-        for (auto& clangCommand : bitcodeFile.GetClangCommands()) {
-          std::cout << " " << clangCommand;
-        }
-        std::cout << std::endl;
-      }
-
-      auto swiftCommands = bitcodeFile.GetSwiftCommands();
-      if (!swiftCommands.empty()) {
-        std::cout << std::setw(WIDTH_NESTED) << "Swift:";
-        for (auto& swiftCommand : bitcodeFile.GetSwiftCommands()) {
-          std::cout << " " << swiftCommand;
+        for (auto& command : commands) {
+          std::cout << " " << command;
         }
         std::cout << std::endl;
       }

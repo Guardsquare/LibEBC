@@ -129,11 +129,11 @@ std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles() const {
 
     // Add clang commands
     auto clangCommands = _metadata->GetClangCommands(path);
-    bitcodeFile.SetClangCommands(clangCommands);
+    bitcodeFile.SetCommands(clangCommands);
 
     // Add swift commands
     auto swiftCommands = _metadata->GetSwiftCommands(path);
-    bitcodeFile.SetSwiftCommands(swiftCommands);
+    bitcodeFile.SetCommands(swiftCommands);
 
     // Add to list of bitcode files
     files.push_back(bitcodeFile);

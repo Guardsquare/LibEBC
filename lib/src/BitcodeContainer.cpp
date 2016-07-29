@@ -88,7 +88,10 @@ std::vector<BitcodeFile> BitcodeContainer::GetBitcodeFiles() const {
     auto size = end - begin - 1;
     auto fileName = GetName() + "_" + std::to_string(i) + ".bc";
     util::WriteBitcodeFile(_data + begin, size, fileName);
-    files.push_back(fileName);
+
+    BitcodeFile bitcodeFile(fileName);
+    bitcodeFile.SetCommands(_commands);
+    files.push_back(bitcodeFile);
   }
 
   return files;
