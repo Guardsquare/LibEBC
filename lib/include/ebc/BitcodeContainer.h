@@ -44,13 +44,10 @@ class BitcodeContainer {
  protected:
   void SetData(const char* data, std::uint32_t size);
   std::pair<const char*, std::uint32_t> GetData() const;
-  static constexpr int UUID_BYTE_LENGTH = 16;
-  static constexpr int UUID_ASCII_LENGTH = 36;
 
  private:
-  bool IsBitcode(const char* data) const;
+  std::vector<std::uint32_t> GetBitcodeFileOffsets() const;
 
-  void WriteFile(std::size_t begin, std::size_t end, std::string name) const;
   std::string _name;
   std::vector<std::string> _commands;
   std::string _arch;

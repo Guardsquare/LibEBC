@@ -1,8 +1,7 @@
 #include "ebc/BitcodeContainer.h"
+#include "ebc/BitcodeUtil.h"
 
 #include <cstdio>
-#include <fstream>
-#include <iostream>
 #include <streambuf>
 
 namespace ebc {
@@ -65,11 +64,7 @@ void BitcodeContainer::SetUuid(const std::uint8_t *uuid) {
 }
 
 std::string BitcodeContainer::GetUUID() const {
-  char buffer[UUID_ASCII_LENGTH + 1];
-  sprintf(buffer, "%2.2X%2.2X%2.2X%2.2X-%2.2X%2.2X-%2.2X%2.2X-%2.2X%2.2X-%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X", _uuid[0],
-          _uuid[1], _uuid[2], _uuid[3], _uuid[4], _uuid[5], _uuid[6], _uuid[7], _uuid[8], _uuid[9], _uuid[10],
-          _uuid[11], _uuid[12], _uuid[13], _uuid[14], _uuid[15]);
-  return std::string(buffer);
+  return util::UuidToString(_uuid);
 }
 
 void BitcodeContainer::SetData(const char *data, std::uint32_t size) {
@@ -84,37 +79,29 @@ std::pair<const char *, std::uint32_t> BitcodeContainer::GetData() const {
 }
 
 std::vector<BitcodeFile> BitcodeContainer::GetBitcodeFiles() const {
-  std::vector<std::size_t> fileOffsets;
-  fileOffsets.push_back(0);
-  for (int i = 2; i < _size - 3; ++i) {
-    if (IsBitcode(_data + i)) {
-      fileOffsets.push_back(i);
-    }
-  }
-  fileOffsets.push_back(_size + 1);
-
   std::vector<BitcodeFile> files;
-  for (int i = 0; i < fileOffsets.size() - 1; ++i) {
-    auto begin = fileOffsets[i];
-    auto end = fileOffsets[i + 1];
+
+  auto offsets = GetBitcodeFileOffsets();
+  for (int i = 0; i < offsets.size() - 1; ++i) {
+    auto begin = offsets[i];
+    auto end = offsets[i + 1];
+    auto size = end - begin - 1;
     auto fileName = GetName() + "_" + std::to_string(i) + ".bc";
-    WriteFile(begin, end, fileName);
+    util::WriteBitcodeFile(_data + begin, size, fileName);
     files.push_back(fileName);
   }
 
   return files;
 }
 
-bool BitcodeContainer::IsBitcode(const char *data) const {
-  return static_cast<unsigned char>(data[0]) == 0x42 && static_cast<unsigned char>(data[1]) == 0x43 &&
-         static_cast<unsigned char>(data[2]) == 0xC0 && static_cast<unsigned char>(data[3]) == 0xDE;
-}
-
-void BitcodeContainer::WriteFile(std::size_t begin, std::size_t end, std::string name) const {
-  if (begin < end) {
-    std::ofstream outfile(name, std::ofstream::binary);
-    outfile.write(_data + begin, end - begin - 1);
-    outfile.close();
+std::vector<std::uint32_t> BitcodeContainer::GetBitcodeFileOffsets() const {
+  std::vector<std::uint32_t> offsets;
+  for (int i = 0; i < _size - 3; ++i) {
+    if (util::IsBitcodeFile(_data + i)) {
+      offsets.push_back(i);
+    }
   }
+  offsets.push_back(_size + 1);
+  return offsets;
 }
 }

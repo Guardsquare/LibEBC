@@ -76,7 +76,7 @@ std::unique_ptr<BitcodeContainer> BitcodeRetriever::GetBitcodeContainerFromObjec
 
 std::unique_ptr<BitcodeContainer> BitcodeRetriever::GetBitcodeContainerFromMachO(
     llvm::object::MachOObjectFile *machOObjectFile) const {
-  BitcodeArchive *bitcodeArchive = nullptr;
+  BitcodeContainer *bitcodeContainer = nullptr;
 
   const std::string name = machOObjectFile->getFileFormatName().str();
   std::vector<std::string> commands;
@@ -89,19 +89,27 @@ std::unique_ptr<BitcodeContainer> BitcodeRetriever::GetBitcodeContainerFromMachO
       StringRef sectName;
       section.getName(sectName);
       if (sectName == "__bundle") {
+        // Embedded bitcode in universal binary.
         auto data = GetSectionData(section);
 
-        bitcodeArchive = new BitcodeArchive(data.first, data.second);
-        bitcodeArchive->SetName(name);
-        bitcodeArchive->SetArch(TripleToArch(machOObjectFile->getArch()));
-        bitcodeArchive->SetUuid(machOObjectFile->getUuid().data());
+        bitcodeContainer = new BitcodeArchive(data.first, data.second);
+        bitcodeContainer->SetName(name);
+        bitcodeContainer->SetArch(TripleToArch(machOObjectFile->getArch()));
+        bitcodeContainer->SetUuid(machOObjectFile->getUuid().data());
+      } else if (sectName == "__bitcode") {
+        // Embedded bitcode in single MachO object.
+        auto data = GetSectionData(section);
+
+        bitcodeContainer = new BitcodeContainer(data.first, data.second);
+        bitcodeContainer->SetName(name);
+        bitcodeContainer->SetArch(TripleToArch(machOObjectFile->getArch()));
       } else if (sectName == "__cmd") {
         commands = GetCommands(section);
       }
     }
   }
-  AddIfNotNull(bitcodeArchive, commands);
-  return std::unique_ptr<BitcodeContainer>(bitcodeArchive);
+  AddIfNotNull(bitcodeContainer, commands);
+  return std::unique_ptr<BitcodeContainer>(bitcodeContainer);
 }
 
 std::pair<const char *, std::uint32_t> BitcodeRetriever::GetSectionData(const llvm::object::SectionRef &section) const {
