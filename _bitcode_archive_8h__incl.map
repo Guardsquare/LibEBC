@@ -1,3 +1,5 @@
-<map id="lib/include/BitcodeArchive.h" name="lib/include/BitcodeArchive.h">
-<area shape="rect" id="node2" href="$_bitcode_file_8h.html" title="BitcodeFile.h" alt="" coords="66,79,164,104"/>
+<map id="lib/include/ebc/BitcodeArchive.h" name="lib/include/ebc/BitcodeArchive.h">
+<area shape="rect" id="node2" href="$_bitcode_container_8h.html" title="ebc/BitcodeContainer.h" alt="" coords="313,79,472,104"/>
+<area shape="rect" id="node3" href="$_bitcode_file_8h.html" title="ebc/BitcodeFile.h" alt="" coords="427,152,550,177"/>
+<area shape="rect" id="node9" href="$_bitcode_metadata_8h.html" title="ebc/BitcodeMetadata.h" alt="" coords="30,79,187,104"/>
 </map>

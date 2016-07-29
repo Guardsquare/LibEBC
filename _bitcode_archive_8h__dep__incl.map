@@ -1,4 +1,4 @@
-<map id="lib/include/BitcodeArchive.h" name="lib/include/BitcodeArchive.h">
+<map id="lib/include/ebc/BitcodeArchive.h" name="lib/include/ebc/BitcodeArchive.h">
 <area shape="rect" id="node2" href="$_bitcode_archive_8cpp.html" title="lib/src/BitcodeArchive.cpp" alt="" coords="5,79,179,104"/>
 <area shape="rect" id="node3" href="$_bitcode_retriever_8cpp.html" title="lib/src/BitcodeRetriever.cpp" alt="" coords="204,79,386,104"/>
 <area shape="rect" id="node4" href="$ebcutil_8cpp.html" title="tool/ebcutil.cpp" alt="" coords="411,79,521,104"/>
