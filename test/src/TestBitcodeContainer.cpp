@@ -28,11 +28,20 @@ TEST_CASE("Bitcode Container Commands", "[BitcodeContainer]") {
 
 TEST_CASE("Bitcode Container Files", "[BitcodeContainer]") {
   using ebc::BitcodeFile;
-  const char data[] = "BC000BC111BC222";
-  auto bitcodeContainer = ebc::BitcodeContainer(data, 15);
+  char data[8];
+  data[0] = 0x42;
+  data[1] = 0x43;
+  data[2] = 0xC0;
+  data[3] = 0xDE;
+  data[4] = 0x42;
+  data[5] = 0x43;
+  data[6] = 0xC0;
+  data[7] = 0xDE;
+  auto bitcodeContainer = ebc::BitcodeContainer(data, 8);
   bitcodeContainer.SetName("name");
-  const std::vector<BitcodeFile> expectedFiles = {BitcodeFile("name_0.bc"), BitcodeFile("name_1.bc"),
-                                                  BitcodeFile("name_2.bc")};
+  const std::vector<BitcodeFile> expectedFiles = {
+      BitcodeFile("name_0.bc"), BitcodeFile("name_1.bc"),
+  };
 
   auto actualFiles = bitcodeContainer.GetBitcodeFiles();
   REQUIRE(expectedFiles == actualFiles);
