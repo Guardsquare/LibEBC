@@ -11,16 +11,9 @@ include_directories(${LLVM_INCLUDE_DIRS})
 
 # Explicitly select components to link against
 llvm_map_components_to_libnames(LLVM_LINK_LIBRARIES
-  bitwriter
   core
-  executionengine
-  interpreter
-  ipo
-  irreader
-  linker
-  native
+  object
   support
-  transformutils
   )
 
 # LLVM compiler flags
