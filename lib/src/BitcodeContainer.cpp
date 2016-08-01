@@ -1,6 +1,7 @@
 #include "ebc/BitcodeContainer.h"
 #include "ebc/BitcodeUtil.h"
 
+#include <algorithm>
 #include <cstdio>
 #include <streambuf>
 
@@ -82,7 +83,7 @@ std::vector<BitcodeFile> BitcodeContainer::GetBitcodeFiles() const {
   std::vector<BitcodeFile> files;
 
   auto offsets = GetBitcodeFileOffsets();
-  for (int i = 0; i < offsets.size() - 1; ++i) {
+  for (std::uint32_t i = 0; i < offsets.size() - 1; ++i) {
     auto begin = offsets[i];
     auto end = offsets[i + 1];
     auto size = end - begin;
@@ -99,7 +100,7 @@ std::vector<BitcodeFile> BitcodeContainer::GetBitcodeFiles() const {
 
 std::vector<std::uint32_t> BitcodeContainer::GetBitcodeFileOffsets() const {
   std::vector<std::uint32_t> offsets;
-  for (int i = 0; i < _size - 3; ++i) {
+  for (std::uint32_t i = 0; i < _size - 3; ++i) {
     if (util::IsBitcodeFile(_data + i)) {
       offsets.push_back(i);
     }
