@@ -85,7 +85,7 @@ std::vector<BitcodeFile> BitcodeContainer::GetBitcodeFiles() const {
   for (int i = 0; i < offsets.size() - 1; ++i) {
     auto begin = offsets[i];
     auto end = offsets[i + 1];
-    auto size = end - begin - 1;
+    auto size = end - begin;
     auto fileName = GetName() + "_" + std::to_string(i) + ".bc";
     util::WriteBitcodeFile(_data + begin, size, fileName);
 
