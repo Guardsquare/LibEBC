@@ -9,7 +9,7 @@ matrix:
     - os: linux
       sudo: required
       dist: trusty
-      env: LLVM_HINT="/opt/llvm"
+      env: LLVM_HINT="/usr/local/opt/llvm"
 
 before_install:
   - ./.travis/dependencies.sh
