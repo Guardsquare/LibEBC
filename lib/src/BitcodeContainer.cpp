@@ -104,7 +104,7 @@ std::vector<std::uint32_t> BitcodeContainer::GetBitcodeFileOffsets() const {
       offsets.push_back(i);
     }
   }
-  offsets.push_back(_size + 1);
+  offsets.push_back(_size);
   return offsets;
 }
 }

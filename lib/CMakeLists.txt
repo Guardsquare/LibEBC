@@ -5,7 +5,7 @@ find_package(LibXml2 REQUIRED)
 include_directories(${LIBXML2_INCLUDE_DIR})
 
 # LLVM Dependency
-find_package(LLVM REQUIRED CONFIG HINTS /usr/local/opt/llvm)
+find_package(LLVM REQUIRED CONFIG HINTS ${LLVM_HINT})
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 include_directories(${LLVM_INCLUDE_DIRS})
 
