@@ -1,12 +1,11 @@
 #pragma once
 
+#include "ebc/XmlHelper.h"
+
 #include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
-
-struct _xmlDoc;
-struct _xmlNode;
 
 namespace ebc {
 class BitcodeMetadata {

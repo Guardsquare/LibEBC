@@ -110,7 +110,6 @@ std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles() const {
     while ((ret = xar_extract_tostream(&xs)) != XAR_STREAM_END) {
       if (ret == XAR_STREAM_ERR) {
         std::cerr << "Error extracting stream" << std::endl;
-        free(path);
         break;
       }
       std::fwrite(buffer, sizeof(char), sizeof(buffer) - xs.avail_out, output);
@@ -141,6 +140,7 @@ std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles() const {
 
     free(path);
   }
+
   xar_iter_free(xi);
   xar_close(x);
 #endif
