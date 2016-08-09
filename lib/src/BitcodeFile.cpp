@@ -21,4 +21,4 @@ void BitcodeFile::SetCommands(const std::vector<std::string>& commands) {
 void BitcodeFile::Remove() {
   std::remove(_name.c_str());
 }
-}
+}  // namespace ebc

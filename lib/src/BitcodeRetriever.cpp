@@ -153,4 +153,4 @@ std::string BitcodeRetriever::TripleToArch(unsigned arch) {
   }
   return "unknown";
 }
-}
+}  // namespace ebc

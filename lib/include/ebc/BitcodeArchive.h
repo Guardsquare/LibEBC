@@ -15,7 +15,7 @@ class BitcodeArchive : public BitcodeContainer {
  public:
   BitcodeArchive(const char* data, std::uint32_t size);
 
-  BitcodeArchive(BitcodeArchive&& bitcodeArchive);
+  BitcodeArchive(BitcodeArchive&& bitcodeArchive) noexcept;
 
   virtual bool IsArchive() const override;
 

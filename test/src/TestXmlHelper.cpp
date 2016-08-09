@@ -18,7 +18,7 @@ TEST_CASE("Xml Helper", "[XmlHelper]") {
     REQUIRE("content1" == ebc::xml::GetContent(node1));
   }
 
-  xmlNode* node2 = xmlNewNode(NULL, BAD_CAST "node2");
+  xmlNode* node2 = xmlNewNode(nullptr, BAD_CAST "node2");
   xmlAddChild(root, node2);
 
   SECTION("FindNodeWithName") {

@@ -54,4 +54,4 @@ std::vector<std::string> BitcodeMetadata::GetClangCommands(std::string fileName)
 std::vector<std::string> BitcodeMetadata::GetSwiftCommands(std::string fileName) const {
   return GetCommands(fileName, "swift");
 }
-}
+}  // namespace ebc

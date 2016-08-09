@@ -22,10 +22,9 @@ xmlNode* FindNodeWithName(xmlNode* root, std::string name) {
     if (node->type == XML_ELEMENT_NODE) {
       if (std::string(reinterpret_cast<const char*>(node->name)) == name) {
         return node;
-      } else {
-        auto childNode = FindNodeWithName(node->children, name);
-        if (childNode != nullptr) return childNode;
       }
+      auto childNode = FindNodeWithName(node->children, name);
+      if (childNode != nullptr) return childNode;
     }
   }
   return nullptr;
@@ -36,10 +35,9 @@ xmlNode* FindNodeWithNameAndContent(xmlNode* root, std::string name, std::string
     if (node->type == XML_ELEMENT_NODE) {
       if (std::string(reinterpret_cast<const char*>(node->name)) == name && GetContent(node) == content) {
         return node;
-      } else {
-        auto childNode = FindNodeWithNameAndContent(node->children, name, content);
-        if (childNode != nullptr) return childNode;
       }
+      auto childNode = FindNodeWithNameAndContent(node->children, name, content);
+      if (childNode != nullptr) return childNode;
     }
   }
   return nullptr;
@@ -64,5 +62,5 @@ XmlInitialization::~XmlInitialization() {
 }
 
 XmlInitialization xmlInitialization;
-}
-}
+}  // namespace xml
+}  // namespace ebc

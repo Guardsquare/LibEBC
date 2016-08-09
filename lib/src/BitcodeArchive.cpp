@@ -24,7 +24,7 @@ BitcodeArchive::BitcodeArchive(const char *data, std::uint32_t size)
   SetMetadata();
 }
 
-BitcodeArchive::BitcodeArchive(BitcodeArchive &&bitcodeArchive) : BitcodeContainer(std::move(bitcodeArchive)) {
+BitcodeArchive::BitcodeArchive(BitcodeArchive &&bitcodeArchive) noexcept : BitcodeContainer(std::move(bitcodeArchive)) {
   SetMetadata();
 }
 
@@ -183,4 +183,4 @@ std::string BitcodeArchive::GetMetadataXml() const {
   return std::string();
 #endif
 }
-}
+}  // namespace ebc
