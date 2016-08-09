@@ -1,6 +1,7 @@
 #include "ebc/BitcodeArchive.h"
 
 #include "ebc/BitcodeMetadata.h"
+#include "ebc/BitcodeUtil.h"
 #include "ebc/Config.h"
 
 #ifdef HAVE_LIBXAR
@@ -47,7 +48,7 @@ std::string BitcodeArchive::WriteXarToFile(std::string fileName) const {
   return fileName;
 }
 
-std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles() const {
+std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles(std::string prefix) const {
   auto files = std::vector<BitcodeFile>();
 
 #ifdef HAVE_LIBXAR
@@ -96,8 +97,8 @@ std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles() const {
     }
 
     // Write bitcode to file
-    auto filePath = GetName() + "_" + std::to_string(i++) + ".bc";
-    std::FILE *output = std::fopen(filePath.c_str(), "wb");
+    auto fileName = util::MakeBitcodeFileName(prefix, GetName(), i++);
+    std::FILE *output = std::fopen(fileName.c_str(), "wb");
     if (!output) {
       std::cerr << "Error opening output file" << std::endl;
       continue;
@@ -125,7 +126,7 @@ std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles() const {
     std::fclose(output);
 
     // Create bitcode file
-    auto bitcodeFile = BitcodeFile(filePath);
+    auto bitcodeFile = BitcodeFile(fileName);
 
     // Add clang commands
     auto clangCommands = _metadata->GetClangCommands(path);

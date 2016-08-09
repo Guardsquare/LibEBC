@@ -30,7 +30,7 @@ class BitcodeArchive : public BitcodeContainer {
   /// Extract individual bitcode files from this archive and return a vector of
   /// file names. This operation can be expensive as it decompresses each
   /// bitcode file.
-  std::vector<BitcodeFile> GetBitcodeFiles() const override;
+  std::vector<BitcodeFile> GetBitcodeFiles(std::string prefix = "") const override;
 
  private:
   void SetMetadata();

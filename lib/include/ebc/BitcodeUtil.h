@@ -18,6 +18,10 @@ inline void WriteBitcodeFile(const char *data, std::uint32_t size, std::string n
   outfile.close();
 }
 
+inline std::string MakeBitcodeFileName(std::string prefix, std::string name, int i) {
+  return prefix.append(name).append(".").append(std::to_string(i)).append(".bc");
+}
+
 inline std::string UuidToString(std::array<std::uint8_t, 16> uuid) {
   char buffer[37];
   sprintf(buffer, "%2.2X%2.2X%2.2X%2.2X-%2.2X%2.2X-%2.2X%2.2X-%2.2X%2.2X-%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X", uuid[0],

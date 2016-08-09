@@ -39,11 +39,38 @@ TEST_CASE("Bitcode Container Files", "[BitcodeContainer]") {
   data[7] = 0xDE;
   auto bitcodeContainer = ebc::BitcodeContainer(data, 8);
   bitcodeContainer.SetName("name");
+
   const std::vector<BitcodeFile> expectedFiles = {
-      BitcodeFile("name_0.bc"), BitcodeFile("name_1.bc"),
+      BitcodeFile("name.0.bc"), BitcodeFile("name.1.bc"),
   };
 
   auto actualFiles = bitcodeContainer.GetBitcodeFiles();
+  REQUIRE(expectedFiles == actualFiles);
+
+  for (auto& file : actualFiles) {
+    file.Remove();
+  }
+}
+
+TEST_CASE("Bitcode Container Files Prefix", "[BitcodeContainer]") {
+  using ebc::BitcodeFile;
+  char data[8];
+  data[0] = 0x42;
+  data[1] = 0x43;
+  data[2] = 0xC0;
+  data[3] = 0xDE;
+  data[4] = 0x42;
+  data[5] = 0x43;
+  data[6] = 0xC0;
+  data[7] = 0xDE;
+  auto bitcodeContainer = ebc::BitcodeContainer(data, 8);
+  bitcodeContainer.SetName("name");
+
+  const std::vector<BitcodeFile> expectedFiles = {
+      BitcodeFile("prefix_name.0.bc"), BitcodeFile("prefix_name.1.bc"),
+  };
+
+  auto actualFiles = bitcodeContainer.GetBitcodeFiles("prefix_");
   REQUIRE(expectedFiles == actualFiles);
 
   for (auto& file : actualFiles) {

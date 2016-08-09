@@ -79,7 +79,7 @@ std::pair<const char *, std::uint32_t> BitcodeContainer::GetData() const {
   return std::make_pair(_data, _size);
 }
 
-std::vector<BitcodeFile> BitcodeContainer::GetBitcodeFiles() const {
+std::vector<BitcodeFile> BitcodeContainer::GetBitcodeFiles(std::string prefix) const {
   std::vector<BitcodeFile> files;
 
   auto offsets = GetBitcodeFileOffsets();
@@ -87,7 +87,7 @@ std::vector<BitcodeFile> BitcodeContainer::GetBitcodeFiles() const {
     auto begin = offsets[i];
     auto end = offsets[i + 1];
     auto size = end - begin;
-    auto fileName = GetName() + "_" + std::to_string(i) + ".bc";
+    auto fileName = util::MakeBitcodeFileName(prefix, GetName(), i);
     util::WriteBitcodeFile(_data + begin, size, fileName);
 
     BitcodeFile bitcodeFile(fileName);

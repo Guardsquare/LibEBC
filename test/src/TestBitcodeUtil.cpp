@@ -25,6 +25,12 @@ TEST_CASE("Write Bitcode To File", "[BitcodeUtil]") {
   // Cleanup
   REQUIRE(std::remove(fileName) == 0);
 }
+
+TEST_CASE("Make Bitcode File Name", "[BitcodeUtil]") {
+  const std::string fileName = ebc::util::MakeBitcodeFileName("prefix_", "name", 1);
+  REQUIRE("prefix_name.1.bc");
+}
+
 TEST_CASE("UUID To String", "[BitcodeUtil]") {
   std::array<std::uint8_t, 16> uuid = {
       {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'}};
