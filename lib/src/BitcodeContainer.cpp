@@ -82,6 +82,10 @@ std::pair<const char *, std::uint32_t> BitcodeContainer::GetData() const {
 std::vector<BitcodeFile> BitcodeContainer::GetBitcodeFiles(std::string prefix) const {
   std::vector<BitcodeFile> files;
 
+  if (_size < 4) {
+    return files;
+  }
+
   auto offsets = GetBitcodeFileOffsets();
   for (std::uint32_t i = 0; i < offsets.size() - 1; ++i) {
     auto begin = offsets[i];

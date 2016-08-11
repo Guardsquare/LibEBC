@@ -77,3 +77,16 @@ TEST_CASE("Bitcode Container Files Prefix", "[BitcodeContainer]") {
     file.Remove();
   }
 }
+
+TEST_CASE("Bitcode Container Marker Only", "[BitcodeContainer]") {
+  using ebc::BitcodeFile;
+  char data[3];
+  data[0] = 0x42;
+  data[1] = 0x43;
+  data[2] = 0xC0;
+  auto bitcodeContainer = ebc::BitcodeContainer(data, 3);
+  bitcodeContainer.SetName("name");
+
+  auto actualFiles = bitcodeContainer.GetBitcodeFiles();
+  REQUIRE(actualFiles.empty());
+}
