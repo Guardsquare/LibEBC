@@ -32,6 +32,8 @@ class BitcodeArchive : public BitcodeContainer {
   /// bitcode file.
   std::vector<BitcodeFile> GetBitcodeFiles(std::string prefix = "") const override;
 
+  static bool HasXar();
+
  private:
   void SetMetadata();
   /// Serializes XAR metadata to XML. Beware that this operation is expensive as

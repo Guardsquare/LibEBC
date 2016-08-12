@@ -183,4 +183,12 @@ std::string BitcodeArchive::GetMetadataXml() const {
   return std::string();
 #endif
 }
+
+bool BitcodeArchive::HasXar() {
+#ifdef HAVE_LIBXAR
+  return true;
+#else
+  return false;
+#endif
+}
 }  // namespace ebc

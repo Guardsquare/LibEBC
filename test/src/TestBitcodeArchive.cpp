@@ -165,9 +165,13 @@ TEST_CASE("Bitcode Archive Files", "[BitcodeArchive]") {
   };
 
   auto actualFiles = bitcodeArchive.GetBitcodeFiles();
-  REQUIRE(expectedFiles.size() == 2);
-  REQUIRE(expectedFiles[0].GetName() == actualFiles[0].GetName());
-  REQUIRE(expectedFiles[1].GetName() == actualFiles[1].GetName());
+  if (ebc::BitcodeArchive::HasXar()) {
+    REQUIRE(expectedFiles.size() == 2);
+    REQUIRE(expectedFiles[0].GetName() == actualFiles[0].GetName());
+    REQUIRE(expectedFiles[1].GetName() == actualFiles[1].GetName());
+  } else {
+    REQUIRE(actualFiles.empty());
+  }
 }
 
 TEST_CASE("Bitcode Archive Linker Flags", "[BitcodeArchive]") {
@@ -179,7 +183,11 @@ TEST_CASE("Bitcode Archive Linker Flags", "[BitcodeArchive]") {
   const std::vector<std::string> expectedLinkOpts = {"-execute", "-macosx_version_min", "10.11.0",       "-e",
                                                      "_main",    "-executable_path",    "build/x86_64.o"};
 
-  REQUIRE(bitcodeMetadata.GetLinkOptions() == expectedLinkOpts);
+  if (ebc::BitcodeArchive::HasXar()) {
+    REQUIRE(bitcodeMetadata.GetLinkOptions() == expectedLinkOpts);
+  } else {
+    REQUIRE(bitcodeMetadata.GetLinkOptions().empty());
+  }
 }
 
 TEST_CASE("Bitcode Archive Dylibs", "[BitcodeArchive]") {
@@ -190,5 +198,9 @@ TEST_CASE("Bitcode Archive Dylibs", "[BitcodeArchive]") {
 
   const std::vector<std::string> expectedDylibs = {"{SDKPATH}/usr/lib/libSystem.B.dylib"};
 
-  REQUIRE(bitcodeMetadata.GetDylibs() == expectedDylibs);
+  if (ebc::BitcodeArchive::HasXar()) {
+    REQUIRE(bitcodeMetadata.GetDylibs() == expectedDylibs);
+  } else {
+    REQUIRE(bitcodeMetadata.GetDylibs().empty());
+  }
 }
