@@ -16,6 +16,25 @@ using namespace llvm::object;
 
 namespace ebc {
 
+static std::string TripleToArch(unsigned arch) {
+  switch (arch) {
+    case Triple::x86:
+      return "x86";
+    case Triple::x86_64:
+      return "x86_64";
+    case Triple::arm:
+      return "arm";
+    case Triple::aarch64:
+      return "arm64";
+  }
+  return "unknown";
+}
+
+static std::string StripFileName(std::string fileName) {
+  auto pos = fileName.rfind('/');
+  return pos == std::string::npos ? fileName : fileName.substr(pos + 1);
+}
+
 BitcodeRetriever::BitcodeRetriever(std::string objectPath) : _objectPath(objectPath) {}
 
 std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeContainers() {
@@ -62,28 +81,32 @@ std::unique_ptr<BitcodeContainer> BitcodeRetriever::GetBitcodeContainerFromObjec
 
     if (sectName == ".llvmbc") {
       auto data = GetSectionData(section);
-
       bitcodeContainer = new BitcodeContainer(data.first, data.second);
-      bitcodeContainer->SetName(name);
-      bitcodeContainer->SetArch(TripleToArch(objectFile->getArch()));
     } else if (sectName == ".llvmcmd") {
       commands = GetCommands(section);
     }
   }
-  AddIfNotNull(bitcodeContainer, commands);
+
+  if (bitcodeContainer != nullptr) {
+    bitcodeContainer->SetCommands(commands);
+    bitcodeContainer->GetBinaryMetadata().SetFileName(StripFileName(objectFile->getFileName()));
+    bitcodeContainer->GetBinaryMetadata().SetFileFormatName(objectFile->getFileFormatName());
+    bitcodeContainer->GetBinaryMetadata().SetArch(TripleToArch(objectFile->getArch()));
+  }
+
   return std::unique_ptr<BitcodeContainer>(bitcodeContainer);
 }
 
 std::unique_ptr<BitcodeContainer> BitcodeRetriever::GetBitcodeContainerFromMachO(
-    llvm::object::MachOObjectFile *machOObjectFile) const {
+    llvm::object::MachOObjectFile *objectFile) const {
   BitcodeContainer *bitcodeContainer = nullptr;
 
-  const std::string name = machOObjectFile->getFileFormatName().str();
+  const std::string name = objectFile->getFileFormatName().str();
   std::vector<std::string> commands;
-  for (const SectionRef &section : machOObjectFile->sections()) {
+  for (const SectionRef &section : objectFile->sections()) {
     // Get section name
     DataRefImpl dataRef = section.getRawDataRefImpl();
-    StringRef segName = machOObjectFile->getSectionFinalSegmentName(dataRef);
+    StringRef segName = objectFile->getSectionFinalSegmentName(dataRef);
 
     if (segName == "__LLVM") {
       StringRef sectName;
@@ -91,24 +114,25 @@ std::unique_ptr<BitcodeContainer> BitcodeRetriever::GetBitcodeContainerFromMachO
       if (sectName == "__bundle") {
         // Embedded bitcode in universal binary.
         auto data = GetSectionData(section);
-
         bitcodeContainer = new BitcodeArchive(data.first, data.second);
-        bitcodeContainer->SetName(name);
-        bitcodeContainer->SetArch(TripleToArch(machOObjectFile->getArch()));
-        bitcodeContainer->SetUuid(machOObjectFile->getUuid().data());
       } else if (sectName == "__bitcode") {
         // Embedded bitcode in single MachO object.
         auto data = GetSectionData(section);
-
         bitcodeContainer = new BitcodeContainer(data.first, data.second);
-        bitcodeContainer->SetName(name);
-        bitcodeContainer->SetArch(TripleToArch(machOObjectFile->getArch()));
       } else if (sectName == "__cmd" || sectName == "__cmdline") {
         commands = GetCommands(section);
       }
     }
   }
-  AddIfNotNull(bitcodeContainer, commands);
+
+  if (bitcodeContainer != nullptr) {
+    bitcodeContainer->SetCommands(commands);
+    bitcodeContainer->GetBinaryMetadata().SetFileName(StripFileName(objectFile->getFileName()));
+    bitcodeContainer->GetBinaryMetadata().SetFileFormatName(objectFile->getFileFormatName());
+    bitcodeContainer->GetBinaryMetadata().SetArch(TripleToArch(objectFile->getArch()));
+    bitcodeContainer->GetBinaryMetadata().SetUuid(objectFile->getUuid().data());
+  }
+
   return std::unique_ptr<BitcodeContainer>(bitcodeContainer);
 }
 
@@ -134,23 +158,4 @@ std::vector<std::string> BitcodeRetriever::GetCommands(const llvm::object::Secti
   return cmds;
 }
 
-void BitcodeRetriever::AddIfNotNull(BitcodeContainer *bitcodeContainer, std::vector<std::string> commands) const {
-  if (bitcodeContainer != nullptr) {
-    bitcodeContainer->SetCommands(commands);
-  }
-}
-
-std::string BitcodeRetriever::TripleToArch(unsigned arch) {
-  switch (arch) {
-    case Triple::x86:
-      return "x86";
-    case Triple::x86_64:
-      return "x86_64";
-    case Triple::arm:
-      return "arm";
-    case Triple::aarch64:
-      return "arm64";
-  }
-  return "unknown";
-}
 }  // namespace ebc

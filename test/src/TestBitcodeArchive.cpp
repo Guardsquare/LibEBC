@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+constexpr auto size = 5122;
 constexpr auto data =
     "\x78\x61\x72\x21\x00\x1c\x00\x01\x00\x00\x00\x00\x00\x00\x02\x7c\x00\x00\x00\x00\x00\x00\x07\x4b\x00\x00\x00\x01"
     "\x78\xda\xdc\x55\x4d\x8f\xda\x30\x10\xbd\xef\xaf\x88\x72\x37\x89\x13\xf2\xb5\x32\x59\x75\x55\x55\x95\xda\xaa\x95"
@@ -157,8 +158,8 @@ constexpr auto data =
 TEST_CASE("Bitcode Archive Files", "[BitcodeArchive]") {
   using ebc::BitcodeFile;
 
-  auto bitcodeArchive = ebc::BitcodeArchive(data, 5122);
-  bitcodeArchive.SetName("Mach-O 64-bit x86-64");
+  auto bitcodeArchive = ebc::BitcodeArchive(data, size);
+  bitcodeArchive.GetBinaryMetadata().SetFileFormatName("Mach-O 64-bit x86-64");
 
   const std::vector<BitcodeFile> expectedFiles = {
       BitcodeFile("Mach-O 64-bit x86-64.0.bc"), BitcodeFile("Mach-O 64-bit x86-64.1.bc"),
@@ -177,7 +178,7 @@ TEST_CASE("Bitcode Archive Files", "[BitcodeArchive]") {
 TEST_CASE("Bitcode Archive Linker Flags", "[BitcodeArchive]") {
   using ebc::BitcodeFile;
 
-  auto bitcodeArchive = ebc::BitcodeArchive(data, 5122);
+  auto bitcodeArchive = ebc::BitcodeArchive(data, size);
   auto& bitcodeMetadata = bitcodeArchive.GetMetadata();
 
   const std::vector<std::string> expectedLinkOpts = {"-execute", "-macosx_version_min", "10.11.0",       "-e",
@@ -193,7 +194,7 @@ TEST_CASE("Bitcode Archive Linker Flags", "[BitcodeArchive]") {
 TEST_CASE("Bitcode Archive Dylibs", "[BitcodeArchive]") {
   using ebc::BitcodeFile;
 
-  auto bitcodeArchive = ebc::BitcodeArchive(data, 5122);
+  auto bitcodeArchive = ebc::BitcodeArchive(data, size);
   auto& bitcodeMetadata = bitcodeArchive.GetMetadata();
 
   const std::vector<std::string> expectedDylibs = {"{SDKPATH}/usr/lib/libSystem.B.dylib"};

@@ -38,7 +38,7 @@ void BitcodeArchive::SetMetadata() {
 
 std::string BitcodeArchive::WriteXarToFile(std::string fileName) const {
   if (fileName.empty()) {
-    fileName = GetName() + ".xar";
+    fileName = GetBinaryMetadata().GetFileFormatName() + ".xar";
   }
 
   auto data = GetData();
@@ -97,7 +97,7 @@ std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles(std::string prefix) con
     }
 
     // Write bitcode to file
-    auto fileName = util::MakeBitcodeFileName(prefix, GetName(), i++);
+    auto fileName = util::MakeBitcodeFileName(prefix, GetBinaryMetadata().GetFileFormatName(), i++);
     std::FILE *output = std::fopen(fileName.c_str(), "wb");
     if (!output) {
       std::cerr << "Error opening output file" << std::endl;
@@ -160,7 +160,7 @@ std::string BitcodeArchive::GetMetadataXml() const {
   }
 
   std::string xarFile = WriteXarToFile();
-  std::string metadataXmlFile = GetName() + "_metadata.xar";
+  std::string metadataXmlFile = GetBinaryMetadata().GetFileFormatName() + "_metadata.xar";
 
 #ifdef HAVE_LIBXAR
   // Write archive to filesystem and read xar

@@ -6,19 +6,6 @@
 #include <string>
 #include <vector>
 
-TEST_CASE("Bitcode Container Name", "[BitcodeContainer]") {
-  auto bitcodeContainer = ebc::BitcodeContainer(nullptr, 0);
-  bitcodeContainer.SetName("name");
-  REQUIRE("name" == bitcodeContainer.GetName());
-}
-
-TEST_CASE("Bitcode Container UUID", "[BitcodeContainer]") {
-  auto bitcodeContainer = ebc::BitcodeContainer(nullptr, 0);
-  std::uint8_t uuid[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-  bitcodeContainer.SetUuid(uuid);
-  REQUIRE("30313233-3435-3637-3839-414243444546" == bitcodeContainer.GetUUID());
-}
-
 TEST_CASE("Bitcode Container Commands", "[BitcodeContainer]") {
   auto bitcodeContainer = ebc::BitcodeContainer(nullptr, 0);
   std::vector<std::string> commands = {"a", "b", "c"};
@@ -38,7 +25,7 @@ TEST_CASE("Bitcode Container Files", "[BitcodeContainer]") {
   data[6] = 0xC0;
   data[7] = 0xDE;
   auto bitcodeContainer = ebc::BitcodeContainer(data, 8);
-  bitcodeContainer.SetName("name");
+  bitcodeContainer.GetBinaryMetadata().SetFileFormatName("name");
 
   const std::vector<BitcodeFile> expectedFiles = {
       BitcodeFile("name.0.bc"), BitcodeFile("name.1.bc"),
@@ -64,7 +51,7 @@ TEST_CASE("Bitcode Container Files Prefix", "[BitcodeContainer]") {
   data[6] = 0xC0;
   data[7] = 0xDE;
   auto bitcodeContainer = ebc::BitcodeContainer(data, 8);
-  bitcodeContainer.SetName("name");
+  bitcodeContainer.GetBinaryMetadata().SetFileFormatName("name");
 
   const std::vector<BitcodeFile> expectedFiles = {
       BitcodeFile("prefix_name.0.bc"), BitcodeFile("prefix_name.1.bc"),
@@ -84,8 +71,9 @@ TEST_CASE("Bitcode Container Marker Only", "[BitcodeContainer]") {
   data[0] = 0x42;
   data[1] = 0x43;
   data[2] = 0xC0;
+
   auto bitcodeContainer = ebc::BitcodeContainer(data, 3);
-  bitcodeContainer.SetName("name");
+  bitcodeContainer.GetBinaryMetadata().SetFileFormatName("name");
 
   auto actualFiles = bitcodeContainer.GetBitcodeFiles();
   REQUIRE(actualFiles.empty());

@@ -17,11 +17,13 @@ int main(int argc, char* argv[]) {
 
   BitcodeRetriever bitcodeRetriever(argv[1]);
   for (auto& bitcodeContainer : bitcodeRetriever.GetBitcodeContainers()) {
-    std::cout << bitcodeContainer->GetName() << std::endl;
-    std::cout << std::setw(WIDTH) << "UUID:"
-              << " " << bitcodeContainer->GetUUID() << std::endl;
+    std::cout << bitcodeContainer->GetBinaryMetadata().GetFileFormatName() << std::endl;
+    std::cout << std::setw(WIDTH) << "File name:"
+              << " " << bitcodeContainer->GetBinaryMetadata().GetFileName() << std::endl;
     std::cout << std::setw(WIDTH) << "Arch:"
-              << " " << bitcodeContainer->GetArch() << std::endl;
+              << " " << bitcodeContainer->GetBinaryMetadata().GetArch() << std::endl;
+    std::cout << std::setw(WIDTH) << "UUID:"
+              << " " << bitcodeContainer->GetBinaryMetadata().GetUUID() << std::endl;
 
     if (bitcodeContainer->IsArchive()) {
       auto bitcodeArchive = static_cast<BitcodeArchive*>(bitcodeContainer.get());
@@ -40,7 +42,7 @@ int main(int argc, char* argv[]) {
     }
 
     for (auto& bitcodeFile : bitcodeContainer->GetBitcodeFiles()) {
-      std::cout << std::setw(WIDTH) << "File:"
+      std::cout << std::setw(WIDTH) << "Bitcode:"
                 << " " << bitcodeFile.GetName() << std::endl;
 
       auto commands = bitcodeFile.GetCommands();
