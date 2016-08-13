@@ -1,7 +1,8 @@
 #include "ebc/BitcodeContainer.h"
 
 #include "ebc/BitcodeFile.h"
-#include "ebc/util/BitcodeUtil.h"
+#include "ebc/util/Bitcode.h"
+#include "ebc/util/Namer.h"
 
 #include <algorithm>
 #include <cstdio>
@@ -73,7 +74,8 @@ std::vector<BitcodeFile> BitcodeContainer::GetBitcodeFiles() const {
     auto begin = offsets[i];
     auto end = offsets[i + 1];
     auto size = end - begin;
-    auto fileName = util::bitcode::FileNamer::GetFileName();
+
+    auto fileName = util::Namer::GetFileName();
     util::bitcode::WriteBitcodeFile(_data + begin, size, fileName);
 
     BitcodeFile bitcodeFile(fileName);

@@ -3,7 +3,8 @@
 #include "ebc/BitcodeFile.h"
 #include "ebc/BitcodeMetadata.h"
 #include "ebc/Config.h"
-#include "ebc/util/BitcodeUtil.h"
+#include "ebc/util/Bitcode.h"
+#include "ebc/util/Namer.h"
 
 #ifdef HAVE_LIBXAR
 extern "C" {
@@ -97,7 +98,7 @@ std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles() const {
     }
 
     // Write bitcode to file
-    auto fileName = util::bitcode::FileNamer::GetFileName();
+    auto fileName = util::Namer::GetFileName();
     std::FILE *output = std::fopen(fileName.c_str(), "wb");
     if (output == nullptr) {
       std::cerr << "Error opening output file" << std::endl;

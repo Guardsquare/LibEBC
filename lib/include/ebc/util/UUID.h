@@ -6,7 +6,7 @@
 
 namespace ebc {
 namespace util {
-namespace binary {
+namespace uuid {
 
 std::string UuidToString(std::array<std::uint8_t, 16> uuid);
 }

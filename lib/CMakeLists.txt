@@ -6,7 +6,7 @@ include_directories(${LIBXML2_INCLUDE_DIR})
 
 # LLVM Dependency
 message(STATUS "LLVM Hint: ${LLVM_HINT}")
-find_package(LLVM 3.8 REQUIRED CONFIG HINTS ${LLVM_HINT})
+find_package(LLVM REQUIRED CONFIG HINTS ${LLVM_HINT})
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 include_directories(${LLVM_INCLUDE_DIRS})
 

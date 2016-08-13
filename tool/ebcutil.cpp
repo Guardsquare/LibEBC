@@ -14,10 +14,12 @@ constexpr int WIDTH_NESTED = 14;
 int main(int argc, char* argv[]) {
   if (argc < 2) {
     std::cout << "Usage: ebcutil <binary>" << std::endl;
+    return -1;
   }
 
   BitcodeRetriever bitcodeRetriever(argv[1]);
-  for (auto& bitcodeContainer : bitcodeRetriever.GetBitcodeContainers()) {
+  auto bitcodeContainers = bitcodeRetriever.GetBitcodeContainers();
+  for (auto& bitcodeContainer : bitcodeContainers) {
     std::cout << bitcodeContainer->GetBinaryMetadata().GetFileFormatName() << std::endl;
     std::cout << std::setw(WIDTH) << "File name:"
               << " " << bitcodeContainer->GetBinaryMetadata().GetFileName() << std::endl;
@@ -56,4 +58,6 @@ int main(int argc, char* argv[]) {
       }
     }
   }
+
+  return bitcodeContainers.empty() ? -1 : 0;
 }

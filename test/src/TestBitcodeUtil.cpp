@@ -1,4 +1,4 @@
-#include "ebc/util/BitcodeUtil.h"
+#include "ebc/util/Bitcode.h"
 
 #include "catch.hpp"
 
@@ -24,22 +24,4 @@ TEST_CASE("Write Bitcode To File", "[BitcodeUtil]") {
 
   // Cleanup
   REQUIRE(std::remove(fileName) == 0);
-}
-
-TEST_CASE("Monotonically Increasing Bitcode File Name", "[BitcodeUtil]") {
-  ebc::util::bitcode::FileNamer::SetPrefix("");
-  const std::string fileName1 = ebc::util::bitcode::FileNamer::GetFileName();
-  const std::string fileName2 = ebc::util::bitcode::FileNamer::GetFileName();
-
-  REQUIRE(stoi(fileName1.substr(0, fileName1.find("."))) < stoi(fileName2.substr(0, fileName2.find("."))));
-}
-
-TEST_CASE("Bitcode File Name Prefix", "[BitcodeUtil]") {
-  constexpr char prefix[] = "prefix";
-  constexpr int length = std::extent<decltype(prefix)>::value;
-
-  ebc::util::bitcode::FileNamer::SetPrefix(prefix);
-  const std::string fileName = ebc::util::bitcode::FileNamer::GetFileName();
-
-  REQUIRE(fileName.substr(0, length - 1) == prefix);
 }

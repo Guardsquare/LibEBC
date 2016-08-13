@@ -1,8 +1,8 @@
-#include "ebc/util/BinaryUtil.h"
+#include "ebc/util/UUID.h"
 
 namespace ebc {
 namespace util {
-namespace binary {
+namespace uuid {
 
 std::string UuidToString(std::array<std::uint8_t, 16> uuid) {
   char buffer[37];
@@ -12,5 +12,5 @@ std::string UuidToString(std::array<std::uint8_t, 16> uuid) {
   return std::string(buffer);
 }
 }
-}
-}
+}  // namespace util
+}  // namespace ebc

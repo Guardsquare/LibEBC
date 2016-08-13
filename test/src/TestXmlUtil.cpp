@@ -1,4 +1,4 @@
-#include "ebc/util/XmlUtil.h"
+#include "ebc/util/Xml.h"
 
 #include "catch.hpp"
 

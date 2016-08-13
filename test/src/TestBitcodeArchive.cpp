@@ -1,7 +1,7 @@
 #include "ebc/BitcodeArchive.h"
 #include "ebc/BitcodeFile.h"
 #include "ebc/BitcodeMetadata.h"
-#include "ebc/util/BitcodeUtil.h"
+#include "ebc/util/Bitcode.h"
 
 #include "catch.hpp"
 
