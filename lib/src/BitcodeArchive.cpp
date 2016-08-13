@@ -1,8 +1,8 @@
 #include "ebc/BitcodeArchive.h"
 
 #include "ebc/BitcodeMetadata.h"
-#include "ebc/BitcodeUtil.h"
 #include "ebc/Config.h"
+#include "ebc/util/BitcodeUtil.h"
 
 #ifdef HAVE_LIBXAR
 extern "C" {
@@ -48,7 +48,7 @@ std::string BitcodeArchive::WriteXarToFile(std::string fileName) const {
   return fileName;
 }
 
-std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles(std::string prefix) const {
+std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles() const {
   auto files = std::vector<BitcodeFile>();
 
 #ifdef HAVE_LIBXAR
@@ -73,7 +73,6 @@ std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles(std::string prefix) con
     return files;
   }
 
-  int i = 0;
   for (xf = xar_file_first(x, xi); xf; xf = xar_file_next(xi)) {
     char *path = xar_get_path(xf);
     const char *type;
@@ -97,7 +96,7 @@ std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles(std::string prefix) con
     }
 
     // Write bitcode to file
-    auto fileName = util::MakeBitcodeFileName(prefix, GetBinaryMetadata().GetFileFormatName(), i++);
+    auto fileName = util::bitcode::FileNamer::GetFileName();
     std::FILE *output = std::fopen(fileName.c_str(), "wb");
     if (!output) {
       std::cerr << "Error opening output file" << std::endl;

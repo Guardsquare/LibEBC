@@ -7,6 +7,7 @@ struct _xmlDoc;
 struct _xmlNode;
 
 namespace ebc {
+namespace util {
 namespace xml {
 
 std::string GetContent(_xmlNode* node);
@@ -22,5 +23,6 @@ class XmlInitialization {
   XmlInitialization();
   ~XmlInitialization();
 };
+}
 }
 }

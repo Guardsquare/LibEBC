@@ -1,10 +1,11 @@
 #include "ebc/BitcodeFile.h"
 
 #include <cstdio>
+#include <utility>
 
 namespace ebc {
 
-BitcodeFile::BitcodeFile(std::string name) : _name(name) {}
+BitcodeFile::BitcodeFile(std::string name) : _name(std::move(name)) {}
 
 std::string BitcodeFile::GetName() const {
   return _name;

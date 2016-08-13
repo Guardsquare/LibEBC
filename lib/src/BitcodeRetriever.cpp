@@ -8,6 +8,7 @@
 #include "llvm/Object/MachO.h"
 #include "llvm/Object/MachOUniversal.h"
 
+#include <algorithm>
 #include <memory>
 #include <string>
 
@@ -35,43 +36,70 @@ static std::string StripFileName(std::string fileName) {
   return pos == std::string::npos ? fileName : fileName.substr(pos + 1);
 }
 
-BitcodeRetriever::BitcodeRetriever(std::string objectPath) : _objectPath(objectPath) {}
+BitcodeRetriever::BitcodeRetriever(std::string objectPath) : _objectPath(std::move(objectPath)) {}
 
 std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeContainers() {
-  auto bitcodeContainers = std::vector<std::unique_ptr<BitcodeContainer>>();
   auto binaryOrErr = createBinary(_objectPath);
 
   if (!binaryOrErr) {
-    return bitcodeContainers;
+    return {};
   }
 
   auto &binary = *binaryOrErr.get().getBinary();
+  return GetBitcodeContainers(binary);
+}
+
+std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeContainers(llvm::object::Binary &binary) {
+  auto bitcodeContainers = std::vector<std::unique_ptr<BitcodeContainer>>();
+
   if (MachOUniversalBinary *universalBinary = dyn_cast<MachOUniversalBinary>(&binary)) {
     for (auto object : universalBinary->objects()) {
       if (auto machOObject = object.getAsObjectFile()) {
-        auto bitcodeArchive = GetBitcodeContainerFromMachO(machOObject->get());
-        if (bitcodeArchive) {
-          bitcodeContainers.push_back(std::move(bitcodeArchive));
+        auto bitcodeContainer = GetBitcodeContainerFromMachO(machOObject->get());
+        if (bitcodeContainer) {
+          bitcodeContainers.push_back(std::move(bitcodeContainer));
+        }
+      } else if (auto archive = object.getAsArchive()) {
+        for (auto &child : (*archive)->children()) {
+          auto childOrErr = child->getAsBinary();
+          if (childOrErr) {
+            auto archiveContainers = GetBitcodeContainers(*(childOrErr.get()));
+            bitcodeContainers.reserve(bitcodeContainers.size() + archiveContainers.size());
+            std::move(std::begin(archiveContainers), std::end(archiveContainers),
+                      std::back_inserter(bitcodeContainers));
+          }
         }
       }
     }
   } else if (auto machOObjectFile = dyn_cast<MachOObjectFile>(&binary)) {
-    auto bitcodeArchive = GetBitcodeContainerFromMachO(machOObjectFile);
-    if (bitcodeArchive) {
-      bitcodeContainers.push_back(std::move(bitcodeArchive));
+    auto bitcodeContainer = GetBitcodeContainerFromMachO(machOObjectFile);
+    if (bitcodeContainer) {
+      bitcodeContainers.push_back(std::move(bitcodeContainer));
     }
   } else if (auto object = dyn_cast<ObjectFile>(&binary)) {
     auto bitcodeContainer = GetBitcodeContainerFromObject(object);
     if (bitcodeContainer) {
       bitcodeContainers.push_back(std::move(bitcodeContainer));
     }
+  } else if (auto archive = dyn_cast<Archive>(&binary)) {
+    return GetBitcodeContainersFromArchive(*archive);
   }
 
   return bitcodeContainers;
 }
 
+std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeContainersFromArchive(Archive &archive) {
+  for (auto &child : archive.children()) {
+    auto childOrErr = child->getAsBinary();
+    if (childOrErr) {
+      return GetBitcodeContainers(*(childOrErr.get()));
+    }
+  }
+  return {};
+}
+
 std::unique_ptr<BitcodeContainer> BitcodeRetriever::GetBitcodeContainerFromObject(
-    llvm::object::ObjectFile *objectFile) const {
+    llvm::object::ObjectFile *objectFile) {
   BitcodeContainer *bitcodeContainer = nullptr;
   const std::string name = objectFile->getFileFormatName().str();
   std::vector<std::string> commands;
@@ -98,7 +126,7 @@ std::unique_ptr<BitcodeContainer> BitcodeRetriever::GetBitcodeContainerFromObjec
 }
 
 std::unique_ptr<BitcodeContainer> BitcodeRetriever::GetBitcodeContainerFromMachO(
-    llvm::object::MachOObjectFile *objectFile) const {
+    llvm::object::MachOObjectFile *objectFile) {
   BitcodeContainer *bitcodeContainer = nullptr;
 
   const std::string name = objectFile->getFileFormatName().str();
@@ -136,7 +164,7 @@ std::unique_ptr<BitcodeContainer> BitcodeRetriever::GetBitcodeContainerFromMachO
   return std::unique_ptr<BitcodeContainer>(bitcodeContainer);
 }
 
-std::pair<const char *, std::uint32_t> BitcodeRetriever::GetSectionData(const llvm::object::SectionRef &section) const {
+std::pair<const char *, std::uint32_t> BitcodeRetriever::GetSectionData(const llvm::object::SectionRef &section) {
   StringRef bytesStr;
   section.getContents(bytesStr);
   const char *sect = reinterpret_cast<const char *>(bytesStr.data());
@@ -144,7 +172,7 @@ std::pair<const char *, std::uint32_t> BitcodeRetriever::GetSectionData(const ll
   return std::make_pair(sect, sect_size);
 }
 
-std::vector<std::string> BitcodeRetriever::GetCommands(const llvm::object::SectionRef &section) const {
+std::vector<std::string> BitcodeRetriever::GetCommands(const llvm::object::SectionRef &section) {
   auto data = GetSectionData(section);
   const char *p = data.first;
   const char *end = data.first + data.second;

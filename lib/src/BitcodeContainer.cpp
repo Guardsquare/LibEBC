@@ -1,5 +1,5 @@
 #include "ebc/BitcodeContainer.h"
-#include "ebc/BitcodeUtil.h"
+#include "ebc/util/BitcodeUtil.h"
 
 #include <algorithm>
 #include <cstdio>
@@ -58,7 +58,7 @@ const BinaryMetadata &BitcodeContainer::GetBinaryMetadata() const {
   return _binaryMetadata;
 }
 
-std::vector<BitcodeFile> BitcodeContainer::GetBitcodeFiles(std::string prefix) const {
+std::vector<BitcodeFile> BitcodeContainer::GetBitcodeFiles() const {
   std::vector<BitcodeFile> files;
 
   if (_size < 4) {
@@ -70,8 +70,8 @@ std::vector<BitcodeFile> BitcodeContainer::GetBitcodeFiles(std::string prefix) c
     auto begin = offsets[i];
     auto end = offsets[i + 1];
     auto size = end - begin;
-    auto fileName = util::MakeBitcodeFileName(prefix, _binaryMetadata.GetFileFormatName(), i);
-    util::WriteBitcodeFile(_data + begin, size, fileName);
+    auto fileName = util::bitcode::FileNamer::GetFileName();
+    util::bitcode::WriteBitcodeFile(_data + begin, size, fileName);
 
     BitcodeFile bitcodeFile(fileName);
     bitcodeFile.SetCommands(_commands);
@@ -84,7 +84,7 @@ std::vector<BitcodeFile> BitcodeContainer::GetBitcodeFiles(std::string prefix) c
 std::vector<std::uint32_t> BitcodeContainer::GetBitcodeFileOffsets() const {
   std::vector<std::uint32_t> offsets;
   for (std::uint32_t i = 0; i < _size - 3; ++i) {
-    if (util::IsBitcodeFile(_data + i)) {
+    if (util::bitcode::IsBitcodeFile(_data + i)) {
       offsets.push_back(i);
     }
   }

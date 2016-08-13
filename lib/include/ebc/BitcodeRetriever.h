@@ -6,6 +6,8 @@
 
 namespace llvm {
 namespace object {
+class Archive;
+class Binary;
 class MachOObjectFile;
 class ObjectFile;
 class SectionRef;
@@ -21,11 +23,13 @@ class BitcodeRetriever {
   std::vector<std::unique_ptr<BitcodeContainer>> GetBitcodeContainers();
 
  private:
-  std::unique_ptr<BitcodeContainer> GetBitcodeContainerFromMachO(llvm::object::MachOObjectFile* objectFile) const;
-  std::unique_ptr<BitcodeContainer> GetBitcodeContainerFromObject(llvm::object::ObjectFile* objectFile) const;
+  static std::vector<std::unique_ptr<BitcodeContainer>> GetBitcodeContainers(llvm::object::Binary& binary);
+  static std::vector<std::unique_ptr<BitcodeContainer>> GetBitcodeContainersFromArchive(llvm::object::Archive& archive);
+  static std::unique_ptr<BitcodeContainer> GetBitcodeContainerFromMachO(llvm::object::MachOObjectFile* objectFile);
+  static std::unique_ptr<BitcodeContainer> GetBitcodeContainerFromObject(llvm::object::ObjectFile* objectFile);
 
-  std::pair<const char*, std::uint32_t> GetSectionData(const llvm::object::SectionRef& section) const;
-  std::vector<std::string> GetCommands(const llvm::object::SectionRef& section) const;
+  static std::pair<const char*, std::uint32_t> GetSectionData(const llvm::object::SectionRef& section);
+  static std::vector<std::string> GetCommands(const llvm::object::SectionRef& section);
 
   std::string _objectPath;
 };

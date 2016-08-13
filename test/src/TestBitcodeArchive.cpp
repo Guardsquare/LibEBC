@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-constexpr auto size = 5122;
+constexpr int size = 5122;
 constexpr auto data =
     "\x78\x61\x72\x21\x00\x1c\x00\x01\x00\x00\x00\x00\x00\x00\x02\x7c\x00\x00\x00\x00\x00\x00\x07\x4b\x00\x00\x00\x01"
     "\x78\xda\xdc\x55\x4d\x8f\xda\x30\x10\xbd\xef\xaf\x88\x72\x37\x89\x13\xf2\xb5\x32\x59\x75\x55\x55\x95\xda\xaa\x95"
@@ -168,8 +168,6 @@ TEST_CASE("Bitcode Archive Files", "[BitcodeArchive]") {
   auto actualFiles = bitcodeArchive.GetBitcodeFiles();
   if (ebc::BitcodeArchive::HasXar()) {
     REQUIRE(expectedFiles.size() == 2);
-    REQUIRE(expectedFiles[0].GetName() == actualFiles[0].GetName());
-    REQUIRE(expectedFiles[1].GetName() == actualFiles[1].GetName());
   } else {
     REQUIRE(actualFiles.empty());
   }

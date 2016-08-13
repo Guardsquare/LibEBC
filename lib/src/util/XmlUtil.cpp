@@ -1,4 +1,4 @@
-#include "ebc/XmlHelper.h"
+#include "ebc/util/XmlUtil.h"
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -8,6 +8,7 @@
 #include <vector>
 
 namespace ebc {
+namespace util {
 namespace xml {
 
 std::string GetContent(xmlNode* node) {
@@ -63,4 +64,5 @@ XmlInitialization::~XmlInitialization() {
 
 XmlInitialization xmlInitialization;
 }  // namespace xml
+}  // namespace util
 }  // namespace ebc

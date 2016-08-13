@@ -31,7 +31,7 @@ class BitcodeContainer {
   /// Extract individual bitcode files from this container and return a vector of
   /// file names. This operation can be expensive as it decompresses each
   /// bitcode file.
-  virtual std::vector<BitcodeFile> GetBitcodeFiles(std::string prefix = "") const;
+  virtual std::vector<BitcodeFile> GetBitcodeFiles() const;
 
  protected:
   void SetData(const char* data, std::uint32_t size);
