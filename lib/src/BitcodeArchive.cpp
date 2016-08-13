@@ -1,5 +1,6 @@
 #include "ebc/BitcodeArchive.h"
 
+#include "ebc/BitcodeFile.h"
 #include "ebc/BitcodeMetadata.h"
 #include "ebc/Config.h"
 #include "ebc/util/BitcodeUtil.h"
@@ -61,24 +62,24 @@ std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles() const {
   auto archivePath = WriteXarToFile();
 
   x = xar_open(archivePath.c_str(), READ);
-  if (!x) {
+  if (x == nullptr) {
     std::cerr << "Error opening archive" << std::endl;
     return files;
   }
 
   xi = xar_iter_new();
-  if (!xi) {
+  if (xi == nullptr) {
     std::cerr << "Error creating xar iterator" << std::endl;
     xar_close(x);
     return files;
   }
 
-  for (xf = xar_file_first(x, xi); xf; xf = xar_file_next(xi)) {
+  for (xf = xar_file_first(x, xi); xf != nullptr; xf = xar_file_next(xi)) {
     char *path = xar_get_path(xf);
     const char *type;
     xar_prop_get(xf, "type", &type);
 
-    if (!type) {
+    if (type == nullptr) {
       std::cerr << "File has no type" << std::endl;
       free(path);
       continue;
@@ -98,7 +99,7 @@ std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles() const {
     // Write bitcode to file
     auto fileName = util::bitcode::FileNamer::GetFileName();
     std::FILE *output = std::fopen(fileName.c_str(), "wb");
-    if (!output) {
+    if (output == nullptr) {
       std::cerr << "Error opening output file" << std::endl;
       continue;
     }
@@ -183,11 +184,4 @@ std::string BitcodeArchive::GetMetadataXml() const {
 #endif
 }
 
-bool BitcodeArchive::HasXar() {
-#ifdef HAVE_LIBXAR
-  return true;
-#else
-  return false;
-#endif
-}
 }  // namespace ebc

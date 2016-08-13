@@ -1,6 +1,7 @@
 #include "ebc/BitcodeArchive.h"
 #include "ebc/BitcodeFile.h"
 #include "ebc/BitcodeMetadata.h"
+#include "ebc/util/BitcodeUtil.h"
 
 #include "catch.hpp"
 
@@ -166,7 +167,7 @@ TEST_CASE("Bitcode Archive Files", "[BitcodeArchive]") {
   };
 
   auto actualFiles = bitcodeArchive.GetBitcodeFiles();
-  if (ebc::BitcodeArchive::HasXar()) {
+  if (ebc::util::bitcode::HasXar()) {
     REQUIRE(expectedFiles.size() == 2);
   } else {
     REQUIRE(actualFiles.empty());
@@ -182,7 +183,7 @@ TEST_CASE("Bitcode Archive Linker Flags", "[BitcodeArchive]") {
   const std::vector<std::string> expectedLinkOpts = {"-execute", "-macosx_version_min", "10.11.0",       "-e",
                                                      "_main",    "-executable_path",    "build/x86_64.o"};
 
-  if (ebc::BitcodeArchive::HasXar()) {
+  if (ebc::util::bitcode::HasXar()) {
     REQUIRE(bitcodeMetadata.GetLinkOptions() == expectedLinkOpts);
   } else {
     REQUIRE(bitcodeMetadata.GetLinkOptions().empty());
@@ -197,7 +198,7 @@ TEST_CASE("Bitcode Archive Dylibs", "[BitcodeArchive]") {
 
   const std::vector<std::string> expectedDylibs = {"{SDKPATH}/usr/lib/libSystem.B.dylib"};
 
-  if (ebc::BitcodeArchive::HasXar()) {
+  if (ebc::util::bitcode::HasXar()) {
     REQUIRE(bitcodeMetadata.GetDylibs() == expectedDylibs);
   } else {
     REQUIRE(bitcodeMetadata.GetDylibs().empty());

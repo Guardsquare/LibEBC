@@ -1,4 +1,5 @@
 #include "ebc/BitcodeMetadata.h"
+
 #include "ebc/util/XmlUtil.h"
 
 #include <libxml/parser.h>
@@ -44,7 +45,9 @@ std::vector<std::string> BitcodeMetadata::GetCommands(std::string fileName, std:
   auto node = util::xml::FindNodeWithNameAndContent(_root, "name", fileName);
   if (node != nullptr) {
     node = util::xml::FindNodeWithName(node, nodeName);
-    if (node != nullptr) return util::xml::GetTextFromNodesWithName(node->children, "cmd");
+    if (node != nullptr) {
+      return util::xml::GetTextFromNodesWithName(node->children, "cmd");
+    }
   }
   return std::vector<std::string>();
 }

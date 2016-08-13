@@ -1,8 +1,11 @@
 #include "ebc/BitcodeContainer.h"
+
+#include "ebc/BitcodeFile.h"
 #include "ebc/util/BitcodeUtil.h"
 
 #include <algorithm>
 #include <cstdio>
+#include <cstdlib>
 #include <streambuf>
 
 namespace ebc {
@@ -91,4 +94,4 @@ std::vector<std::uint32_t> BitcodeContainer::GetBitcodeFileOffsets() const {
   offsets.push_back(_size);
   return offsets;
 }
-}
+}  // namespace ebc

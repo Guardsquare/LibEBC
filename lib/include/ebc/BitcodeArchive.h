@@ -1,8 +1,6 @@
 #pragma once
 
 #include "ebc/BitcodeContainer.h"
-#include "ebc/BitcodeFile.h"
-#include "ebc/BitcodeMetadata.h"
 
 #include <array>
 #include <cstdint>
@@ -11,6 +9,8 @@
 #include <vector>
 
 namespace ebc {
+class BitcodeFile;
+class BitcodeMetadata;
 class BitcodeArchive : public BitcodeContainer {
  public:
   BitcodeArchive(const char* data, std::uint32_t size);
@@ -19,8 +19,8 @@ class BitcodeArchive : public BitcodeContainer {
 
   virtual bool IsArchive() const override;
 
-  /// Write data to file. If no file name is provided, the name of this
-  /// BitcodeArchive will be used, followed by the xar extension.
+  /// Write data to file. If no file name is provided, the file format name of the
+  /// binary will be used, followed by the xar extension.
   std::string WriteXarToFile(std::string fileName = "") const;
 
   /// Return the MetaData contained in this bitcode archive. This operation is
@@ -31,8 +31,6 @@ class BitcodeArchive : public BitcodeContainer {
   /// file names. This operation can be expensive as it decompresses each
   /// bitcode file.
   std::vector<BitcodeFile> GetBitcodeFiles() const override;
-
-  static bool HasXar();
 
  private:
   void SetMetadata();

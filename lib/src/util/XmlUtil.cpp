@@ -25,7 +25,9 @@ xmlNode* FindNodeWithName(xmlNode* root, std::string name) {
         return node;
       }
       auto childNode = FindNodeWithName(node->children, name);
-      if (childNode != nullptr) return childNode;
+      if (childNode != nullptr) {
+        return childNode;
+      }
     }
   }
   return nullptr;
@@ -38,7 +40,9 @@ xmlNode* FindNodeWithNameAndContent(xmlNode* root, std::string name, std::string
         return node;
       }
       auto childNode = FindNodeWithNameAndContent(node->children, name, content);
-      if (childNode != nullptr) return childNode;
+      if (childNode != nullptr) {
+        return childNode;
+      }
     }
   }
   return nullptr;

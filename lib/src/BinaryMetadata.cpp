@@ -1,5 +1,8 @@
 #include "ebc/BinaryMetadata.h"
+
 #include "ebc/util/BinaryUtil.h"
+
+#include <algorithm>
 
 namespace ebc {
 
@@ -36,4 +39,4 @@ void BinaryMetadata::SetUuid(const std::uint8_t *uuid) {
 std::string BinaryMetadata::GetUUID() const {
   return util::binary::UuidToString(_uuid);
 }
-}
+}  // namespace ebc

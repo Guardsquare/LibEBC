@@ -1,5 +1,6 @@
 #include "ebc/BitcodeArchive.h"
 #include "ebc/BitcodeContainer.h"
+#include "ebc/BitcodeFile.h"
 #include "ebc/BitcodeMetadata.h"
 #include "ebc/BitcodeRetriever.h"
 

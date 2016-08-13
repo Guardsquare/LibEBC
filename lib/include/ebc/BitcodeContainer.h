@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ebc/BinaryMetadata.h"
-#include "ebc/BitcodeFile.h"
 
 #include <array>
 #include <cstdint>
@@ -10,7 +9,7 @@
 #include <vector>
 
 namespace ebc {
-class BitcodeMetadata;
+class BitcodeFile;
 class BitcodeContainer {
  public:
   BitcodeContainer(const char* data, std::uint32_t size);
