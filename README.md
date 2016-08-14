@@ -2,18 +2,31 @@
 
 [![Build Status](https://travis-ci.org/JDevlieghere/LibEBC.svg?branch=master)](https://travis-ci.org/JDevlieghere/LibEBC)
 
-Library for obtaining bitcode embedded in object files. In theory it should
-work with all types of objects files (MachO, ELF, COFF, ...) as well as with
-MachO universal binaries.
+Library and tool for retrieving embedded bitcode from binaries end libraries.
+It supports all types of objects files (MachO, ELF, COFF, ...) as well as MachO
+universal binaries, and static and dynamic libraries.
 
-Embedded bitcode was originally added by Apple for MachO binaries and later
-[upstreamed to clang](http://lists.llvm.org/pipermail/llvm-dev/2016-February/094851.html).
-More information can be found in [this blogpost](https://jonasdevlieghere.com/embedded-bitcode/)
-I wrote.
+## EBC Util
 
-## Usage
+`ebcutil` is a stand-alone command line tool for extracting embedded bitcode.
 
-```
+Information about the binary is printed as well as  metadata that is stored
+together with the bitcode files. For universal MachO binaries this includes
+linker flags and used dylibs. Objects not created by Apple LLVM contain only
+the command line options passed to the clang frontend.
+
+The bitcode files are created in the current working directory. They can be
+processed by any tool accepting bitcode or you can use `llvm-dis` to convert
+them into human-readable [LLVM assembly language](http://llvm.org/docs/LangRef.html).
+
+Example of a **Mach-O universal binary** (fat binary):
+
+```shell
+$ file fat.o
+fat.o: Mach-O universal binary with 2 architectures
+fat.o (for architecture i386):    Mach-O executable i386
+fat.o (for architecture x86_64):  Mach-O 64-bit executable x86_64
+
 $ ebcutil fat.o
 Mach-O 32-bit i386
   File name: fat.o
@@ -33,9 +46,42 @@ Mach-O 64-bit x86-64
     Bitcode: 3.bc
 ```
 
+Example of an **ELF shared library**:
+
+```shell
+$ file lib.so
+lib.so: ELF 32-bit LSB shared object, ARM, version 1 (SYSV), dynamically linked, not stripped
+
+$ ebcutil lib.so
+ELF32-arm-little
+  File name: lib.so
+       Arch: arm
+       UUID: 00000000-0000-0000-0000-000000000000
+    Bitcode: 0.bc
+        Clang: -triple thumbv7-none-linux-android -S -fembed-bitcode=all -disable-llvm-optzns ...
+    Bitcode: 1.bc
+        Clang: -triple thumbv7-none-linux-android -S -fembed-bitcode=all -disable-llvm-optzns ...
+```
+
+You can also use `ebcutil` to check whether a given binary or library contains
+bitcode. It prints the first object encountered without bitcode and exits with
+a non-zero exit status.
+
+```shell
+$ ebcutil nobitcode.o
+Error: No bitcode section in nobitcode.o
+```
+
 ## Build
 
-```
+This project uses CMake as its build system. It has the following dependencies:
+
+ - CMake 3.0
+ - LibXML2
+ - LibXar (optional, but required for Mach-O)
+ - LLVM 3.8
+
+```shell
 $ git clone https://github.com/JDevlieghere/LibEBC.git && cd LibEBC
 $ mkdir build && cd build
 $ cmake ..
