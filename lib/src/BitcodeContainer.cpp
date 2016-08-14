@@ -65,6 +65,8 @@ const BinaryMetadata &BitcodeContainer::GetBinaryMetadata() const {
 std::vector<BitcodeFile> BitcodeContainer::GetBitcodeFiles() const {
   std::vector<BitcodeFile> files;
 
+  // Magic number is 4 bytes long. If less than four bytes are available there
+  // is no bitcode. Likely only a bitcode marker was embedded.
   if (_size < 4) {
     return files;
   }

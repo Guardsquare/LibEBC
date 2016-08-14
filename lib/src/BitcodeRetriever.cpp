@@ -18,6 +18,7 @@ using namespace llvm::object;
 
 namespace ebc {
 
+/// Strip path from file name.
 static std::string StripFileName(std::string fileName) {
   auto pos = fileName.rfind('/');
   return pos == std::string::npos ? fileName : fileName.substr(pos + 1);
@@ -41,6 +42,7 @@ std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeConta
   auto bitcodeContainers = std::vector<std::unique_ptr<BitcodeContainer>>();
 
   if (const auto *universalBinary = dyn_cast<MachOUniversalBinary>(&binary)) {
+    // Iterate over all objects (i.e. architectures):
     for (auto object : universalBinary->objects()) {
       if (auto machOObject = object.getAsObjectFile()) {
         auto container = GetBitcodeContainerFromMachO(machOObject->get());
@@ -49,6 +51,7 @@ std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeConta
         }
       } else if (const auto archive = object.getAsArchive()) {
         auto containers = GetBitcodeContainersFromArchive(*(archive.get()));
+        // We have to move all containers so we can continue with the next architecture.
         bitcodeContainers.reserve(bitcodeContainers.size() + containers.size());
         std::move(std::begin(containers), std::end(containers), std::back_inserter(bitcodeContainers));
       } else {
@@ -66,6 +69,7 @@ std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeConta
       bitcodeContainers.push_back(std::move(container));
     }
   } else if (const auto archive = dyn_cast<Archive>(&binary)) {
+    // We can return early to prevent moving all containers in the vector.
     return GetBitcodeContainersFromArchive(*archive);
   } else {
     throw EbcError("Unsupported binary");
@@ -109,7 +113,10 @@ std::unique_ptr<BitcodeContainer> BitcodeRetriever::GetBitcodeContainerFromObjec
     throw EbcError("No bitcode section in " + objectFile->getFileName().str());
   }
 
+  // Set commands
   bitcodeContainer->SetCommands(commands);
+
+  // Set binary metadata
   bitcodeContainer->GetBinaryMetadata().SetFileName(StripFileName(objectFile->getFileName()));
   bitcodeContainer->GetBinaryMetadata().SetFileFormatName(objectFile->getFileFormatName());
   bitcodeContainer->GetBinaryMetadata().SetArch(
@@ -150,7 +157,10 @@ std::unique_ptr<BitcodeContainer> BitcodeRetriever::GetBitcodeContainerFromMachO
     throw EbcError("No bitcode section in " + objectFile->getFileName().str());
   }
 
+  // Set commands
   bitcodeContainer->SetCommands(commands);
+
+  // Set binary metadata
   bitcodeContainer->GetBinaryMetadata().SetFileName(StripFileName(objectFile->getFileName()));
   bitcodeContainer->GetBinaryMetadata().SetFileFormatName(objectFile->getFileFormatName());
   bitcodeContainer->GetBinaryMetadata().SetArch(
@@ -173,9 +183,12 @@ std::vector<std::string> BitcodeRetriever::GetCommands(const llvm::object::Secti
   const char *p = data.first;
   const char *end = data.first + data.second;
 
+  // Create list of strings from commands separated by null bytes.
   std::vector<std::string> cmds;
   do {
+    // Creating a string from p consumes data until next null byte.
     cmds.push_back(std::string(p));
+    // Continue after the null byte.
     p += cmds.back().size() + 1;
   } while (p < end);
 
