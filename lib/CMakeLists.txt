@@ -16,7 +16,7 @@ llvm_map_components_to_libnames(LLVM_LINK_LIBRARIES
   )
 
 # LLVM compiler flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fno-exceptions -fno-rtti -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fno-rtti -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS")
 
 # Xar
 check_library_exists(xar xar_open "" HAVE_LIBXAR)

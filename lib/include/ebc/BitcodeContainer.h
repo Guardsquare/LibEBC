@@ -14,7 +14,7 @@ class BitcodeContainer {
  public:
   BitcodeContainer(const char* data, std::uint32_t size);
 
-  BitcodeContainer(BitcodeContainer&& bitcodeArchive);
+  BitcodeContainer(BitcodeContainer&& bitcodeArchive) noexcept;
 
   virtual ~BitcodeContainer();
 
@@ -33,7 +33,7 @@ class BitcodeContainer {
   virtual std::vector<BitcodeFile> GetBitcodeFiles() const;
 
  protected:
-  void SetData(const char* data, std::uint32_t size);
+  void SetData(const char* data, std::uint32_t size) noexcept;
   std::pair<const char*, std::uint32_t> GetData() const;
 
  private:

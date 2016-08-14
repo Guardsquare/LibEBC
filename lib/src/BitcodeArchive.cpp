@@ -3,6 +3,7 @@
 #include "ebc/BitcodeFile.h"
 #include "ebc/BitcodeMetadata.h"
 #include "ebc/Config.h"
+#include "ebc/EbcError.h"
 #include "ebc/util/Bitcode.h"
 #include "ebc/util/Namer.h"
 
@@ -34,13 +35,13 @@ bool BitcodeArchive::IsArchive() const {
   return true;
 }
 
-void BitcodeArchive::SetMetadata() {
+void BitcodeArchive::SetMetadata() noexcept {
   _metadata = std::make_unique<BitcodeMetadata>(GetMetadataXml());
 }
 
 std::string BitcodeArchive::WriteXarToFile(std::string fileName) const {
   if (fileName.empty()) {
-    fileName = GetBinaryMetadata().GetFileFormatName() + ".xar";
+    fileName = GetBinaryMetadata().GetFileName() + ".xar";
   }
 
   auto data = GetData();
@@ -64,15 +65,13 @@ std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles() const {
 
   x = xar_open(archivePath.c_str(), READ);
   if (x == nullptr) {
-    std::cerr << "Error opening archive" << std::endl;
-    return files;
+    throw EbcError("Could not open xar archive");
   }
 
   xi = xar_iter_new();
   if (xi == nullptr) {
-    std::cerr << "Error creating xar iterator" << std::endl;
     xar_close(x);
-    return files;
+    throw EbcError("Could not read xar archive");
   }
 
   for (xf = xar_file_first(x, xi); xf != nullptr; xf = xar_file_next(xi)) {
@@ -154,10 +153,10 @@ const BitcodeMetadata &BitcodeArchive::GetMetadata() const {
   return *_metadata;
 }
 
-std::string BitcodeArchive::GetMetadataXml() const {
+std::string BitcodeArchive::GetMetadataXml() const noexcept {
   auto data = GetData();
   if (data.first == nullptr) {
-    return std::string();
+    return {};
   }
 
   std::string xarFile = WriteXarToFile();
@@ -167,7 +166,7 @@ std::string BitcodeArchive::GetMetadataXml() const {
   // Write archive to filesystem and read xar
   xar_t x = xar_open(xarFile.c_str(), READ);
   if (x == nullptr) {
-    return std::string();
+    return {};
   }
 
   xar_serialize(x, metadataXmlFile.c_str());

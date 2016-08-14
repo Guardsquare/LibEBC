@@ -15,11 +15,11 @@ BitcodeContainer::BitcodeContainer(const char *data, std::uint32_t size) : _data
   SetData(data, size);
 }
 
-BitcodeContainer::BitcodeContainer(BitcodeContainer &&bitcodeContainer)
-    : _data(nullptr)
-    , _size(bitcodeContainer._size)
-    , _commands(bitcodeContainer._commands)
-    , _binaryMetadata(bitcodeContainer._binaryMetadata) {
+BitcodeContainer::BitcodeContainer(BitcodeContainer &&bitcodeContainer) noexcept
+    : _data(nullptr),
+      _size(bitcodeContainer._size),
+      _commands(bitcodeContainer._commands),
+      _binaryMetadata(bitcodeContainer._binaryMetadata) {
   SetData(bitcodeContainer._data, bitcodeContainer._size);
   bitcodeContainer._data = nullptr;
 }
@@ -43,7 +43,7 @@ void BitcodeContainer::SetCommands(const std::vector<std::string> &commands) {
   _commands = commands;
 }
 
-void BitcodeContainer::SetData(const char *data, std::uint32_t size) {
+void BitcodeContainer::SetData(const char *data, std::uint32_t size) noexcept {
   if (size > 0) {
     _data = reinterpret_cast<char *>(std::malloc(size * sizeof(char)));
     std::copy(data, data + size, _data);
