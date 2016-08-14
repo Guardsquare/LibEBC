@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['remove',['Remove',['../classebc_1_1_bitcode_file.html#a2846623c9c0b3e317af4bb8c99196818',1,'ebc::BitcodeFile']]]
+  ['main',['main',['../ebcutil_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'ebcutil.cpp']]]
 ];

@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['libebc',['LibEBC',['../index.html',1,'']]],
-  ['llvm',['llvm',['../namespacellvm.html',1,'']]],
-  ['object',['object',['../namespacellvm_1_1object.html',1,'llvm']]]
+  ['hasxar',['HasXar',['../namespaceebc_1_1util_1_1bitcode.html#a18054d02054b68a11c854e61058dd153',1,'ebc::util::bitcode']]]
 ];

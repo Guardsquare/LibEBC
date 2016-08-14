@@ -1,0 +1,9 @@
+<map id="lib/include/ebc/BinaryMetadata.h" name="lib/include/ebc/BinaryMetadata.h">
+<area shape="rect" id="node2" href="$_bitcode_container_8h.html" title="lib/include/ebc/BitcodeContainer.h" alt="" coords="259,79,481,104"/>
+<area shape="rect" id="node8" href="$_binary_metadata_8cpp.html" title="lib/src/BinaryMetadata.cpp" alt="" coords="505,79,683,104"/>
+<area shape="rect" id="node3" href="$_bitcode_archive_8h.html" title="lib/include/ebc/BitcodeArchive.h" alt="" coords="195,152,404,177"/>
+<area shape="rect" id="node5" href="$_bitcode_retriever_8cpp.html" title="lib/src/BitcodeRetriever.cpp" alt="" coords="5,225,188,251"/>
+<area shape="rect" id="node6" href="$ebcutil_8cpp.html" title="tool/ebcutil.cpp" alt="" coords="411,225,521,251"/>
+<area shape="rect" id="node7" href="$_bitcode_container_8cpp.html" title="lib/src/BitcodeContainer.cpp" alt="" coords="479,152,666,177"/>
+<area shape="rect" id="node4" href="$_bitcode_archive_8cpp.html" title="lib/src/BitcodeArchive.cpp" alt="" coords="212,225,386,251"/>
+</map>

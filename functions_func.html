@@ -73,7 +73,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="functions.html"><span>All</span></a></li>
       <li class="current"><a href="functions_func.html"><span>Functions</span></a></li>
-      <li><a href="functions_vars.html"><span>Variables</span></a></li>
     </ul>
   </div>
   <div id="navrow4" class="tabs3">
@@ -81,9 +80,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="#index_b"><span>b</span></a></li>
       <li><a href="#index_g"><span>g</span></a></li>
       <li><a href="#index_i"><span>i</span></a></li>
+      <li><a href="#index_n"><span>n</span></a></li>
       <li><a href="#index_r"><span>r</span></a></li>
       <li><a href="#index_s"><span>s</span></a></li>
       <li><a href="#index_w"><span>w</span></a></li>
+      <li><a href="#index_x"><span>x</span></a></li>
       <li class="current"><a href="#index_0x7e"><span>~</span></a></li>
     </ul>
   </div>
@@ -110,7 +111,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classebc_1_1_bitcode_archive.html#ac2f70e9aa742ba4196e26730f5e5f5f9">ebc::BitcodeArchive</a>
 </li>
 <li>BitcodeContainer()
-: <a class="el" href="classebc_1_1_bitcode_container.html#a07c7cb8d5250ffef938fbb2854c70571">ebc::BitcodeContainer</a>
+: <a class="el" href="classebc_1_1_bitcode_container.html#a9310bc4e834645b57efe28f38d49587b">ebc::BitcodeContainer</a>
 </li>
 <li>BitcodeFile()
 : <a class="el" href="classebc_1_1_bitcode_file.html#a1a821b806bf82c38295fd841df5597d6">ebc::BitcodeFile</a>
@@ -126,7 +127,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <h3><a class="anchor" id="index_g"></a>- g -</h3><ul>
 <li>GetArch()
-: <a class="el" href="classebc_1_1_bitcode_container.html#a77b9a22ebdb2f140031f6b1f0dea290e">ebc::BitcodeContainer</a>
+: <a class="el" href="classebc_1_1_binary_metadata.html#aec6bd45322c6dbfa356a58d0749c3ac7">ebc::BinaryMetadata</a>
+</li>
+<li>GetBinaryMetadata()
+: <a class="el" href="classebc_1_1_bitcode_container.html#aa66aaf2f0d5aa87340c1ed8bee68c253">ebc::BitcodeContainer</a>
 </li>
 <li>GetBitcodeContainers()
 : <a class="el" href="classebc_1_1_bitcode_retriever.html#a4ad5d396145fe541bc367dd402a1f851">ebc::BitcodeRetriever</a>
@@ -136,17 +140,24 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 , <a class="el" href="classebc_1_1_bitcode_container.html#aa0369fb8c7c8bf39be33ca2a6eae64c4">ebc::BitcodeContainer</a>
 </li>
 <li>GetClangCommands()
-: <a class="el" href="classebc_1_1_bitcode_file.html#a5c3b82e1df3fe68f9a6b65173fa3846f">ebc::BitcodeFile</a>
-, <a class="el" href="classebc_1_1_bitcode_metadata.html#a3f43ebbc0ad2e354f5e33269365efa53">ebc::BitcodeMetadata</a>
+: <a class="el" href="classebc_1_1_bitcode_metadata.html#a3f43ebbc0ad2e354f5e33269365efa53">ebc::BitcodeMetadata</a>
 </li>
 <li>GetCommands()
 : <a class="el" href="classebc_1_1_bitcode_container.html#a77f2586eb799c29f46a3e6ee0bdee971">ebc::BitcodeContainer</a>
+, <a class="el" href="classebc_1_1_bitcode_file.html#a8dfb0ccf9358d5bdd2269af57bfe49c3">ebc::BitcodeFile</a>
 </li>
 <li>GetData()
 : <a class="el" href="classebc_1_1_bitcode_container.html#a74f13d13d228f90e43d07b297e6fb748">ebc::BitcodeContainer</a>
 </li>
 <li>GetDylibs()
 : <a class="el" href="classebc_1_1_bitcode_metadata.html#a4f6f56aacfc0918f9342648e2662e1b6">ebc::BitcodeMetadata</a>
+</li>
+<li>GetFileFormatName()
+: <a class="el" href="classebc_1_1_binary_metadata.html#ad74ddbfbf401f817687ed48759d40c52">ebc::BinaryMetadata</a>
+</li>
+<li>GetFileName()
+: <a class="el" href="classebc_1_1_binary_metadata.html#a36fd1cd05fbf9fde67a597454b43adb6">ebc::BinaryMetadata</a>
+, <a class="el" href="classebc_1_1util_1_1_namer.html#a4f28817e80fcb7779816faa39e46fea6">ebc::util::Namer</a>
 </li>
 <li>GetLinkOptions()
 : <a class="el" href="classebc_1_1_bitcode_metadata.html#a7ed28a655c96a908713b5f84da1f9926">ebc::BitcodeMetadata</a>
@@ -155,15 +166,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classebc_1_1_bitcode_archive.html#a95a232838e2f740961f120a39d63cd4f">ebc::BitcodeArchive</a>
 </li>
 <li>GetName()
-: <a class="el" href="classebc_1_1_bitcode_container.html#ab99ecfc003f11c2d8a20cfd06e1ccfe1">ebc::BitcodeContainer</a>
-, <a class="el" href="classebc_1_1_bitcode_file.html#ad678a3c173745fd0a7d9d0e02213f34a">ebc::BitcodeFile</a>
+: <a class="el" href="classebc_1_1_bitcode_file.html#ad678a3c173745fd0a7d9d0e02213f34a">ebc::BitcodeFile</a>
 </li>
 <li>GetSwiftCommands()
-: <a class="el" href="classebc_1_1_bitcode_file.html#a6270861b8ead436e3ea4bb9d3e5fd768">ebc::BitcodeFile</a>
-, <a class="el" href="classebc_1_1_bitcode_metadata.html#ab4667e025848f9dc035bbf832afa0c3a">ebc::BitcodeMetadata</a>
+: <a class="el" href="classebc_1_1_bitcode_metadata.html#ab4667e025848f9dc035bbf832afa0c3a">ebc::BitcodeMetadata</a>
 </li>
 <li>GetUUID()
-: <a class="el" href="classebc_1_1_bitcode_container.html#a6b3d124c1bf350e7b9e011a31bdb2759">ebc::BitcodeContainer</a>
+: <a class="el" href="classebc_1_1_binary_metadata.html#a54485875e29a248ccb6a28033401337e">ebc::BinaryMetadata</a>
 </li>
 <li>GetXml()
 : <a class="el" href="classebc_1_1_bitcode_metadata.html#ab68d323b94f6b977520691ce88ba1379">ebc::BitcodeMetadata</a>
@@ -179,6 +188,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </ul>
 
 
+<h3><a class="anchor" id="index_n"></a>- n -</h3><ul>
+<li>Namer()
+: <a class="el" href="classebc_1_1util_1_1_namer.html#a5ed7df912dcb2a87888e07007f2fee58">ebc::util::Namer</a>
+</li>
+</ul>
+
+
 <h3><a class="anchor" id="index_r"></a>- r -</h3><ul>
 <li>Remove()
 : <a class="el" href="classebc_1_1_bitcode_file.html#a2846623c9c0b3e317af4bb8c99196818">ebc::BitcodeFile</a>
@@ -188,25 +204,26 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <h3><a class="anchor" id="index_s"></a>- s -</h3><ul>
 <li>SetArch()
-: <a class="el" href="classebc_1_1_bitcode_container.html#a02630cc02bc03f03b78af003bdbb4d24">ebc::BitcodeContainer</a>
-</li>
-<li>SetClangCommands()
-: <a class="el" href="classebc_1_1_bitcode_file.html#aa793e774b0cc0a047bef189b77089315">ebc::BitcodeFile</a>
+: <a class="el" href="classebc_1_1_binary_metadata.html#a8f48f56c568ce429f4d66d5f319d6bb4">ebc::BinaryMetadata</a>
 </li>
 <li>SetCommands()
 : <a class="el" href="classebc_1_1_bitcode_container.html#a4d20ad1c24be4fe581e5e9e244b586d7">ebc::BitcodeContainer</a>
+, <a class="el" href="classebc_1_1_bitcode_file.html#ac117693c45d1bff73c6e8acbf4e77b05">ebc::BitcodeFile</a>
 </li>
 <li>SetData()
-: <a class="el" href="classebc_1_1_bitcode_container.html#a6b0a30ab67cc39d2ac14e9db30f17417">ebc::BitcodeContainer</a>
+: <a class="el" href="classebc_1_1_bitcode_container.html#abc88fe3e6bd4c8e587f98513a02f4059">ebc::BitcodeContainer</a>
 </li>
-<li>SetName()
-: <a class="el" href="classebc_1_1_bitcode_container.html#ad524749191a976aa13cb13f59a8d6cef">ebc::BitcodeContainer</a>
+<li>SetFileFormatName()
+: <a class="el" href="classebc_1_1_binary_metadata.html#a0a8d99f144b49895cc165a08fd5700dc">ebc::BinaryMetadata</a>
 </li>
-<li>SetSwiftCommands()
-: <a class="el" href="classebc_1_1_bitcode_file.html#a83f1159fb57ec1e5a39099e5dec42788">ebc::BitcodeFile</a>
+<li>SetFileName()
+: <a class="el" href="classebc_1_1_binary_metadata.html#aebc671d7d217fccb505757f2461e9864">ebc::BinaryMetadata</a>
+</li>
+<li>SetPrefix()
+: <a class="el" href="classebc_1_1util_1_1_namer.html#abc491fb0be3afb33f159844efd050566">ebc::util::Namer</a>
 </li>
 <li>SetUuid()
-: <a class="el" href="classebc_1_1_bitcode_container.html#a19faff1922e5acb151697b65a7861c8c">ebc::BitcodeContainer</a>
+: <a class="el" href="classebc_1_1_binary_metadata.html#a5a736cf60a147e339ba8a37d6a54f6bb">ebc::BinaryMetadata</a>
 </li>
 </ul>
 
@@ -218,12 +235,22 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </ul>
 
 
+<h3><a class="anchor" id="index_x"></a>- x -</h3><ul>
+<li>XmlInitialization()
+: <a class="el" href="classebc_1_1util_1_1xml_1_1_xml_initialization.html#adb09f985646e3fb1134b460d367fca6d">ebc::util::xml::XmlInitialization</a>
+</li>
+</ul>
+
+
 <h3><a class="anchor" id="index_0x7e"></a>- ~ -</h3><ul>
 <li>~BitcodeContainer()
 : <a class="el" href="classebc_1_1_bitcode_container.html#ab6517b8b6f814931ed552c524e794c7d">ebc::BitcodeContainer</a>
 </li>
 <li>~BitcodeMetadata()
 : <a class="el" href="classebc_1_1_bitcode_metadata.html#a65c87ded96116c25f82d7fbb493444a2">ebc::BitcodeMetadata</a>
+</li>
+<li>~XmlInitialization()
+: <a class="el" href="classebc_1_1util_1_1xml_1_1_xml_initialization.html#a5024375181ccff8308ae521d61588737">ebc::util::xml::XmlInitialization</a>
 </li>
 </ul>
 </div><!-- contents -->

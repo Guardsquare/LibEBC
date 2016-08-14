@@ -1,7 +1,5 @@
 <map id="lib/include/ebc/BitcodeMetadata.h" name="lib/include/ebc/BitcodeMetadata.h">
-<area shape="rect" id="node2" href="$_bitcode_archive_8h.html" title="lib/include/ebc/BitcodeArchive.h" alt="" coords="190,79,400,104"/>
-<area shape="rect" id="node3" href="$_bitcode_archive_8cpp.html" title="lib/src/BitcodeArchive.cpp" alt="" coords="5,152,179,177"/>
-<area shape="rect" id="node5" href="$ebcutil_8cpp.html" title="tool/ebcutil.cpp" alt="" coords="411,152,521,177"/>
-<area shape="rect" id="node6" href="$_bitcode_metadata_8cpp.html" title="lib/src/BitcodeMetadata.cpp" alt="" coords="474,79,660,104"/>
-<area shape="rect" id="node4" href="$_bitcode_retriever_8cpp.html" title="lib/src/BitcodeRetriever.cpp" alt="" coords="204,152,386,177"/>
+<area shape="rect" id="node2" href="$_bitcode_archive_8cpp.html" title="lib/src/BitcodeArchive.cpp" alt="" coords="5,79,179,104"/>
+<area shape="rect" id="node3" href="$_bitcode_metadata_8cpp.html" title="lib/src/BitcodeMetadata.cpp" alt="" coords="204,79,389,104"/>
+<area shape="rect" id="node4" href="$ebcutil_8cpp.html" title="tool/ebcutil.cpp" alt="" coords="413,79,523,104"/>
 </map>

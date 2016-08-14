@@ -1,4 +1,4 @@
 <map id="lib/src/BitcodeMetadata.cpp" name="lib/src/BitcodeMetadata.cpp">
-<area shape="rect" id="node2" href="$_bitcode_metadata_8h.html" title="ebc/BitcodeMetadata.h" alt="" coords="76,79,234,104"/>
-<area shape="rect" id="node7" href="$_xml_helper_8h.html" title="ebc/XmlHelper.h" alt="" coords="258,79,378,104"/>
+<area shape="rect" id="node2" href="$_bitcode_metadata_8h.html" title="ebc/BitcodeMetadata.h" alt="" coords="5,79,163,104"/>
+<area shape="rect" id="node6" href="$_xml_8h.html" title="ebc/util/Xml.h" alt="" coords="187,79,288,104"/>
 </map>

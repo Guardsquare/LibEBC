@@ -1,5 +1,9 @@
 var searchData=
 [
+  ['binarymetadata_2ecpp',['BinaryMetadata.cpp',['../_binary_metadata_8cpp.html',1,'']]],
+  ['binarymetadata_2eh',['BinaryMetadata.h',['../_binary_metadata_8h.html',1,'']]],
+  ['bitcode_2ecpp',['Bitcode.cpp',['../_bitcode_8cpp.html',1,'']]],
+  ['bitcode_2eh',['Bitcode.h',['../_bitcode_8h.html',1,'']]],
   ['bitcodearchive_2ecpp',['BitcodeArchive.cpp',['../_bitcode_archive_8cpp.html',1,'']]],
   ['bitcodearchive_2eh',['BitcodeArchive.h',['../_bitcode_archive_8h.html',1,'']]],
   ['bitcodecontainer_2ecpp',['BitcodeContainer.cpp',['../_bitcode_container_8cpp.html',1,'']]],

@@ -1,7 +1,7 @@
 <map id="lib/src/BitcodeRetriever.cpp" name="lib/src/BitcodeRetriever.cpp">
-<area shape="rect" id="node2" href="$_bitcode_retriever_8h.html" title="ebc/BitcodeRetriever.h" alt="" coords="40,152,196,177"/>
-<area shape="rect" id="node6" href="$_bitcode_archive_8h.html" title="ebc/BitcodeArchive.h" alt="" coords="383,79,530,104"/>
-<area shape="rect" id="node7" href="$_bitcode_container_8h.html" title="ebc/BitcodeContainer.h" alt="" coords="553,152,712,177"/>
-<area shape="rect" id="node8" href="$_bitcode_file_8h.html" title="ebc/BitcodeFile.h" alt="" coords="620,225,744,251"/>
-<area shape="rect" id="node11" href="$_bitcode_metadata_8h.html" title="ebc/BitcodeMetadata.h" alt="" coords="320,152,478,177"/>
+<area shape="rect" id="node2" href="$_bitcode_retriever_8h.html" title="ebc/BitcodeRetriever.h" alt="" coords="69,152,225,177"/>
+<area shape="rect" id="node6" href="$_bitcode_archive_8h.html" title="ebc/BitcodeArchive.h" alt="" coords="239,79,386,104"/>
+<area shape="rect" id="node7" href="$_bitcode_container_8h.html" title="ebc/BitcodeContainer.h" alt="" coords="350,152,509,177"/>
+<area shape="rect" id="node11" href="$_ebc_error_8h.html" title="ebc/EbcError.h" alt="" coords="460,79,570,104"/>
+<area shape="rect" id="node8" href="$_binary_metadata_8h.html" title="ebc/BinaryMetadata.h" alt="" coords="297,225,448,251"/>
 </map>
