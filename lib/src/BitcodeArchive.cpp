@@ -45,9 +45,7 @@ std::string BitcodeArchive::WriteXarToFile(std::string fileName) const {
   }
 
   auto data = GetData();
-  std::ofstream outfile(fileName, std::ofstream::binary);
-  outfile.write(data.first, data.second);
-  outfile.close();
+  util::bitcode::WriteFile(data.first, data.second, fileName);
   return fileName;
 }
 

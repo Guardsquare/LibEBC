@@ -78,7 +78,7 @@ std::vector<BitcodeFile> BitcodeContainer::GetBitcodeFiles() const {
     auto size = end - begin;
 
     auto fileName = util::Namer::GetFileName();
-    util::bitcode::WriteBitcodeFile(_data + begin, size, fileName);
+    util::bitcode::WriteFile(_data + begin, size, fileName);
 
     BitcodeFile bitcodeFile(fileName);
     bitcodeFile.SetCommands(_commands);

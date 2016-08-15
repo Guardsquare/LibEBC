@@ -15,7 +15,7 @@ TEST_CASE("Bitcode File Magic Number", "[BitcodeUtil]") {
 TEST_CASE("Write Bitcode To File", "[BitcodeUtil]") {
   const char* data = "foobar";
   const char* fileName = "bitcodeutil.test.temp";
-  ebc::util::bitcode::WriteBitcodeFile(data, 6, fileName);
+  ebc::util::bitcode::WriteFile(data, 6, fileName);
 
   // Compare file content
   std::ifstream in(fileName, std::ios::in | std::ios::binary);
