@@ -3,6 +3,9 @@
 #include "ebc/BitcodeFile.h"
 #include "ebc/BitcodeMetadata.h"
 #include "ebc/BitcodeRetriever.h"
+#include "ebc/util/Namer.h"
+
+#include <tclap/CmdLine.h>
 
 #include <iomanip>
 #include <iostream>
@@ -35,8 +38,8 @@ static void printArchiveInfo(const ebc::BitcodeArchive& bitcodeArchive) {
   std::cout << std::endl;
 }
 
-static void printBitcodeFiles(const ebc::BitcodeContainer& bitcodeContainer) {
-  for (auto& bitcodeFile : bitcodeContainer.GetBitcodeFiles()) {
+static void printBitcodeFiles(const ebc::BitcodeContainer& bitcodeContainer, bool extract) {
+  for (auto& bitcodeFile : bitcodeContainer.GetBitcodeFiles(extract)) {
     std::cout << std::setw(WIDTH) << "Bitcode:"
               << " " << bitcodeFile.GetName() << std::endl;
 
@@ -51,25 +54,64 @@ static void printBitcodeFiles(const ebc::BitcodeContainer& bitcodeContainer) {
   }
 }
 
-int main(int argc, char* argv[]) {
-  if (argc < 2) {
-    std::cout << "Usage: ebcutil <binary>" << std::endl;
-    return EXIT_FAILURE;
+static void printDetailled(const ebc::BitcodeContainer& bitcodeContainer, bool extract) {
+  printContainerInfo(bitcodeContainer);
+  if (bitcodeContainer.IsArchive()) {
+    const auto& bitcodeArchive = static_cast<const BitcodeArchive&>(bitcodeContainer);
+    printArchiveInfo(bitcodeArchive);
   }
+  printBitcodeFiles(bitcodeContainer, extract);
+}
 
+static void printSimple(const ebc::BitcodeContainer& bitcodeContainer, bool extract) {
+  std::cout << bitcodeContainer.GetBinaryMetadata().GetFileName() << " ("
+            << bitcodeContainer.GetBinaryMetadata().GetArch() << "): ";
+
+  for (auto& bitcodeFile : bitcodeContainer.GetBitcodeFiles(extract)) {
+    std::cout << bitcodeFile.GetName() << " ";
+  }
+  std::cout << std::endl;
+}
+
+int main(int argc, char* argv[]) {
   try {
-    BitcodeRetriever bitcodeRetriever(argv[1]);
+    // Command line arguments
+    TCLAP::CmdLine cmd("Embedded Bitcode Tool", ' ', "1.0");
+    TCLAP::SwitchArg extractArg("e", "extract", "Extract bitcode files", cmd, false);
+    TCLAP::SwitchArg simpleArg("s", "simple", "Simple output, no details", cmd, false);
+
+    TCLAP::ValueArg<std::string> prefixArg("p", "prefix", "Prefix for bitcode files", false, "", "string");
+    cmd.add(prefixArg);
+
+    TCLAP::UnlabeledValueArg<std::string> fileArg("File", "Library or object file", false, "", "file");
+    cmd.add(fileArg);
+
+    cmd.parse(argc, argv);
+
+    const bool extract = extractArg.getValue();
+    const bool simple = simpleArg.getValue();
+    const std::string prefix = prefixArg.getValue();
+    if (!prefix.empty()) {
+      ebc::util::Namer::SetPrefix(prefix);
+    }
+
+    BitcodeRetriever bitcodeRetriever(fileArg.getValue());
     auto bitcodeContainers = bitcodeRetriever.GetBitcodeContainers();
     for (auto& bitcodeContainer : bitcodeContainers) {
-      printContainerInfo(*bitcodeContainer);
-      if (bitcodeContainer->IsArchive()) {
-        auto bitcodeArchive = static_cast<BitcodeArchive*>(bitcodeContainer.get());
-        printArchiveInfo(*bitcodeArchive);
+      if (simple) {
+        printSimple(*bitcodeContainer, extract);
+      } else {
+        printDetailled(*bitcodeContainer, extract);
       }
-      printBitcodeFiles(*bitcodeContainer);
     }
+  } catch (TCLAP::ArgException& e) {
+    std::cerr << "Error: " << e.error() << " for arg " << e.argId() << std::endl;
+    return EXIT_FAILURE;
   } catch (std::exception& e) {
     std::cerr << "Error: " << e.what() << std::endl;
+    return EXIT_FAILURE;
+  } catch (...) {
+    std::cerr << "Error: exiting" << std::endl;
     return EXIT_FAILURE;
   }
 

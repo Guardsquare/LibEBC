@@ -49,7 +49,7 @@ std::string BitcodeArchive::WriteXarToFile(std::string fileName) const {
   return fileName;
 }
 
-std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles() const {
+std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles(bool extract) const {
   auto files = std::vector<BitcodeFile>();
 
 #ifdef HAVE_LIBXAR
@@ -94,34 +94,37 @@ std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles() const {
       continue;
     }
 
-    // Write bitcode to file
     auto fileName = util::Namer::GetFileName();
-    std::FILE *output = std::fopen(fileName.c_str(), "wb");
-    if (output == nullptr) {
-      std::cerr << "Error opening output file" << std::endl;
-      continue;
-    }
 
-    xs.avail_out = sizeof(buffer);
-    xs.next_out = buffer;
-
-    int32_t ret;
-    while ((ret = xar_extract_tostream(&xs)) != XAR_STREAM_END) {
-      if (ret == XAR_STREAM_ERR) {
-        std::cerr << "Error extracting stream" << std::endl;
-        break;
+    // Write bitcode to file
+    if (extract) {
+      std::FILE *output = std::fopen(fileName.c_str(), "wb");
+      if (output == nullptr) {
+        std::cerr << "Error opening output file" << std::endl;
+        continue;
       }
-      std::fwrite(buffer, sizeof(char), sizeof(buffer) - xs.avail_out, output);
 
       xs.avail_out = sizeof(buffer);
       xs.next_out = buffer;
-    }
 
-    if (xar_extract_tostream_end(&xs) != XAR_STREAM_OK) {
-      std::cerr << "Error ending stream" << std::endl;
-    }
+      int32_t ret;
+      while ((ret = xar_extract_tostream(&xs)) != XAR_STREAM_END) {
+        if (ret == XAR_STREAM_ERR) {
+          std::cerr << "Error extracting stream" << std::endl;
+          break;
+        }
+        std::fwrite(buffer, sizeof(char), sizeof(buffer) - xs.avail_out, output);
 
-    std::fclose(output);
+        xs.avail_out = sizeof(buffer);
+        xs.next_out = buffer;
+      }
+
+      if (xar_extract_tostream_end(&xs) != XAR_STREAM_OK) {
+        std::cerr << "Error ending stream" << std::endl;
+      }
+
+      std::fclose(output);
+    }
 
     // Create bitcode file
     auto bitcodeFile = BitcodeFile(fileName);

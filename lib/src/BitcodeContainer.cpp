@@ -16,10 +16,10 @@ BitcodeContainer::BitcodeContainer(const char *data, std::uint32_t size) : _data
 }
 
 BitcodeContainer::BitcodeContainer(BitcodeContainer &&bitcodeContainer) noexcept
-    : _data(nullptr)
-    , _size(bitcodeContainer._size)
-    , _commands(bitcodeContainer._commands)
-    , _binaryMetadata(bitcodeContainer._binaryMetadata) {
+    : _data(nullptr),
+      _size(bitcodeContainer._size),
+      _commands(bitcodeContainer._commands),
+      _binaryMetadata(bitcodeContainer._binaryMetadata) {
   SetData(bitcodeContainer._data, bitcodeContainer._size);
   bitcodeContainer._data = nullptr;
 }
@@ -62,7 +62,7 @@ const BinaryMetadata &BitcodeContainer::GetBinaryMetadata() const {
   return _binaryMetadata;
 }
 
-std::vector<BitcodeFile> BitcodeContainer::GetBitcodeFiles() const {
+std::vector<BitcodeFile> BitcodeContainer::GetBitcodeFiles(bool extract) const {
   std::vector<BitcodeFile> files;
 
   // Magic number is 4 bytes long. If less than four bytes are available there
@@ -78,7 +78,9 @@ std::vector<BitcodeFile> BitcodeContainer::GetBitcodeFiles() const {
     auto size = end - begin;
 
     auto fileName = util::Namer::GetFileName();
-    util::bitcode::WriteFile(_data + begin, size, fileName);
+    if (extract) {
+      util::bitcode::WriteFile(_data + begin, size, fileName);
+    }
 
     BitcodeFile bitcodeFile(fileName);
     bitcodeFile.SetCommands(_commands);

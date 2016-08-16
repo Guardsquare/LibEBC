@@ -32,7 +32,7 @@ class BitcodeArchive : public BitcodeContainer {
   /// Extract individual bitcode files from this archive and return a vector of
   /// file names. This operation can be expensive as it decompresses each
   /// bitcode file. The result is empty if not compiled with xar support.
-  std::vector<BitcodeFile> GetBitcodeFiles() const override;
+  std::vector<BitcodeFile> GetBitcodeFiles(bool extract = false) const override;
 
  private:
   void SetMetadata() noexcept;
