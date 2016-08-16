@@ -82,7 +82,7 @@ std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeConta
     const Archive &archive) {
   auto bitcodeContainers = std::vector<std::unique_ptr<BitcodeContainer>>();
   for (const auto &child : archive.children()) {
-    const auto childOrErr = child->getAsBinary();
+    auto childOrErr = child->getAsBinary();
     if (childOrErr) {
       auto containers = GetBitcodeContainers(*(childOrErr.get()));
       bitcodeContainers.reserve(bitcodeContainers.size() + containers.size());
