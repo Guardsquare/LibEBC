@@ -80,6 +80,9 @@ int main(int argc, char* argv[]) {
     TCLAP::SwitchArg extractArg("e", "extract", "Extract bitcode files", cmd, false);
     TCLAP::SwitchArg simpleArg("s", "simple", "Simple output, no details", cmd, false);
 
+    TCLAP::ValueArg<std::string> archArg("a", "arch", "Limit to a single architecture", false, "", "string");
+    cmd.add(archArg);
+
     TCLAP::ValueArg<std::string> prefixArg("p", "prefix", "Prefix for bitcode files", false, "", "string");
     cmd.add(prefixArg);
 
@@ -90,12 +93,17 @@ int main(int argc, char* argv[]) {
 
     const bool extract = extractArg.getValue();
     const bool simple = simpleArg.getValue();
-    const std::string prefix = prefixArg.getValue();
-    if (!prefix.empty()) {
-      ebc::util::Namer::SetPrefix(prefix);
+
+    if (prefixArg.isSet()) {
+      ebc::util::Namer::SetPrefix(prefixArg.getValue());
     }
 
     BitcodeRetriever bitcodeRetriever(fileArg.getValue());
+
+    if (archArg.isSet()) {
+      bitcodeRetriever.SetArch(archArg.getValue());
+    }
+
     auto bitcodeContainers = bitcodeRetriever.GetBitcodeContainers();
     for (auto& bitcodeContainer : bitcodeContainers) {
       if (simple) {

@@ -26,6 +26,10 @@ static std::string StripFileName(std::string fileName) {
 
 BitcodeRetriever::BitcodeRetriever(std::string objectPath) : _objectPath(std::move(objectPath)) {}
 
+void BitcodeRetriever::SetArch(std::string arch) {
+  _arch = arch;
+}
+
 std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeContainers() {
   auto binaryOrErr = createBinary(_objectPath);
 
@@ -38,7 +42,7 @@ std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeConta
 }
 
 std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeContainers(
-    const llvm::object::Binary &binary) {
+    const llvm::object::Binary &binary) const {
   auto bitcodeContainers = std::vector<std::unique_ptr<BitcodeContainer>>();
 
   if (const auto *universalBinary = dyn_cast<MachOUniversalBinary>(&binary)) {
@@ -79,7 +83,7 @@ std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeConta
 }
 
 std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeContainersFromArchive(
-    const Archive &archive) {
+    const Archive &archive) const {
   auto bitcodeContainers = std::vector<std::unique_ptr<BitcodeContainer>>();
   for (const auto &child : archive.children()) {
     auto childOrErr = child->getAsBinary();
@@ -93,7 +97,12 @@ std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeConta
 }
 
 std::unique_ptr<BitcodeContainer> BitcodeRetriever::GetBitcodeContainerFromObject(
-    const llvm::object::ObjectFile *objectFile) {
+    const llvm::object::ObjectFile *objectFile) const {
+  const auto arch = llvm::Triple::getArchTypeName(static_cast<Triple::ArchType>(objectFile->getArch()));
+  if (!processArch(arch)) {
+    return {};
+  }
+
   BitcodeContainer *bitcodeContainer = nullptr;
 
   std::vector<std::string> commands;
@@ -119,14 +128,18 @@ std::unique_ptr<BitcodeContainer> BitcodeRetriever::GetBitcodeContainerFromObjec
   // Set binary metadata
   bitcodeContainer->GetBinaryMetadata().SetFileName(StripFileName(objectFile->getFileName()));
   bitcodeContainer->GetBinaryMetadata().SetFileFormatName(objectFile->getFileFormatName());
-  bitcodeContainer->GetBinaryMetadata().SetArch(
-      llvm::Triple::getArchTypeName(static_cast<Triple::ArchType>(objectFile->getArch())));
+  bitcodeContainer->GetBinaryMetadata().SetArch(arch);
 
   return std::unique_ptr<BitcodeContainer>(bitcodeContainer);
 }
 
 std::unique_ptr<BitcodeContainer> BitcodeRetriever::GetBitcodeContainerFromMachO(
-    const llvm::object::MachOObjectFile *objectFile) {
+    const llvm::object::MachOObjectFile *objectFile) const {
+  const auto arch = llvm::Triple::getArchTypeName(static_cast<Triple::ArchType>(objectFile->getArch()));
+  if (!processArch(arch)) {
+    return {};
+  }
+
   BitcodeContainer *bitcodeContainer = nullptr;
 
   const std::string name = objectFile->getFileFormatName().str();
@@ -163,8 +176,7 @@ std::unique_ptr<BitcodeContainer> BitcodeRetriever::GetBitcodeContainerFromMachO
   // Set binary metadata
   bitcodeContainer->GetBinaryMetadata().SetFileName(StripFileName(objectFile->getFileName()));
   bitcodeContainer->GetBinaryMetadata().SetFileFormatName(objectFile->getFileFormatName());
-  bitcodeContainer->GetBinaryMetadata().SetArch(
-      llvm::Triple::getArchTypeName(static_cast<Triple::ArchType>(objectFile->getArch())));
+  bitcodeContainer->GetBinaryMetadata().SetArch(arch);
   bitcodeContainer->GetBinaryMetadata().SetUuid(objectFile->getUuid().data());
 
   return std::unique_ptr<BitcodeContainer>(bitcodeContainer);
@@ -193,6 +205,10 @@ std::vector<std::string> BitcodeRetriever::GetCommands(const llvm::object::Secti
   } while (p < end);
 
   return cmds;
+}
+bool BitcodeRetriever::processArch(std::string arch) const {
+  if (_arch.empty()) return true;
+  return _arch == arch;
 }
 
 }  // namespace ebc

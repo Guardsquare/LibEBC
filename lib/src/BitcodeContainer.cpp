@@ -16,10 +16,10 @@ BitcodeContainer::BitcodeContainer(const char *data, std::uint32_t size) : _data
 }
 
 BitcodeContainer::BitcodeContainer(BitcodeContainer &&bitcodeContainer) noexcept
-    : _data(nullptr),
-      _size(bitcodeContainer._size),
-      _commands(bitcodeContainer._commands),
-      _binaryMetadata(bitcodeContainer._binaryMetadata) {
+    : _data(nullptr)
+    , _size(bitcodeContainer._size)
+    , _commands(bitcodeContainer._commands)
+    , _binaryMetadata(bitcodeContainer._binaryMetadata) {
   SetData(bitcodeContainer._data, bitcodeContainer._size);
   bitcodeContainer._data = nullptr;
 }
