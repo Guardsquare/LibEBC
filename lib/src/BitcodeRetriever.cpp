@@ -44,16 +44,16 @@ std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeConta
   if (const auto *universalBinary = dyn_cast<MachOUniversalBinary>(&binary)) {
     // Iterate over all objects (i.e. architectures):
     for (auto object : universalBinary->objects()) {
-      if (auto machOObject = object.getAsObjectFile()) {
-        auto container = GetBitcodeContainerFromMachO(machOObject->get());
-        if (container) {
-          bitcodeContainers.push_back(std::move(container));
-        }
-      } else if (const auto archive = object.getAsArchive()) {
+      if (const auto archive = object.getAsArchive()) {
         auto containers = GetBitcodeContainersFromArchive(*(archive.get()));
         // We have to move all containers so we can continue with the next architecture.
         bitcodeContainers.reserve(bitcodeContainers.size() + containers.size());
         std::move(std::begin(containers), std::end(containers), std::back_inserter(bitcodeContainers));
+      } else if (auto machOObject = object.getAsObjectFile()) {
+        auto container = GetBitcodeContainerFromMachO(machOObject->get());
+        if (container) {
+          bitcodeContainers.push_back(std::move(container));
+        }
       } else {
         throw EbcError("Unrecognized MachO universal binary");
       }
