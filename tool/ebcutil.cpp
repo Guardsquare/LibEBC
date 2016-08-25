@@ -83,6 +83,9 @@ int main(int argc, char* argv[]) {
     TCLAP::ValueArg<std::string> archArg("a", "arch", "Limit to a single architecture", false, "", "string");
     cmd.add(archArg);
 
+    TCLAP::ValueArg<std::string> directoryArg("d", "directory", "Directory for bitcode files", false, "", "string");
+    cmd.add(directoryArg);
+
     TCLAP::ValueArg<std::string> prefixArg("p", "prefix", "Prefix for bitcode files", false, "", "string");
     cmd.add(prefixArg);
 
@@ -91,8 +94,12 @@ int main(int argc, char* argv[]) {
 
     cmd.parse(argc, argv);
 
-    const bool extract = extractArg.getValue();
+    const bool extract = extractArg.getValue() || directoryArg.isSet() || prefixArg.isSet();
     const bool simple = simpleArg.getValue();
+
+    if (directoryArg.isSet()) {
+      ebc::util::Namer::SetPath(directoryArg.getValue());
+    }
 
     if (prefixArg.isSet()) {
       ebc::util::Namer::SetPrefix(prefixArg.getValue());
