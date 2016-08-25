@@ -12,16 +12,27 @@ include_directories(${LLVM_INCLUDE_DIRS})
 
 # Explicitly select components to link against
 llvm_map_components_to_libnames(LLVM_LINK_LIBRARIES
-  object
-  )
+  object)
 
 # LLVM compiler flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fno-rtti -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS")
 
 # Xar
-check_library_exists(xar xar_open "" HAVE_LIBXAR)
+find_library(XAR_LIBRARY_NAME NAMES xar)
+if(XAR_LIBRARY_NAME)
+  set(HAVE_LIBXAR true)
+  set(XAR_LIBRARY ${XAR_LIBRARY_NAME})
+else ()
+  check_library_exists(xar xar_open "" HAVE_LIBXAR)
+  if(HAVE_LIBXAR)
+    set(XAR_LIBRARY xar)
+  endif()
+endif()
+
 if(HAVE_LIBXAR)
-  set(XAR_LIB xar)
+  message (STATUS "Found XAR library at " ${XAR_LIBRARY})
+else()
+  message(WARNING "Could not find XAR library; disabled")
 endif()
 
 # Configure header
@@ -36,7 +47,7 @@ set(HEADER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 file(GLOB_RECURSE SOURCE_FILES ${SOURCE_DIR}/*.cpp)
 
 add_library(ebc ${SOURCE_FILES})
-target_link_libraries(ebc ${XAR_LIB} ${LLVM_LINK_LIBRARIES} ${LIBXML2_LIBRARIES})
+target_link_libraries(ebc ${XAR_LIBRARY} ${LLVM_LINK_LIBRARIES} ${LIBXML2_LIBRARIES} ${PC_LIBXML_STATIC_LIBRARIES})
 target_include_directories(ebc PRIVATE  ${PROJECT_BINARY_DIR})
 target_include_directories(ebc PUBLIC ${HEADER_DIR})
 
