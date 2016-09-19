@@ -79,7 +79,7 @@ This project uses CMake as its build system. It has the following dependencies:
  - CMake 3.0
  - LibXML2
  - LibXar (optional, but required for Mach-O)
- - LLVM 3.8
+ - LLVM 3.9
 
 ```shell
 $ git clone https://github.com/JDevlieghere/LibEBC.git && cd LibEBC
