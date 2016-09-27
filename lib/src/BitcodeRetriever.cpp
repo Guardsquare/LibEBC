@@ -48,20 +48,31 @@ std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeConta
   if (const auto *universalBinary = dyn_cast<MachOUniversalBinary>(&binary)) {
     // Iterate over all objects (i.e. architectures):
     for (auto object : universalBinary->objects()) {
-      Expected<std::unique_ptr<Archive>> archive = object.getAsArchive();
-      if (archive) {
-        auto containers = GetBitcodeContainersFromArchive(*(archive.get()));
-        // We have to move all containers so we can continue with the next architecture.
-        bitcodeContainers.reserve(bitcodeContainers.size() + containers.size());
-        std::move(std::begin(containers), std::end(containers), std::back_inserter(bitcodeContainers));
-      } else if (auto machOObject = object.getAsObjectFile()) {
+      Expected<std::unique_ptr<MachOObjectFile>> machOObject = object.getAsObjectFile();
+      if (machOObject) {
         auto container = GetBitcodeContainerFromMachO(machOObject->get());
         if (container) {
           bitcodeContainers.push_back(std::move(container));
         }
+        continue;
       } else {
-        throw EbcError("Unrecognized MachO universal binary");
+        // Calling operator bool() is not sufficient.
+        machOObject.takeError();
       }
+
+      Expected<std::unique_ptr<Archive>> archive = object.getAsArchive();
+      if (archive) {
+        auto containers = GetBitcodeContainersFromArchive(*archive->get());
+        // We have to move all containers so we can continue with the next architecture.
+        bitcodeContainers.reserve(bitcodeContainers.size() + containers.size());
+        std::move(std::begin(containers), std::end(containers), std::back_inserter(bitcodeContainers));
+        continue;
+      } else {
+        // Calling operator bool() is not sufficient.
+        archive.takeError();
+      }
+
+      throw EbcError("Unrecognized MachO universal binary");
     }
   } else if (const auto machOObjectFile = dyn_cast<MachOObjectFile>(&binary)) {
     auto container = GetBitcodeContainerFromMachO(machOObjectFile);
@@ -85,9 +96,11 @@ std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeConta
 
 std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeContainersFromArchive(
     const Archive &archive) const {
-  auto bitcodeContainers = std::vector<std::unique_ptr<BitcodeContainer>>();
   Error err;
-  for (const auto &child : archive.children(err)) {
+  auto children = archive.children(err);
+
+  auto bitcodeContainers = std::vector<std::unique_ptr<BitcodeContainer>>();
+  for (const auto &child : children) {
     auto childOrErr = child.getAsBinary();
     if (childOrErr) {
       auto containers = GetBitcodeContainers(*(childOrErr.get()));
@@ -95,11 +108,6 @@ std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeConta
       std::move(std::begin(containers), std::end(containers), std::back_inserter(bitcodeContainers));
     }
   }
-
-  if (err) {
-    throw EbcError("Failed to get archive children.");
-  }
-
   return bitcodeContainers;
 }
 
