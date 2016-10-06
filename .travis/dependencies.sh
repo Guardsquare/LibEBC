@@ -4,6 +4,7 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
   # Install dependencies for macOS
   brew update
   brew install libxml2
+  brew link -f libxml2
 
   # Get LLVM 3.9.0
   wget http://llvm.org/releases/3.9.0/clang+llvm-3.9.0-x86_64-apple-darwin.tar.xz

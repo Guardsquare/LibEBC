@@ -4,6 +4,8 @@
 #include <string>
 
 namespace ebc {
+
+/// Abstraction of the meta data linked to a binary object or archive.
 class BinaryMetadata {
  public:
   std::string GetFileFormatName() const;

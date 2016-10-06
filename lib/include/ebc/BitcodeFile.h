@@ -11,10 +11,17 @@ class BitcodeFile {
   std::string GetName() const;
 
   /// Get all commands passed to the compiler to create this bitcode file.
+  ///
+  /// @return A vector of strings with the clang front-end commands.
   const std::vector<std::string>& GetCommands() const;
+
+  /// Set all commands passed to the compiler to create this bitcode file.
+  ///
+  /// @param clangCommands A vector of strings with the clang front-end
+  ///                      commands.
   void SetCommands(const std::vector<std::string>& clangCommands);
 
-  /// Remove the actual bitcode file from the filesystem.
+  /// Remove the actual bitcode file from the file system.
   void Remove();
 
  private:
