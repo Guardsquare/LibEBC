@@ -1,21 +1,12 @@
 var searchData=
 [
-  ['getarch',['GetArch',['../classebc_1_1_binary_metadata.html#aec6bd45322c6dbfa356a58d0749c3ac7',1,'ebc::BinaryMetadata']]],
-  ['getbinarymetadata',['GetBinaryMetadata',['../classebc_1_1_bitcode_container.html#aa66aaf2f0d5aa87340c1ed8bee68c253',1,'ebc::BitcodeContainer::GetBinaryMetadata()'],['../classebc_1_1_bitcode_container.html#a390a8f4280847506a6ac00e061bb2bc8',1,'ebc::BitcodeContainer::GetBinaryMetadata() const ']]],
-  ['getbitcodecontainers',['GetBitcodeContainers',['../classebc_1_1_bitcode_retriever.html#a4ad5d396145fe541bc367dd402a1f851',1,'ebc::BitcodeRetriever']]],
-  ['getbitcodefiles',['GetBitcodeFiles',['../classebc_1_1_bitcode_archive.html#a62da7dd14e8dce272a1513af57dc98a7',1,'ebc::BitcodeArchive::GetBitcodeFiles()'],['../classebc_1_1_bitcode_container.html#aa0369fb8c7c8bf39be33ca2a6eae64c4',1,'ebc::BitcodeContainer::GetBitcodeFiles()']]],
-  ['getclangcommands',['GetClangCommands',['../classebc_1_1_bitcode_metadata.html#a3f43ebbc0ad2e354f5e33269365efa53',1,'ebc::BitcodeMetadata']]],
-  ['getcommands',['GetCommands',['../classebc_1_1_bitcode_container.html#a77f2586eb799c29f46a3e6ee0bdee971',1,'ebc::BitcodeContainer::GetCommands()'],['../classebc_1_1_bitcode_file.html#a8dfb0ccf9358d5bdd2269af57bfe49c3',1,'ebc::BitcodeFile::GetCommands()']]],
-  ['getcontent',['GetContent',['../namespaceebc_1_1util_1_1xml.html#a46400ff069ba56664a6bee9f97fd5a74',1,'ebc::util::xml::GetContent(_xmlNode *node)'],['../namespaceebc_1_1util_1_1xml.html#af650ce57b4456bace446cdd4c8d82c82',1,'ebc::util::xml::GetContent(xmlNode *node)']]],
-  ['getdata',['GetData',['../classebc_1_1_bitcode_container.html#a74f13d13d228f90e43d07b297e6fb748',1,'ebc::BitcodeContainer']]],
-  ['getdylibs',['GetDylibs',['../classebc_1_1_bitcode_metadata.html#a4f6f56aacfc0918f9342648e2662e1b6',1,'ebc::BitcodeMetadata']]],
-  ['getfileformatname',['GetFileFormatName',['../classebc_1_1_binary_metadata.html#ad74ddbfbf401f817687ed48759d40c52',1,'ebc::BinaryMetadata']]],
-  ['getfilename',['GetFileName',['../classebc_1_1_binary_metadata.html#a36fd1cd05fbf9fde67a597454b43adb6',1,'ebc::BinaryMetadata::GetFileName()'],['../classebc_1_1util_1_1_namer.html#a4f28817e80fcb7779816faa39e46fea6',1,'ebc::util::Namer::GetFileName()']]],
-  ['getlinkoptions',['GetLinkOptions',['../classebc_1_1_bitcode_metadata.html#a7ed28a655c96a908713b5f84da1f9926',1,'ebc::BitcodeMetadata']]],
-  ['getmetadata',['GetMetadata',['../classebc_1_1_bitcode_archive.html#a95a232838e2f740961f120a39d63cd4f',1,'ebc::BitcodeArchive']]],
-  ['getname',['GetName',['../classebc_1_1_bitcode_file.html#ad678a3c173745fd0a7d9d0e02213f34a',1,'ebc::BitcodeFile']]],
-  ['getswiftcommands',['GetSwiftCommands',['../classebc_1_1_bitcode_metadata.html#ab4667e025848f9dc035bbf832afa0c3a',1,'ebc::BitcodeMetadata']]],
-  ['gettextfromnodeswithname',['GetTextFromNodesWithName',['../namespaceebc_1_1util_1_1xml.html#a679777dcc59b725d5ba5353a192c5322',1,'ebc::util::xml::GetTextFromNodesWithName(_xmlNode *root, std::string name)'],['../namespaceebc_1_1util_1_1xml.html#acaee7ad345fa2f08bcdd830fc77ecb51',1,'ebc::util::xml::GetTextFromNodesWithName(xmlNode *root, std::string name)']]],
-  ['getuuid',['GetUUID',['../classebc_1_1_binary_metadata.html#a54485875e29a248ccb6a28033401337e',1,'ebc::BinaryMetadata']]],
-  ['getxml',['GetXml',['../classebc_1_1_bitcode_metadata.html#ab68d323b94f6b977520691ce88ba1379',1,'ebc::BitcodeMetadata']]]
+  ['basename',['basename',['../class_t_c_l_a_p_1_1_doc_book_output.html#a82d49ab25845c7d191863be9c482409e',1,'TCLAP::DocBookOutput::basename()'],['../class_t_c_l_a_p_1_1_zsh_completion_output.html#a3fff80665ab8d6161de6451924c2b954',1,'TCLAP::ZshCompletionOutput::basename()']]],
+  ['begin',['begin',['../class_t_c_l_a_p_1_1_multi_arg.html#a9309fbbdf04e379085bf1b64d09a2fcb',1,'TCLAP::MultiArg']]],
+  ['beginignoring',['beginIgnoring',['../class_t_c_l_a_p_1_1_arg.html#a24165d31c1ec70777fb201356b6cdf6a',1,'TCLAP::Arg']]],
+  ['bitcodearchive',['BitcodeArchive',['../classebc_1_1_bitcode_archive.html#ac2f70e9aa742ba4196e26730f5e5f5f9',1,'ebc::BitcodeArchive::BitcodeArchive(const char *data, std::uint32_t size)'],['../classebc_1_1_bitcode_archive.html#a25226b62a3879c1a0f769d894ca7b2ed',1,'ebc::BitcodeArchive::BitcodeArchive(BitcodeArchive &amp;&amp;bitcodeArchive) noexcept']]],
+  ['bitcodecontainer',['BitcodeContainer',['../classebc_1_1_bitcode_container.html#ae26cafd7f60e1a3e458135fe8d1d33a9',1,'ebc::BitcodeContainer::BitcodeContainer(const char *data, std::uint32_t size)'],['../classebc_1_1_bitcode_container.html#a9310bc4e834645b57efe28f38d49587b',1,'ebc::BitcodeContainer::BitcodeContainer(BitcodeContainer &amp;&amp;bitcodeArchive) noexcept']]],
+  ['bitcodefile',['BitcodeFile',['../classebc_1_1_bitcode_file.html#a1a821b806bf82c38295fd841df5597d6',1,'ebc::BitcodeFile']]],
+  ['bitcodemetadata',['BitcodeMetadata',['../classebc_1_1_bitcode_metadata.html#a5e318fe783c3bf6f6708e425a43f373a',1,'ebc::BitcodeMetadata::BitcodeMetadata(std::string xml)'],['../classebc_1_1_bitcode_metadata.html#a2aff6c1d1e02ebc1f759d44020e5e4fd',1,'ebc::BitcodeMetadata::BitcodeMetadata(const BitcodeMetadata &amp;bitcodeTOC)=delete']]],
+  ['bitcoderetriever',['BitcodeRetriever',['../classebc_1_1_bitcode_retriever.html#a3dc1b564b9057c8976cc1d379956ddb4',1,'ebc::BitcodeRetriever']]],
+  ['blankchar',['blankChar',['../class_t_c_l_a_p_1_1_arg.html#a0abd38f46dbf7d267078134a4817fbb2',1,'TCLAP::Arg']]]
 ];

@@ -1,6 +1,8 @@
 var searchData=
 [
-  ['uuid_2ecpp',['UUID.cpp',['../_u_u_i_d_8cpp.html',1,'']]],
-  ['uuid_2eh',['UUID.h',['../_u_u_i_d_8h.html',1,'']]],
-  ['uuidtostring',['UuidToString',['../namespaceebc_1_1util_1_1uuid.html#a33d18680e03fe7615e745d698176d4a1',1,'ebc::util::uuid']]]
+  ['namer',['Namer',['../classebc_1_1util_1_1_namer.html',1,'ebc::util']]],
+  ['namer',['Namer',['../classebc_1_1util_1_1_namer.html#a5ed7df912dcb2a87888e07007f2fee58',1,'ebc::util::Namer']]],
+  ['namer_2ecpp',['Namer.cpp',['../_namer_8cpp.html',1,'']]],
+  ['namer_2eh',['Namer.h',['../_namer_8h.html',1,'']]],
+  ['namestartstring',['nameStartString',['../class_t_c_l_a_p_1_1_arg.html#a1df2134870528b80f9f35347fef6fd14',1,'TCLAP::Arg']]]
 ];

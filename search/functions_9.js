@@ -1,10 +1,12 @@
 var searchData=
 [
-  ['setarch',['SetArch',['../classebc_1_1_binary_metadata.html#a8f48f56c568ce429f4d66d5f319d6bb4',1,'ebc::BinaryMetadata']]],
-  ['setcommands',['SetCommands',['../classebc_1_1_bitcode_container.html#a4d20ad1c24be4fe581e5e9e244b586d7',1,'ebc::BitcodeContainer::SetCommands()'],['../classebc_1_1_bitcode_file.html#ac117693c45d1bff73c6e8acbf4e77b05',1,'ebc::BitcodeFile::SetCommands()']]],
-  ['setdata',['SetData',['../classebc_1_1_bitcode_container.html#abc88fe3e6bd4c8e587f98513a02f4059',1,'ebc::BitcodeContainer']]],
-  ['setfileformatname',['SetFileFormatName',['../classebc_1_1_binary_metadata.html#a0a8d99f144b49895cc165a08fd5700dc',1,'ebc::BinaryMetadata']]],
-  ['setfilename',['SetFileName',['../classebc_1_1_binary_metadata.html#aebc671d7d217fccb505757f2461e9864',1,'ebc::BinaryMetadata']]],
-  ['setprefix',['SetPrefix',['../classebc_1_1util_1_1_namer.html#abc491fb0be3afb33f159844efd050566',1,'ebc::util::Namer']]],
-  ['setuuid',['SetUuid',['../classebc_1_1_binary_metadata.html#a5a736cf60a147e339ba8a37d6a54f6bb',1,'ebc::BinaryMetadata']]]
+  ['ignorenamestring',['ignoreNameString',['../class_t_c_l_a_p_1_1_arg.html#a6ce0cbe4effd44679ca11f25e3c318e7',1,'TCLAP::Arg']]],
+  ['ignorerest',['ignoreRest',['../class_t_c_l_a_p_1_1_arg.html#a4d412155b8f9b4956e64e91c48e55a3b',1,'TCLAP::Arg']]],
+  ['ignorerestvisitor',['IgnoreRestVisitor',['../class_t_c_l_a_p_1_1_ignore_rest_visitor.html#a4cd949b7aeff99fba4a8494e02a1cb01',1,'TCLAP::IgnoreRestVisitor']]],
+  ['isarchive',['IsArchive',['../classebc_1_1_bitcode_archive.html#aede5500856c8a97abdc9720f3e1b965f',1,'ebc::BitcodeArchive::IsArchive()'],['../classebc_1_1_bitcode_container.html#a046c33b18c5559975b99cbfd1c7f3dad',1,'ebc::BitcodeContainer::IsArchive()']]],
+  ['isbitcodefile',['IsBitcodeFile',['../namespaceebc_1_1util_1_1bitcode.html#a5b7fad54d510d35039704b14674219af',1,'ebc::util::bitcode']]],
+  ['isignoreable',['isIgnoreable',['../class_t_c_l_a_p_1_1_arg.html#a4e0a80c4d980d0cc59372382fab03413',1,'TCLAP::Arg']]],
+  ['isrequired',['isRequired',['../class_t_c_l_a_p_1_1_arg.html#aec9381ca612a2d37239944b8dd512a7e',1,'TCLAP::Arg::isRequired()'],['../class_t_c_l_a_p_1_1_multi_arg.html#a709f7cc102afc916a61a79ab1502c423',1,'TCLAP::MultiArg::isRequired()']]],
+  ['isset',['isSet',['../class_t_c_l_a_p_1_1_arg.html#a15d126427847cc782cf53ab7364659df',1,'TCLAP::Arg']]],
+  ['isvaluerequired',['isValueRequired',['../class_t_c_l_a_p_1_1_arg.html#a7bdc92de1b8628a02a56be067ca37468',1,'TCLAP::Arg']]]
 ];
