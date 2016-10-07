@@ -10,6 +10,7 @@
 #include "llvm/Object/MachOUniversal.h"
 
 #include <algorithm>
+#include <iostream>
 #include <memory>
 #include <string>
 
@@ -55,9 +56,8 @@ std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeConta
           bitcodeContainers.push_back(std::move(container));
         }
         continue;
-      } else {
-        // Calling operator bool() is not sufficient.
-        machOObject.takeError();
+      } else if (auto e = machOObject.takeError()) {
+        llvm::consumeError(std::move(e));
       }
 
       Expected<std::unique_ptr<Archive>> archive = object.getAsArchive();
@@ -67,9 +67,8 @@ std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeConta
         bitcodeContainers.reserve(bitcodeContainers.size() + containers.size());
         std::move(std::begin(containers), std::end(containers), std::back_inserter(bitcodeContainers));
         continue;
-      } else {
-        // Calling operator bool() is not sufficient.
-        archive.takeError();
+      } else if (auto e = archive.takeError()) {
+        llvm::consumeError(std::move(e));
       }
 
       throw EbcError("Unrecognized MachO universal binary");
@@ -98,6 +97,10 @@ std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeConta
     const Archive &archive) const {
   Error err;
   auto children = archive.children(err);
+
+  if (err) {
+    throw EbcError("Couldn't get children from archive " + archive.getFileName().str());
+  }
 
   auto bitcodeContainers = std::vector<std::unique_ptr<BitcodeContainer>>();
   for (const auto &child : children) {

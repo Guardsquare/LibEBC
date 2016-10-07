@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
     TCLAP::ValueArg<std::string> prefixArg("p", "prefix", "Prefix for bitcode files", false, "", "string");
     cmd.add(prefixArg);
 
-    TCLAP::UnlabeledValueArg<std::string> fileArg("File", "Library or object file", false, "", "file");
+    TCLAP::UnlabeledValueArg<std::string> fileArg("File", "Library or object file", true, "", "file");
     cmd.add(fileArg);
 
     cmd.parse(argc, argv);
