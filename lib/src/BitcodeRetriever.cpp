@@ -34,12 +34,15 @@ void BitcodeRetriever::SetArch(std::string arch) {
 std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeContainers() {
   auto binaryOrErr = createBinary(_objectPath);
 
-  if (!binaryOrErr) {
+  if (binaryOrErr) {
+    auto &binary = *binaryOrErr.get().getBinary();
+    return GetBitcodeContainers(binary);
+  } else if (auto e = binaryOrErr.takeError()) {
+    llvm::consumeError(std::move(e));
     throw EbcError("Invalid binary");
   }
 
-  auto &binary = *binaryOrErr.get().getBinary();
-  return GetBitcodeContainers(binary);
+  return {};
 }
 
 std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeContainers(
