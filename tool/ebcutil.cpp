@@ -112,6 +112,8 @@ int main(int argc, char* argv[]) {
     }
 
     auto bitcodeContainers = bitcodeRetriever.GetBitcodeContainers();
+    if (bitcodeContainers.empty()) {
+    }
     for (auto& bitcodeContainer : bitcodeContainers) {
       if (simple) {
         printSimple(*bitcodeContainer, extract);

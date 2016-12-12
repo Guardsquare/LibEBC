@@ -50,8 +50,9 @@ std::string BitcodeArchive::WriteXarToFile(std::string fileName) const {
 }
 
 std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles(bool extract) const {
-  auto files = std::vector<BitcodeFile>();
+  if (IsEmpty()) return {};
 
+  auto files = std::vector<BitcodeFile>();
 #ifdef HAVE_LIBXAR
   xar_t x;
   xar_iter_t xi;
@@ -63,12 +64,14 @@ std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles(bool extract) const {
 
   x = xar_open(archivePath.c_str(), READ);
   if (x == nullptr) {
+    std::remove(archivePath.c_str());
     throw EbcError("Could not open xar archive");
   }
 
   xi = xar_iter_new();
   if (xi == nullptr) {
     xar_close(x);
+    std::remove(archivePath.c_str());
     throw EbcError("Could not read xar archive");
   }
 
@@ -145,6 +148,13 @@ std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles(bool extract) const {
 
   xar_iter_free(xi);
   xar_close(x);
+
+  // If we extracted the archive we don't need it anymore, so better to clean
+  // it up. If the user really want to keep it he can invoke this method a
+  // second time with extract set to false.
+  if (extract) {
+    std::remove(archivePath.c_str());
+  }
 #endif
 
   return files;

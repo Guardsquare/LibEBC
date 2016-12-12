@@ -23,6 +23,11 @@ class BitcodeContainer {
   /// @return False.
   virtual bool IsArchive() const;
 
+  /// Indicates whether the given bitcode container is merely a placeholder.
+  ///
+  /// @return  True if data is empty.
+  bool IsEmpty() const;
+
   /// Get the commands passed to the compiler front end.
   ///
   /// @return The commands passed to the compiler front end.

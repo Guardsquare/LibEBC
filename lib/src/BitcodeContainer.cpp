@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <cstdlib>
+#include <iostream>
 #include <streambuf>
 
 namespace ebc {
@@ -33,6 +34,10 @@ BitcodeContainer::~BitcodeContainer() {
 
 bool BitcodeContainer::IsArchive() const {
   return false;
+}
+
+bool BitcodeContainer::IsEmpty() const {
+  return _size == 0;
 }
 
 const std::vector<std::string> &BitcodeContainer::GetCommands() const {
@@ -63,14 +68,13 @@ const BinaryMetadata &BitcodeContainer::GetBinaryMetadata() const {
 }
 
 std::vector<BitcodeFile> BitcodeContainer::GetBitcodeFiles(bool extract) const {
-  std::vector<BitcodeFile> files;
-
   // Magic number is 4 bytes long. If less than four bytes are available there
   // is no bitcode. Likely only a bitcode marker was embedded.
-  if (_size < 4) {
-    return files;
+  if (IsEmpty() || _size < 4) {
+    return {};
   }
 
+  std::vector<BitcodeFile> files;
   auto offsets = GetBitcodeFileOffsets();
   for (std::uint32_t i = 0; i < offsets.size() - 1; ++i) {
     auto begin = offsets[i];

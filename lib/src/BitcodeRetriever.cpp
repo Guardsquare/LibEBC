@@ -39,7 +39,7 @@ std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeConta
     return GetBitcodeContainers(binary);
   } else if (auto e = binaryOrErr.takeError()) {
     llvm::consumeError(std::move(e));
-    throw EbcError("Invalid binary");
+    throw EbcError("Could not create binar from " + _objectPath);
   }
 
   return {};
@@ -68,7 +68,8 @@ std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeConta
         auto containers = GetBitcodeContainersFromArchive(*archive->get());
         // We have to move all containers so we can continue with the next architecture.
         bitcodeContainers.reserve(bitcodeContainers.size() + containers.size());
-        std::move(std::begin(containers), std::end(containers), std::back_inserter(bitcodeContainers));
+        std::copy_if(std::make_move_iterator(containers.begin()), std::make_move_iterator(containers.end()),
+                     std::back_inserter(bitcodeContainers), [](const auto &uniquePtr) { return uniquePtr != nullptr; });
         continue;
       } else if (auto e = archive.takeError()) {
         llvm::consumeError(std::move(e));
@@ -140,7 +141,7 @@ std::unique_ptr<BitcodeContainer> BitcodeRetriever::GetBitcodeContainerFromObjec
   }
 
   if (bitcodeContainer == nullptr) {
-    throw EbcError("No bitcode section in " + objectFile->getFileName().str());
+    throw NoBitcodeError("No bitcode section in " + objectFile->getFileName().str());
   }
 
   // Set commands
@@ -188,7 +189,7 @@ std::unique_ptr<BitcodeContainer> BitcodeRetriever::GetBitcodeContainerFromMachO
   }
 
   if (bitcodeContainer == nullptr) {
-    throw EbcError("No bitcode section in " + objectFile->getFileName().str());
+    throw NoBitcodeError("No bitcode section in " + objectFile->getFileName().str());
   }
 
   // Set commands
@@ -227,6 +228,7 @@ std::vector<std::string> BitcodeRetriever::GetCommands(const llvm::object::Secti
 
   return cmds;
 }
+
 bool BitcodeRetriever::processArch(std::string arch) const {
   if (_arch.empty()) return true;
   return _arch == arch;
