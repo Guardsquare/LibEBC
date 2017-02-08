@@ -9,29 +9,47 @@ namespace ebc {
 namespace util {
 namespace bitcode {
 
-bool IsBitcodeFile(const char *data) {
-  return static_cast<unsigned char>(data[0]) == 0x42 && static_cast<unsigned char>(data[1]) == 0x43 &&
-         static_cast<unsigned char>(data[2]) == 0xC0 && static_cast<unsigned char>(data[3]) == 0xDE;
+bool IsBitcode(std::uint32_t magic) {
+  switch (magic) {
+    case BC_MAGIC:
+    case BC_CIGAM:
+    case IR_MAGIC:
+    case IR_CIGAM:
+      return true;
+    default:
+      return false;
+  }
+  return false;
 }
 
-void WriteFile(const char *data, std::uint32_t size, std::string fileName) {
-  std::ofstream outfile(fileName, std::ofstream::binary);
+bool IsBitcode(const char *const data) {
+  return IsBitcode(*reinterpret_cast<const std::uint32_t *>(data));
+}
 
-  if (!outfile) {
-    std::cerr << "Unable to open " << fileName << std::endl;
+bool IsBitcodeFile(std::string file) {
+  // Read first four bytes and check magic number.
+  std::ifstream input(file, std::ifstream::binary);
+
+  if (!input) {
+    std::cerr << "Unable to open " << file << std::endl;
+    return false;
+  }
+
+  char buffer[4];
+  input.read(buffer, 4);
+  return IsBitcode(buffer);
+}
+
+void WriteToFile(const char *data, std::uint32_t size, std::string file) {
+  std::ofstream output(file, std::ofstream::binary);
+
+  if (!output) {
+    std::cerr << "Unable to open " << file << std::endl;
     return;
   }
 
-  outfile.write(data, size);
-  outfile.close();
-}
-
-bool HasXar() {
-#ifdef HAVE_LIBXAR
-  return true;
-#else
-  return false;
-#endif
+  output.write(data, size);
+  output.close();
 }
 
 }  // namespace bitcode

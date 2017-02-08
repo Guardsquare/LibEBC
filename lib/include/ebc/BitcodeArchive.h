@@ -10,7 +10,7 @@
 
 namespace ebc {
 
-class BitcodeFile;
+class EmbeddedFile;
 class BitcodeMetadata;
 
 /// A bitcode archive is a special kind of bitcode container created by Apple's
@@ -21,6 +21,8 @@ class BitcodeArchive : public BitcodeContainer {
   BitcodeArchive(const char* data, std::uint32_t size);
 
   BitcodeArchive(BitcodeArchive&& bitcodeArchive) noexcept;
+
+  virtual ~BitcodeArchive() = default;
 
   /// Indicates whether the given bitcode container is a bitcode archive.
   ///
@@ -47,11 +49,8 @@ class BitcodeArchive : public BitcodeContainer {
   /// file names. This operation can be expensive as it decompresses each
   /// bitcode file. The result is empty if not compiled with xar support.
   ///
-  /// @param extract Optional paramter indicating whether different bitcode
-  ///                files should be extracted and written to file.
-  ///
   /// @return A vector of bitcode files.
-  std::vector<BitcodeFile> GetBitcodeFiles(bool extract = false) const override;
+  std::vector<std::unique_ptr<EmbeddedFile>> GetEmbeddedFiles() const override;
 
  private:
   void SetMetadata() noexcept;

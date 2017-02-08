@@ -39,7 +39,7 @@ std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeConta
     return GetBitcodeContainers(binary);
   } else if (auto e = binaryOrErr.takeError()) {
     llvm::consumeError(std::move(e));
-    throw EbcError("Could not create binar from " + _objectPath);
+    throw EbcError("Could not create binary from " + _objectPath);
   }
 
   return {};
@@ -157,7 +157,8 @@ std::unique_ptr<BitcodeContainer> BitcodeRetriever::GetBitcodeContainerFromObjec
 
 std::unique_ptr<BitcodeContainer> BitcodeRetriever::GetBitcodeContainerFromMachO(
     const llvm::object::MachOObjectFile *objectFile) const {
-  const auto arch = llvm::Triple::getArchTypeName(static_cast<Triple::ArchType>(objectFile->getArch()));
+  // For MachO return the correct arch tripple.
+  const auto arch = objectFile->getArchTriple(nullptr).getArchName();
   if (!processArch(arch)) {
     return {};
   }

@@ -1,11 +1,13 @@
 #include "ebc/BitcodeArchive.h"
 
-#include "ebc/BitcodeFile.h"
 #include "ebc/BitcodeMetadata.h"
 #include "ebc/Config.h"
 #include "ebc/EbcError.h"
+#include "ebc/EmbeddedFile.h"
+#include "ebc/EmbeddedFileFactory.h"
+
 #include "ebc/util/Bitcode.h"
-#include "ebc/util/Namer.h"
+#include "ebc/util/Xar.h"
 
 #ifdef HAVE_LIBXAR
 extern "C" {
@@ -19,6 +21,8 @@ extern "C" {
 #include <iostream>
 #include <memory>
 #include <streambuf>
+
+using namespace ebc::util;
 
 namespace ebc {
 
@@ -41,123 +45,47 @@ void BitcodeArchive::SetMetadata() noexcept {
 
 std::string BitcodeArchive::WriteXarToFile(std::string fileName) const {
   if (fileName.empty()) {
-    fileName = GetBinaryMetadata().GetFileName() + ".xar";
+    fileName = GetPrefix() + GetBinaryMetadata().GetFileName() + ".xar";
   }
 
   auto data = GetData();
-  util::bitcode::WriteFile(data.first, data.second, fileName);
+  bitcode::WriteToFile(data.first, data.second, fileName);
   return fileName;
 }
 
-std::vector<BitcodeFile> BitcodeArchive::GetBitcodeFiles(bool extract) const {
+std::vector<std::unique_ptr<EmbeddedFile>> BitcodeArchive::GetEmbeddedFiles() const {
   if (IsEmpty()) return {};
 
-  auto files = std::vector<BitcodeFile>();
-#ifdef HAVE_LIBXAR
-  xar_t x;
-  xar_iter_t xi;
-  xar_file_t xf;
-  xar_stream xs;
-  char buffer[8192];
+  // Write xar to disk.
+  const std::string archive = WriteXarToFile();
 
-  auto archivePath = WriteXarToFile();
+  // Create bitcode files from archive.
+  auto embeddedFiles = std::vector<std::unique_ptr<EmbeddedFile>>();
 
-  x = xar_open(archivePath.c_str(), READ);
-  if (x == nullptr) {
-    std::remove(archivePath.c_str());
-    throw EbcError("Could not open xar archive");
-  }
+  for (auto filePair : xar::Extract(archive, GetPrefix())) {
+    std::string path = filePair.first;
+    std::string file = filePair.second;
 
-  xi = xar_iter_new();
-  if (xi == nullptr) {
-    xar_close(x);
-    std::remove(archivePath.c_str());
-    throw EbcError("Could not read xar archive");
-  }
+    auto embeddedFile = EmbeddedFileFactory::CreateEmbeddedFile(file);
 
-  for (xf = xar_file_first(x, xi); xf != nullptr; xf = xar_file_next(xi)) {
-    char *path = xar_get_path(xf);
-    const char *type;
-    xar_prop_get(xf, "type", &type);
+    if (!embeddedFile) continue;
 
-    if (type == nullptr) {
-      std::cerr << "File has no type" << std::endl;
-      free(path);
-      continue;
-    }
-
-    if (std::strcmp(type, "file") != 0) {
-      free(path);
-      continue;
-    }
-
-    if (xar_extract_tostream_init(x, xf, &xs) != XAR_STREAM_OK) {
-      std::cerr << "Error initializing stream" << std::endl;
-      free(path);
-      continue;
-    }
-
-    auto fileName = util::Namer::GetFileName();
-
-    // Write bitcode to file
-    if (extract) {
-      std::FILE *output = std::fopen(fileName.c_str(), "wb");
-      if (output == nullptr) {
-        std::cerr << "Error opening output file" << std::endl;
-        continue;
-      }
-
-      xs.avail_out = sizeof(buffer);
-      xs.next_out = buffer;
-
-      int32_t ret;
-      while ((ret = xar_extract_tostream(&xs)) != XAR_STREAM_END) {
-        if (ret == XAR_STREAM_ERR) {
-          std::cerr << "Error extracting stream" << std::endl;
-          break;
-        }
-        std::fwrite(buffer, sizeof(char), sizeof(buffer) - xs.avail_out, output);
-
-        xs.avail_out = sizeof(buffer);
-        xs.next_out = buffer;
-      }
-
-      if (xar_extract_tostream_end(&xs) != XAR_STREAM_OK) {
-        std::cerr << "Error ending stream" << std::endl;
-      }
-
-      std::fclose(output);
-    }
-
-    // Create bitcode file
-    auto bitcodeFile = BitcodeFile(fileName);
-
-    // Add clang commands
+    // Add clang commands.
     auto clangCommands = _metadata->GetClangCommands(path);
-    bitcodeFile.SetCommands(clangCommands);
+    embeddedFile->SetCommands(clangCommands);
 
-    // Add swift commands
+    // Add swift commands.
     auto swiftCommands = _metadata->GetSwiftCommands(path);
-    bitcodeFile.SetCommands(swiftCommands);
+    embeddedFile->SetCommands(swiftCommands);
 
-    // Add to list of bitcode files
-    files.push_back(bitcodeFile);
-
-    free(path);
+    // Add to list of bitcode files.
+    embeddedFiles.push_back(std::move(embeddedFile));
   }
 
-  xar_iter_free(xi);
-  xar_close(x);
+  // Remove xar again.
+  std::remove(archive.c_str());
 
-  // If we extracted the archive we don't need it anymore, so better to clean
-  // it up. If the user really want to keep it he can invoke this method a
-  // second time with extract set to false.
-  if (extract) {
-    std::remove(archivePath.c_str());
-  }
-#endif
-
-  return files;
+  return embeddedFiles;
 }
 
 const BitcodeMetadata &BitcodeArchive::GetMetadata() const {
@@ -166,33 +94,27 @@ const BitcodeMetadata &BitcodeArchive::GetMetadata() const {
 
 std::string BitcodeArchive::GetMetadataXml() const noexcept {
   auto data = GetData();
+
   if (data.first == nullptr) {
     return {};
   }
 
-  std::string xarFile = WriteXarToFile();
-  std::string metadataXmlFile = GetBinaryMetadata().GetFileFormatName() + "_metadata.xar";
+  const std::string xarFile = WriteXarToFile();
+  const std::string metadataXmlFile = GetPrefix() + GetBinaryMetadata().GetFileFormatName() + "_metadata.xar";
 
-#ifdef HAVE_LIBXAR
-  // Write archive to filesystem and read xar
-  xar_t x = xar_open(xarFile.c_str(), READ);
-  if (x == nullptr) {
-    return {};
+  if (xar::WriteTOC(xarFile, metadataXmlFile)) {
+    // Read Metadata in memory.
+    std::ifstream t(metadataXmlFile);
+    std::string xml((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+
+    // Remove temporary files.
+    std::remove(xarFile.c_str());
+    std::remove(metadataXmlFile.c_str());
+
+    return xml;
   }
 
-  xar_serialize(x, metadataXmlFile.c_str());
-  xar_close(x);
-  std::remove(xarFile.c_str());
-
-  // Read Metadata to string and remove temporary file
-  std::ifstream t(metadataXmlFile);
-  std::string xml((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
-  std::remove(metadataXmlFile.c_str());
-
-  return xml;
-#else
-  return std::string();
-#endif
+  return {};
 }
 
 }  // namespace ebc

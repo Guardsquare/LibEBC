@@ -1,5 +1,5 @@
 #include "ebc/BitcodeContainer.h"
-#include "ebc/BitcodeFile.h"
+#include "ebc/EmbeddedFile.h"
 
 #include "catch.hpp"
 
@@ -14,7 +14,7 @@ TEST_CASE("Bitcode Container Commands", "[BitcodeContainer]") {
 }
 
 TEST_CASE("Bitcode Container Files", "[BitcodeContainer]") {
-  using ebc::BitcodeFile;
+  using ebc::EmbeddedFile;
   char data[8];
   data[0] = 0x42;
   data[1] = 0x43;
@@ -27,16 +27,16 @@ TEST_CASE("Bitcode Container Files", "[BitcodeContainer]") {
   auto bitcodeContainer = ebc::BitcodeContainer(data, 8);
   bitcodeContainer.GetBinaryMetadata().SetFileFormatName("name");
 
-  auto actualFiles = bitcodeContainer.GetBitcodeFiles();
+  auto actualFiles = bitcodeContainer.GetEmbeddedFiles();
   REQUIRE(actualFiles.size() == 2);
 
   for (auto& file : actualFiles) {
-    file.Remove();
+    file->Remove();
   }
 }
 
 TEST_CASE("Bitcode Container Marker Only", "[BitcodeContainer]") {
-  using ebc::BitcodeFile;
+  using ebc::EmbeddedFile;
   char data[3];
   data[0] = 0x42;
   data[1] = 0x43;
@@ -45,6 +45,31 @@ TEST_CASE("Bitcode Container Marker Only", "[BitcodeContainer]") {
   auto bitcodeContainer = ebc::BitcodeContainer(data, 3);
   bitcodeContainer.GetBinaryMetadata().SetFileFormatName("name");
 
-  auto actualFiles = bitcodeContainer.GetBitcodeFiles();
+  auto actualFiles = bitcodeContainer.GetEmbeddedFiles();
   REQUIRE(actualFiles.empty());
+}
+
+TEST_CASE("Bitcode Container Prefix", "[BitcodeContainer]") {
+  using ebc::EmbeddedFile;
+  char data[8];
+  data[0] = 0x42;
+  data[1] = 0x43;
+  data[2] = 0xC0;
+  data[3] = 0xDE;
+  data[4] = 0x42;
+  data[5] = 0x43;
+  data[6] = 0xC0;
+  data[7] = 0xDE;
+
+  auto bitcodeContainer = ebc::BitcodeContainer(data, 8);
+  bitcodeContainer.GetBinaryMetadata().SetFileFormatName("name");
+
+  REQUIRE(bitcodeContainer.GetPrefix() == "");
+  bitcodeContainer.SetPrefix("prefix");
+  REQUIRE(bitcodeContainer.GetPrefix() == "prefix");
+
+  for (auto& file : bitcodeContainer.GetEmbeddedFiles()) {
+    REQUIRE(file->GetName().find("prefix") == 0);
+    file->Remove();
+  }
 }

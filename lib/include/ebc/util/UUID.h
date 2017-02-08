@@ -10,6 +10,9 @@ namespace uuid {
 
 /// Convert UUID to canonical format with hyphens.
 std::string UuidToString(std::array<std::uint8_t, 16> uuid);
+
+/// Generate a random UUID
+std::array<std::uint8_t, 16> GenerateUUID();
 }
 }
 }

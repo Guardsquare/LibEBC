@@ -9,7 +9,7 @@
 #include <vector>
 
 namespace ebc {
-class BitcodeFile;
+class EmbeddedFile;
 class BitcodeContainer {
  public:
   BitcodeContainer(const char* data, std::uint32_t size);
@@ -52,23 +52,25 @@ class BitcodeContainer {
   /// of file names. This operation can be expensive as it decompresses each
   /// bitcode file.
   ///
-  /// @param extract Optional paramter indicating whether different bitcode
-  ///                files should be extracted and written to file.
-  ///
   /// @return A vector of bitcode files.
-  virtual std::vector<BitcodeFile> GetBitcodeFiles(bool extract = false) const;
+  virtual std::vector<std::unique_ptr<EmbeddedFile>> GetEmbeddedFiles() const;
+
+  const std::string& GetPrefix() const;
+  void SetPrefix(std::string prefix);
 
  protected:
   void SetData(const char* data, std::uint32_t size) noexcept;
   std::pair<const char*, std::uint32_t> GetData() const;
 
  private:
-  std::vector<std::uint32_t> GetBitcodeFileOffsets() const;
+  std::vector<std::uint32_t> GetEmbeddedFileOffsets() const;
 
   char* _data;
   std::uint32_t _size;
 
   std::vector<std::string> _commands;
   BinaryMetadata _binaryMetadata;
+
+  std::string _prefix;
 };
 }
