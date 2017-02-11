@@ -1,5 +1,6 @@
 <map id="lib/include/ebc/util/Bitcode.h" name="lib/include/ebc/util/Bitcode.h">
-<area shape="rect" id="node2" href="$_bitcode_archive_8cpp.html" title="lib/src/BitcodeArchive.cpp" alt="" coords="5,92,179,117"/>
-<area shape="rect" id="node3" href="$_bitcode_container_8cpp.html" title="lib/src/BitcodeContainer.cpp" alt="" coords="203,92,390,117"/>
-<area shape="rect" id="node4" href="$_bitcode_8cpp.html" title="lib/src/util/Bitcode.cpp" alt="" coords="413,92,563,117"/>
+<area shape="rect" id="node2" href="$_bitcode_archive_8cpp.html" title="lib/src/BitcodeArchive.cpp" alt="" coords="5,95,180,121"/>
+<area shape="rect" id="node3" href="$_bitcode_container_8cpp.html" title="lib/src/BitcodeContainer.cpp" alt="" coords="205,95,391,121"/>
+<area shape="rect" id="node4" href="$_embedded_file_factory_8cpp.html" title="lib/src/EmbeddedFileFactory.cpp" alt="" coords="415,95,629,121"/>
+<area shape="rect" id="node5" href="$_bitcode_8cpp.html" title="lib/src/util/Bitcode.cpp" alt="" coords="653,95,804,121"/>
 </map>

@@ -1,0 +1,11 @@
+<map id="lib/include/ebc/EmbeddedFile.h" name="lib/include/ebc/EmbeddedFile.h">
+<area shape="rect" id="node2" href="$_embedded_bitcode_8h.html" title="lib/include/ebc/Embedded\lBitcode.h" alt="" coords="416,95,587,136"/>
+<area shape="rect" id="node3" href="$_embedded_file_factory_8cpp.html" title="lib/src/EmbeddedFileFactory.cpp" alt="" coords="5,184,219,211"/>
+<area shape="rect" id="node4" href="$ebcutil_8cpp.html" title="tool/ebcutil.cpp" alt="" coords="507,184,618,211"/>
+<area shape="rect" id="node5" href="$_embedded_mach_o_8h.html" title="lib/include/ebc/Embedded\lMachO.h" alt="" coords="27,95,197,136"/>
+<area shape="rect" id="node6" href="$_embedded_xar_8h.html" title="lib/include/ebc/Embedded\lXar.h" alt="" coords="221,95,392,136"/>
+<area shape="rect" id="node8" href="$_bitcode_archive_8cpp.html" title="lib/src/BitcodeArchive.cpp" alt="" coords="662,102,837,129"/>
+<area shape="rect" id="node9" href="$_bitcode_container_8cpp.html" title="lib/src/BitcodeContainer.cpp" alt="" coords="861,102,1048,129"/>
+<area shape="rect" id="node10" href="$_embedded_file_8cpp.html" title="lib/src/EmbeddedFile.cpp" alt="" coords="1073,102,1242,129"/>
+<area shape="rect" id="node7" href="$_embedded_xar_8cpp.html" title="lib/src/EmbeddedXar.cpp" alt="" coords="243,184,411,211"/>
+</map>

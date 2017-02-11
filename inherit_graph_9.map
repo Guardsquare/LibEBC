@@ -1,3 +1,9 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$struct_t_c_l_a_p_1_1_arg_traits_3_01bool_01_4.html" title="TCLAP::ArgTraits\&lt; bool \&gt;" alt="" coords="5,5,179,31"/>
+<area shape="rect" id="node1" href="$class_t_c_l_a_p_1_1_arg.html" title="TCLAP::Arg" alt="" coords="5,56,99,83"/>
+<area shape="rect" id="node2" href="$class_t_c_l_a_p_1_1_multi_arg.html" title="TCLAP::MultiArg\&lt; T \&gt;" alt="" coords="149,5,303,32"/>
+<area shape="rect" id="node4" href="$class_t_c_l_a_p_1_1_switch_arg.html" title="TCLAP::SwitchArg" alt="" coords="159,56,293,83"/>
+<area shape="rect" id="node6" href="$class_t_c_l_a_p_1_1_value_arg.html" title="TCLAP::ValueArg\&lt; T \&gt;" alt="" coords="147,107,305,133"/>
+<area shape="rect" id="node3" href="$class_t_c_l_a_p_1_1_unlabeled_multi_arg.html" title="TCLAP::UnlabeledMultiArg\&lt; T \&gt;" alt="" coords="356,5,567,32"/>
+<area shape="rect" id="node5" href="$class_t_c_l_a_p_1_1_multi_switch_arg.html" title="TCLAP::MultiSwitchArg" alt="" coords="381,56,542,83"/>
+<area shape="rect" id="node7" href="$class_t_c_l_a_p_1_1_unlabeled_value_arg.html" title="TCLAP::UnlabeledValueArg\&lt; T \&gt;" alt="" coords="353,107,569,133"/>
 </map>

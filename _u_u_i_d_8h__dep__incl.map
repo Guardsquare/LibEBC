@@ -1,4 +1,6 @@
 <map id="lib/include/ebc/util/UUID.h" name="lib/include/ebc/util/UUID.h">
-<area shape="rect" id="node2" href="$_binary_metadata_8cpp.html" title="lib/src/BinaryMetadata.cpp" alt="" coords="5,92,184,117"/>
-<area shape="rect" id="node3" href="$_u_u_i_d_8cpp.html" title="lib/src/util/UUID.cpp" alt="" coords="208,92,346,117"/>
+<area shape="rect" id="node2" href="$_binary_metadata_8cpp.html" title="lib/src/BinaryMetadata.cpp" alt="" coords="5,95,183,121"/>
+<area shape="rect" id="node3" href="$_bitcode_container_8cpp.html" title="lib/src/BitcodeContainer.cpp" alt="" coords="207,95,394,121"/>
+<area shape="rect" id="node4" href="$_u_u_i_d_8cpp.html" title="lib/src/util/UUID.cpp" alt="" coords="418,95,559,121"/>
+<area shape="rect" id="node5" href="$_xar_8cpp.html" title="lib/src/util/Xar.cpp" alt="" coords="584,95,711,121"/>
 </map>

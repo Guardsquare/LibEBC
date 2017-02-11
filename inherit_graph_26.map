@@ -1,3 +1,6 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_t_c_l_a_p_1_1_exit_exception.html" title="TCLAP::ExitException" alt="" coords="5,5,158,31"/>
+<area shape="rect" id="node1" href="$class_t_c_l_a_p_1_1_cmd_line_output.html" title="TCLAP::CmdLineOutput" alt="" coords="5,56,169,83"/>
+<area shape="rect" id="node2" href="$class_t_c_l_a_p_1_1_doc_book_output.html" title="TCLAP::DocBookOutput" alt="" coords="234,5,401,32"/>
+<area shape="rect" id="node3" href="$class_t_c_l_a_p_1_1_std_output.html" title="TCLAP::StdOutput" alt="" coords="251,56,383,83"/>
+<area shape="rect" id="node4" href="$class_t_c_l_a_p_1_1_zsh_completion_output.html" title="TCLAP::ZshCompletionOutput" alt="" coords="217,107,417,133"/>
 </map>

@@ -1,9 +1,3 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" title="STL class. " alt="" coords="5,56,109,81"/>
-<area shape="rect" id="node2" title="STL class. " alt="" coords="169,19,296,44"/>
-<area shape="rect" id="node4" href="$class_t_c_l_a_p_1_1_arg_exception.html" title="TCLAP::ArgException" alt="" coords="157,92,308,117"/>
-<area shape="rect" id="node3" href="$classebc_1_1_ebc_error.html" title="Exception thrown by LibEBC. " alt="" coords="414,5,517,31"/>
-<area shape="rect" id="node5" href="$class_t_c_l_a_p_1_1_arg_parse_exception.html" title="TCLAP::ArgParseException" alt="" coords="372,55,558,80"/>
-<area shape="rect" id="node6" href="$class_t_c_l_a_p_1_1_cmd_line_parse_exception.html" title="TCLAP::CmdLineParseException" alt="" coords="356,104,574,129"/>
-<area shape="rect" id="node7" href="$class_t_c_l_a_p_1_1_specification_exception.html" title="TCLAP::SpecificationException" alt="" coords="362,153,568,179"/>
+<area shape="rect" id="node1" href="$classebc_1_1util_1_1xml_1_1_xml_initialization.html" title="ebc::util::xml::XmlInitialization" alt="" coords="5,5,203,32"/>
 </map>

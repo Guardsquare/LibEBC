@@ -1,7 +1,6 @@
 var searchData=
 [
   ['libebc',['LibEBC',['../index.html',1,'']]],
-  ['llvm',['llvm',['../namespacellvm.html',1,'']]],
-  ['longid',['longID',['../class_t_c_l_a_p_1_1_arg.html#a1a71b113dfa30f35551cc5b71f6389e2',1,'TCLAP::Arg::longID()'],['../class_t_c_l_a_p_1_1_multi_arg.html#af2afdcc8c926cfd16b60120a1beb2406',1,'TCLAP::MultiArg::longID()'],['../class_t_c_l_a_p_1_1_multi_switch_arg.html#a7a98d4af63c81da894d171bc6c8e5530',1,'TCLAP::MultiSwitchArg::longID()'],['../class_t_c_l_a_p_1_1_unlabeled_multi_arg.html#a81babdb1b8710712e804f288a261b2a3',1,'TCLAP::UnlabeledMultiArg::longID()'],['../class_t_c_l_a_p_1_1_unlabeled_value_arg.html#a32e4a226cbcccc28f7d6b0a571957c9e',1,'TCLAP::UnlabeledValueArg::longID()'],['../class_t_c_l_a_p_1_1_value_arg.html#a0e0b127b19efaef3c6c8dfbb9aba17bf',1,'TCLAP::ValueArg::longID()']]],
-  ['object',['object',['../namespacellvm_1_1object.html',1,'llvm']]]
+  ['log',['log',['../classebc_1_1_internal_ebc_error.html#aa90f33279ea50ace9801f05f9627e2a5',1,'ebc::InternalEbcError']]],
+  ['longid',['longID',['../class_t_c_l_a_p_1_1_arg.html#aad93aff46e1fc67e3853765f565bfa96',1,'TCLAP::Arg::longID()'],['../class_t_c_l_a_p_1_1_multi_arg.html#a16c00fbce6876bceabb3dab4723f7e79',1,'TCLAP::MultiArg::longID()'],['../class_t_c_l_a_p_1_1_multi_switch_arg.html#a0b0aacc09c93462bab4347f86db0fccd',1,'TCLAP::MultiSwitchArg::longID()'],['../class_t_c_l_a_p_1_1_unlabeled_multi_arg.html#a1e7262967b850fb30e1003890a45f1ca',1,'TCLAP::UnlabeledMultiArg::longID()'],['../class_t_c_l_a_p_1_1_unlabeled_value_arg.html#ade738f42a7867324ce780b0c240b0460',1,'TCLAP::UnlabeledValueArg::longID()'],['../class_t_c_l_a_p_1_1_value_arg.html#a586d25c04c39ddf0e589605d79f72f8a',1,'TCLAP::ValueArg::longID()']]]
 ];

@@ -1,3 +1,10 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$struct_t_c_l_a_p_1_1_arg_traits_3_01char_01_4.html" title="TCLAP::ArgTraits\&lt; char \&gt;" alt="" coords="5,5,180,31"/>
+<area shape="rect" id="node1" title="STL class. " alt="" coords="5,81,109,108"/>
+<area shape="rect" id="node2" title="STL class. " alt="" coords="171,56,295,83"/>
+<area shape="rect" id="node5" href="$class_t_c_l_a_p_1_1_arg_exception.html" title="TCLAP::ArgException" alt="" coords="157,132,308,159"/>
+<area shape="rect" id="node3" href="$classebc_1_1_ebc_error.html" title="Exception thrown by LibEBC. " alt="" coords="413,5,516,32"/>
+<area shape="rect" id="node4" href="$classebc_1_1_no_bitcode_error.html" title="Exception thrown when no bitcode section is found. " alt="" coords="395,56,535,83"/>
+<area shape="rect" id="node6" href="$class_t_c_l_a_p_1_1_arg_parse_exception.html" title="TCLAP::ArgParseException" alt="" coords="372,107,557,133"/>
+<area shape="rect" id="node7" href="$class_t_c_l_a_p_1_1_cmd_line_parse_exception.html" title="TCLAP::CmdLineParseException" alt="" coords="356,157,573,184"/>
+<area shape="rect" id="node8" href="$class_t_c_l_a_p_1_1_specification_exception.html" title="TCLAP::SpecificationException" alt="" coords="361,208,568,235"/>
 </map>
