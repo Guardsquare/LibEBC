@@ -12,8 +12,9 @@
 namespace ebc {
 
 std::unique_ptr<EmbeddedFile> EmbeddedFileFactory::CreateEmbeddedFile(std::string file) {
-  if (util::bitcode::IsBitcodeFile(file)) {
-    return std::unique_ptr<EmbeddedFile>(new EmbeddedBitcode(std::move(file)));
+  BitcodeType bitcodeType = util::bitcode::GetBitcodeType(file);
+  if (bitcodeType != BitcodeType::Unknown) {
+    return std::unique_ptr<EmbeddedFile>(new EmbeddedBitcode(std::move(file), bitcodeType));
   }
 
   if (util::xar::IsXarFile(file)) {
@@ -24,6 +25,6 @@ std::unique_ptr<EmbeddedFile> EmbeddedFileFactory::CreateEmbeddedFile(std::strin
     return std::unique_ptr<EmbeddedFile>(new EmbeddedMachO(std::move(file)));
   }
 
-  return nullptr;
+  return std::make_unique<EmbeddedFile>(file);
 }
 }

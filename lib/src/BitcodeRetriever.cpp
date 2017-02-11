@@ -37,8 +37,8 @@ std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeConta
   if (binaryOrErr) {
     auto &binary = *binaryOrErr.get().getBinary();
     return GetBitcodeContainers(binary);
-  } else if (auto e = binaryOrErr.takeError()) {
-    llvm::consumeError(std::move(e));
+  } else {
+    llvm::consumeError(binaryOrErr.takeError());
     throw EbcError("Could not create binary from " + _objectPath);
   }
 
@@ -59,8 +59,8 @@ std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeConta
           bitcodeContainers.push_back(std::move(container));
         }
         continue;
-      } else if (auto e = machOObject.takeError()) {
-        llvm::consumeError(std::move(e));
+      } else {
+        llvm::consumeError(machOObject.takeError());
       }
 
       Expected<std::unique_ptr<Archive>> archive = object.getAsArchive();
@@ -71,8 +71,8 @@ std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeConta
         std::copy_if(std::make_move_iterator(containers.begin()), std::make_move_iterator(containers.end()),
                      std::back_inserter(bitcodeContainers), [](const auto &uniquePtr) { return uniquePtr != nullptr; });
         continue;
-      } else if (auto e = archive.takeError()) {
-        llvm::consumeError(std::move(e));
+      } else {
+        llvm::consumeError(archive.takeError());
       }
 
       throw EbcError("Unrecognized MachO universal binary");
@@ -158,7 +158,7 @@ std::unique_ptr<BitcodeContainer> BitcodeRetriever::GetBitcodeContainerFromObjec
 std::unique_ptr<BitcodeContainer> BitcodeRetriever::GetBitcodeContainerFromMachO(
     const llvm::object::MachOObjectFile *objectFile) const {
   // For MachO return the correct arch tripple.
-  const auto arch = objectFile->getArchTriple(nullptr).getArchName();
+  const std::string arch = objectFile->getArchTriple(nullptr).getArchName();
   if (!processArch(arch)) {
     return {};
   }
@@ -231,8 +231,7 @@ std::vector<std::string> BitcodeRetriever::GetCommands(const llvm::object::Secti
 }
 
 bool BitcodeRetriever::processArch(std::string arch) const {
-  if (_arch.empty()) return true;
-  return _arch == arch;
+  return _arch.empty() ? true : (_arch == arch);
 }
 
 }  // namespace ebc

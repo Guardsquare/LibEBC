@@ -9,6 +9,8 @@
 #include <string>
 #include <vector>
 
+using namespace ebc;
+
 static constexpr int size = 4033;
 static constexpr auto data =
     "\x78\x61\x72\x21\x00\x1c\x00\x01\x00\x00\x00\x00\x00\x00\x02\x7c\x00\x00\x00\x00\x00\x00\x07\x4b\x00\x00\x00\x01"
@@ -158,9 +160,7 @@ static constexpr auto data =
     "\x00";
 
 TEST_CASE("Bitcode Archive Files", "[BitcodeArchive]") {
-  using ebc::EmbeddedBitcode;
-
-  auto bitcodeArchive = ebc::BitcodeArchive(data, size);
+  auto bitcodeArchive = BitcodeArchive(data, size);
   bitcodeArchive.GetBinaryMetadata().SetFileFormatName("Mach-O 64-bit x86-64");
 
   const std::vector<EmbeddedBitcode> expectedFiles = {
@@ -168,7 +168,7 @@ TEST_CASE("Bitcode Archive Files", "[BitcodeArchive]") {
   };
 
   auto actualFiles = bitcodeArchive.GetEmbeddedFiles();
-  if (ebc::util::xar::HasXar()) {
+  if (util::xar::HasXar()) {
     REQUIRE(expectedFiles.size() == 2);
   } else {
     REQUIRE(actualFiles.empty());
@@ -176,15 +176,13 @@ TEST_CASE("Bitcode Archive Files", "[BitcodeArchive]") {
 }
 
 TEST_CASE("Bitcode Archive Linker Flags", "[BitcodeArchive]") {
-  using ebc::EmbeddedBitcode;
-
-  auto bitcodeArchive = ebc::BitcodeArchive(data, size);
+  auto bitcodeArchive = BitcodeArchive(data, size);
   auto& bitcodeMetadata = bitcodeArchive.GetMetadata();
 
   const std::vector<std::string> expectedLinkOpts = {"-execute", "-macosx_version_min", "10.11.0",       "-e",
                                                      "_main",    "-executable_path",    "build/x86_64.o"};
 
-  if (ebc::util::xar::HasXar()) {
+  if (util::xar::HasXar()) {
     REQUIRE(bitcodeMetadata.GetLinkOptions() == expectedLinkOpts);
   } else {
     REQUIRE(bitcodeMetadata.GetLinkOptions().empty());
@@ -192,14 +190,12 @@ TEST_CASE("Bitcode Archive Linker Flags", "[BitcodeArchive]") {
 }
 
 TEST_CASE("Bitcode Archive Dylibs", "[BitcodeArchive]") {
-  using ebc::EmbeddedBitcode;
-
-  auto bitcodeArchive = ebc::BitcodeArchive(data, size);
+  auto bitcodeArchive = BitcodeArchive(data, size);
   auto& bitcodeMetadata = bitcodeArchive.GetMetadata();
 
   const std::vector<std::string> expectedDylibs = {"{SDKPATH}/usr/lib/libSystem.B.dylib"};
 
-  if (ebc::util::xar::HasXar()) {
+  if (util::xar::HasXar()) {
     REQUIRE(bitcodeMetadata.GetDylibs() == expectedDylibs);
   } else {
     REQUIRE(bitcodeMetadata.GetDylibs().empty());

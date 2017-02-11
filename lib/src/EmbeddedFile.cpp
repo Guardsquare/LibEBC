@@ -5,7 +5,7 @@
 
 namespace ebc {
 
-EmbeddedFile::EmbeddedFile(std::string name) : _name(std::move(name)), _type(EmbeddedFile::Type::Unknown) {}
+EmbeddedFile::EmbeddedFile(std::string name) : _name(std::move(name)), _type(EmbeddedFile::Type::File) {}
 EmbeddedFile::EmbeddedFile(std::string name, EmbeddedFile::Type type) : _name(std::move(name)), _type(type) {}
 
 std::string EmbeddedFile::GetName() const {

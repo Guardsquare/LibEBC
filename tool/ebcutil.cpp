@@ -2,6 +2,7 @@
 #include "ebc/BitcodeContainer.h"
 #include "ebc/BitcodeMetadata.h"
 #include "ebc/BitcodeRetriever.h"
+#include "ebc/EmbeddedBitcode.h"
 #include "ebc/EmbeddedFile.h"
 
 #include <tclap/CmdLine.h>
@@ -15,7 +16,29 @@ static constexpr auto VERSION = "@VERSION_MAJOR@.@VERSION_MINOR@ (@GIT_COMMIT_HA
 static constexpr int WIDTH = 12;
 static constexpr int WIDTH_NESTED = 14;
 
-static void printContainerInfo(const ebc::BitcodeContainer& bitcodeContainer) {
+static std::string filePrefix(const EmbeddedFile& file) {
+  switch (file.GetType()) {
+    case EmbeddedFile::Type::Bitcode: {
+      auto bitcodeFile = static_cast<const EmbeddedBitcode&>(file);
+      switch (bitcodeFile.GetBitcodeType()) {
+        case BitcodeType::BitcodeWrapper:
+          return "Wrapper:";
+        case BitcodeType::IR:
+          return "IR:";
+        default:
+          return "Bitcode:";
+      }
+    }
+    case EmbeddedFile::Type::Xar:
+      return "Xar:";
+    case EmbeddedFile::Type::MachO:
+      return "Mach-O:";
+    case EmbeddedFile::Type::File:
+      return "File:";
+  }
+}
+
+static void printContainerInfo(const BitcodeContainer& bitcodeContainer) {
   std::cout << bitcodeContainer.GetBinaryMetadata().GetFileFormatName() << std::endl;
   std::cout << std::setw(WIDTH) << "File name:"
             << " " << bitcodeContainer.GetBinaryMetadata().GetFileName() << std::endl;
@@ -25,7 +48,7 @@ static void printContainerInfo(const ebc::BitcodeContainer& bitcodeContainer) {
             << " " << bitcodeContainer.GetBinaryMetadata().GetUUID() << std::endl;
 }
 
-static void printArchiveInfo(const ebc::BitcodeArchive& bitcodeArchive) {
+static void printArchiveInfo(const BitcodeArchive& bitcodeArchive) {
   std::cout << std::setw(WIDTH) << "Dylibs:";
   for (const auto& dylib : bitcodeArchive.GetMetadata().GetDylibs()) {
     std::cout << " " << dylib;
@@ -39,26 +62,9 @@ static void printArchiveInfo(const ebc::BitcodeArchive& bitcodeArchive) {
   std::cout << std::endl;
 }
 
-static void printEmbeddedFiles(const ebc::BitcodeContainer& bitcodeContainer, bool extract) {
+static void printEmbeddedFiles(const BitcodeContainer& bitcodeContainer, bool extract) {
   for (auto& embeddedFile : bitcodeContainer.GetEmbeddedFiles()) {
-    std::string prefix;
-
-    switch (embeddedFile->GetType()) {
-      case EmbeddedFile::Type::Bitcode:
-        prefix = "Bitcode:";
-        break;
-      case EmbeddedFile::Type::Xar:
-        prefix = "Xar:";
-        break;
-      case EmbeddedFile::Type::MachO:
-        prefix = "MachO:";
-        break;
-      case EmbeddedFile::Type::Unknown:
-        prefix = "File:";
-        break;
-    }
-
-    std::cout << std::setw(WIDTH) << prefix << " " << embeddedFile->GetName() << std::endl;
+    std::cout << std::setw(WIDTH) << filePrefix(*embeddedFile) << " " << embeddedFile->GetName() << std::endl;
 
     if (!extract) {
       embeddedFile->Remove();
@@ -75,7 +81,7 @@ static void printEmbeddedFiles(const ebc::BitcodeContainer& bitcodeContainer, bo
   }
 }
 
-static void printDetailled(const ebc::BitcodeContainer& bitcodeContainer, bool extract) {
+static void printDetailled(const BitcodeContainer& bitcodeContainer, bool extract) {
   printContainerInfo(bitcodeContainer);
   if (bitcodeContainer.IsArchive()) {
     const auto& bitcodeArchive = static_cast<const BitcodeArchive&>(bitcodeContainer);
@@ -84,7 +90,7 @@ static void printDetailled(const ebc::BitcodeContainer& bitcodeContainer, bool e
   printEmbeddedFiles(bitcodeContainer, extract);
 }
 
-static void printSimple(const ebc::BitcodeContainer& bitcodeContainer, bool extract) {
+static void printSimple(const BitcodeContainer& bitcodeContainer, bool extract) {
   std::cout << bitcodeContainer.GetBinaryMetadata().GetFileName() << " ("
             << bitcodeContainer.GetBinaryMetadata().GetArch() << "): ";
 

@@ -6,6 +6,13 @@
 namespace ebc {
 class EmbeddedFile {
  public:
+  enum class Type {
+    Bitcode,
+    MachO,
+    File,
+    Xar,
+  };
+
   EmbeddedFile(std::string name);
   virtual ~EmbeddedFile() = default;
 
@@ -24,13 +31,6 @@ class EmbeddedFile {
 
   /// Remove the underlying file from the file system.
   void Remove() const;
-
-  enum class Type {
-    Bitcode,
-    MachO,
-    Unknown,
-    Xar,
-  };
 
   Type GetType() const;
 

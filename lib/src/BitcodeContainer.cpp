@@ -1,6 +1,8 @@
 #include "ebc/BitcodeContainer.h"
 
-#include "ebc/EmbeddedBitcode.h"
+#include "ebc/BitcodeType.h"
+#include "ebc/EmbeddedFile.h"
+#include "ebc/EmbeddedFileFactory.h"
 #include "ebc/util/Bitcode.h"
 #include "ebc/util/UUID.h"
 
@@ -70,9 +72,10 @@ const BinaryMetadata &BitcodeContainer::GetBinaryMetadata() const {
 }
 
 std::vector<std::unique_ptr<EmbeddedFile>> BitcodeContainer::GetEmbeddedFiles() const {
-  // Magic number is 4 bytes long. If less than four bytes are available there
-  // is no bitcode. Likely only a bitcode marker was embedded.
-  if (IsEmpty() || _size < 4) {
+  // Magic number + wrapper version is 8 bytes long. If less than 8 bytes are
+  // available there is no valid bitcode present. Likely only a bitcode marker
+  // was embedded.
+  if (IsEmpty() || _size < 8) {
     return {};
   }
 
@@ -86,9 +89,9 @@ std::vector<std::unique_ptr<EmbeddedFile>> BitcodeContainer::GetEmbeddedFiles() 
     auto fileName = _prefix + util::uuid::UuidToString(util::uuid::GenerateUUID());
     util::bitcode::WriteToFile(_data + begin, size, fileName);
 
-    auto bitcodeFile = std::unique_ptr<EmbeddedFile>(new EmbeddedBitcode(fileName));
-    bitcodeFile->SetCommands(_commands);
-    files.push_back(std::move(bitcodeFile));
+    auto embeddedFile = EmbeddedFileFactory::CreateEmbeddedFile(fileName);
+    embeddedFile->SetCommands(_commands);
+    files.push_back(std::move(embeddedFile));
   }
 
   return files;
@@ -96,8 +99,8 @@ std::vector<std::unique_ptr<EmbeddedFile>> BitcodeContainer::GetEmbeddedFiles() 
 
 std::vector<std::uint32_t> BitcodeContainer::GetEmbeddedFileOffsets() const {
   std::vector<std::uint32_t> offsets;
-  for (std::uint32_t i = 0; i < _size - 3; ++i) {
-    if (util::bitcode::IsBitcode(_data + i)) {
+  for (std::uint32_t i = 0; i <= (_size - 8); i++) {
+    if (util::bitcode::GetBitcodeType(*reinterpret_cast<std::uint64_t *>(_data + i)) != BitcodeType::Unknown) {
       offsets.push_back(i);
     }
   }
