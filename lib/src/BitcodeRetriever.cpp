@@ -183,6 +183,9 @@ class BitcodeRetriever::Impl {
         return childOrErr.takeError();
       }
       auto containers = GetBitcodeContainers(*(*childOrErr));
+      if (!containers) {
+        return containers.takeError();
+      }
       bitcodeContainers.reserve(bitcodeContainers.size() + containers->size());
       std::move(containers->begin(), containers->end(), std::back_inserter(bitcodeContainers));
     }
