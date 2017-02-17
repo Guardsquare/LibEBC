@@ -7,6 +7,7 @@
 #include "ebc/EmbeddedFileFactory.h"
 
 #include "ebc/util/Bitcode.h"
+#include "ebc/util/UUID.h"
 #include "ebc/util/Xar.h"
 
 #ifdef HAVE_LIBXAR
@@ -43,11 +44,8 @@ void BitcodeArchive::SetMetadata() noexcept {
   _metadata = std::make_unique<BitcodeMetadata>(GetMetadataXml());
 }
 
-std::string BitcodeArchive::WriteXarToFile(std::string fileName) const {
-  if (fileName.empty()) {
-    fileName = GetPrefix() + GetBinaryMetadata().GetFileName() + ".xar";
-  }
-
+std::string BitcodeArchive::WriteXarToFile() const {
+  const std::string fileName = GetPrefix() + util::uuid::UuidToString(util::uuid::GenerateUUID()) + ".xar";
   auto data = GetData();
   bitcode::WriteToFile(data.first, data.second, fileName);
   return fileName;
@@ -100,16 +98,16 @@ std::string BitcodeArchive::GetMetadataXml() const noexcept {
   }
 
   const std::string xarFile = WriteXarToFile();
-  const std::string metadataXmlFile = GetPrefix() + GetBinaryMetadata().GetFileFormatName() + "_metadata.xar";
+  const std::string xmlFile = GetPrefix() + util::uuid::UuidToString(util::uuid::GenerateUUID()) + ".xml";
 
-  if (xar::WriteTOC(xarFile, metadataXmlFile)) {
+  if (xar::WriteTOC(xarFile, xmlFile)) {
     // Read Metadata in memory.
-    std::ifstream t(metadataXmlFile);
+    std::ifstream t(xmlFile);
     std::string xml((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
 
     // Remove temporary files.
     std::remove(xarFile.c_str());
-    std::remove(metadataXmlFile.c_str());
+    std::remove(xmlFile.c_str());
 
     return xml;
   }
