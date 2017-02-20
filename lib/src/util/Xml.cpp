@@ -12,6 +12,7 @@ namespace util {
 namespace xml {
 
 std::string GetContent(xmlNode* node) {
+  if (node == nullptr) return {};
   auto content = reinterpret_cast<char*>(xmlNodeGetContent(node));
   auto contentStr = std::string(content);
   xmlFree(content);

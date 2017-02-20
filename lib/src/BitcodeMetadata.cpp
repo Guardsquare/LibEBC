@@ -25,6 +25,31 @@ const std::string& BitcodeMetadata::GetXml() const {
   return _xml;
 }
 
+std::string BitcodeMetadata::GetVersion() const {
+  auto node = util::xml::FindNodeWithName(_root, "version");
+  return util::xml::GetContent(node);
+}
+
+std::string BitcodeMetadata::GetArchitecture() const {
+  auto node = util::xml::FindNodeWithName(_root, "architecture");
+  return util::xml::GetContent(node);
+}
+
+std::string BitcodeMetadata::GetHideSymbols() const {
+  auto node = util::xml::FindNodeWithName(_root, "hide-symbols");
+  return util::xml::GetContent(node);
+}
+
+std::string BitcodeMetadata::GetPlatform() const {
+  auto node = util::xml::FindNodeWithName(_root, "platform");
+  return util::xml::GetContent(node);
+}
+
+std::string BitcodeMetadata::GetSdkVersion() const {
+  auto node = util::xml::FindNodeWithName(_root, "sdkversion");
+  return util::xml::GetContent(node);
+}
+
 std::vector<std::string> BitcodeMetadata::GetDylibs() const {
   auto node = util::xml::FindNodeWithName(_root, "dylibs");
   if (node != nullptr) {

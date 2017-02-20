@@ -22,6 +22,7 @@ static constexpr auto xar_xml =
     "  <version>1.0</version>"
     "  <architecture>x86_64</architecture>"
     "  <platform>MacOSX</platform>"
+    "  <hide-symbols>1</hide-symbols>"
     "  <sdkversion>10.11.0</sdkversion>"
     "  <dylibs>"
     "   <lib>{SDKPATH}/usr/lib/libSystem.B.dylib</lib>"
@@ -129,4 +130,29 @@ TEST_CASE("GetSwiftCommands", "[BitcodeMetadata]") {
   const BitcodeMetadata metadata(xar_xml);
   const std::vector<std::string> commands = {"-bogus", "-cmd"};
   REQUIRE(commands == metadata.GetSwiftCommands("2"));
+}
+
+TEST_CASE("GetVersion", "[BitcodeMetadata]") {
+  const BitcodeMetadata metadata(xar_xml);
+  REQUIRE("1.0" == metadata.GetVersion());
+}
+
+TEST_CASE("GetPlatform", "[BitcodeMetadata]") {
+  const BitcodeMetadata metadata(xar_xml);
+  REQUIRE("MacOSX" == metadata.GetPlatform());
+}
+
+TEST_CASE("GetArchitecture", "[BitcodeMetadata]") {
+  const BitcodeMetadata metadata(xar_xml);
+  REQUIRE("x86_64" == metadata.GetArchitecture());
+}
+
+TEST_CASE("GetSdkVersion", "[BitcodeMetadata]") {
+  const BitcodeMetadata metadata(xar_xml);
+  REQUIRE("10.11.0" == metadata.GetSdkVersion());
+}
+
+TEST_CASE("GetHideSymbols", "[BitcodeMetadata]") {
+  const BitcodeMetadata metadata(xar_xml);
+  REQUIRE("1" == metadata.GetHideSymbols());
 }

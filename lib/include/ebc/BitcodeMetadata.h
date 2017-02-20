@@ -23,6 +23,12 @@ class BitcodeMetadata {
   /// @return The XML data as a string.
   const std::string& GetXml() const;
 
+  std::string GetVersion() const;
+  std::string GetArchitecture() const;
+  std::string GetHideSymbols() const;
+  std::string GetPlatform() const;
+  std::string GetSdkVersion() const;
+
   /// Get dynamic libraries used for linking.
   ///
   /// @return A vector of strings with the name of the dylibs this binary was
