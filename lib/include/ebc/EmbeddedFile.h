@@ -13,6 +13,11 @@ class EmbeddedFile {
     Xar,
   };
 
+  enum class CommandSource {
+    Clang,
+    Swift,
+  };
+
   EmbeddedFile(std::string name);
   virtual ~EmbeddedFile() = default;
 
@@ -27,12 +32,14 @@ class EmbeddedFile {
   ///
   /// @param commands A vector of strings with the clang front-end
   ///                 commands.
-  void SetCommands(const std::vector<std::string>& commands);
+  void SetCommands(const std::vector<std::string>& commands, CommandSource source);
 
   /// Remove the underlying file from the file system.
   void Remove() const;
 
   Type GetType() const;
+
+  CommandSource GetCommandSource() const;
 
  protected:
   EmbeddedFile(std::string name, Type type);
@@ -41,6 +48,7 @@ class EmbeddedFile {
   std::string _name;
   Type _type;
   std::vector<std::string> _commands;
+  CommandSource _commandSource;
 };
 
 inline bool operator==(const EmbeddedFile& lhs, const EmbeddedFile& rhs) {

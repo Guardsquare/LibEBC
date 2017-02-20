@@ -70,11 +70,11 @@ std::vector<std::unique_ptr<EmbeddedFile>> BitcodeArchive::GetEmbeddedFiles() co
 
     // Add clang commands.
     auto clangCommands = _metadata->GetClangCommands(path);
-    embeddedFile->SetCommands(clangCommands);
+    embeddedFile->SetCommands(clangCommands, EmbeddedFile::CommandSource::Clang);
 
     // Add swift commands.
     auto swiftCommands = _metadata->GetSwiftCommands(path);
-    embeddedFile->SetCommands(swiftCommands);
+    embeddedFile->SetCommands(swiftCommands, EmbeddedFile::CommandSource::Swift);
 
     // Add to list of bitcode files.
     embeddedFiles.push_back(std::move(embeddedFile));

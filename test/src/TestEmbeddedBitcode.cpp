@@ -17,6 +17,7 @@ TEST_CASE("Bitcode File No  Commands", "[EmbeddedBitcode]") {
 TEST_CASE("Bitcode File Commands", "[EmbeddedBitcode]") {
   auto bitcodeFile = EmbeddedBitcode("Name");
   std::vector<std::string> commands = {"a", "b", "c"};
-  bitcodeFile.SetCommands(commands);
+  bitcodeFile.SetCommands(commands, EmbeddedFile::CommandSource::Clang);
   REQUIRE(commands == bitcodeFile.GetCommands());
+  REQUIRE(EmbeddedFile::CommandSource::Clang == bitcodeFile.GetCommandSource());
 }

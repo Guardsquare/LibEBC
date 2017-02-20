@@ -16,8 +16,11 @@ const std::vector<std::string>& EmbeddedFile::GetCommands() const {
   return _commands;
 }
 
-void EmbeddedFile::SetCommands(const std::vector<std::string>& commands) {
-  _commands = commands;
+void EmbeddedFile::SetCommands(const std::vector<std::string>& commands, CommandSource source) {
+  if (!commands.empty()) {
+    _commands = commands;
+    _commandSource = source;
+  }
 }
 
 EmbeddedFile::Type EmbeddedFile::GetType() const {
@@ -26,5 +29,9 @@ EmbeddedFile::Type EmbeddedFile::GetType() const {
 
 void EmbeddedFile::Remove() const {
   std::remove(_name.c_str());
+}
+
+EmbeddedFile::CommandSource EmbeddedFile::GetCommandSource() const {
+  return _commandSource;
 }
 }  // namespace ebc

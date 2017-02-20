@@ -90,7 +90,7 @@ std::vector<std::unique_ptr<EmbeddedFile>> BitcodeContainer::GetEmbeddedFiles() 
     util::bitcode::WriteToFile(_data + begin, size, fileName);
 
     auto embeddedFile = EmbeddedFileFactory::CreateEmbeddedFile(fileName);
-    embeddedFile->SetCommands(_commands);
+    embeddedFile->SetCommands(_commands, EmbeddedFile::CommandSource::Clang);
     files.push_back(std::move(embeddedFile));
   }
 
