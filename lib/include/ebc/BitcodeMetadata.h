@@ -35,6 +35,12 @@ class BitcodeMetadata {
   ///         linked against.
   std::vector<std::string> GetDylibs() const;
 
+  /// Get weak dynamic libraries used for linking.
+  ///
+  /// @return A vector of strings with the name of the dylibs this binary was
+  ///         linked against.
+  std::vector<std::string> GetWeakDylibs() const;
+
   /// Get options passed to linker.
   ///
   /// @return A list of strings with the options passed to the linker.

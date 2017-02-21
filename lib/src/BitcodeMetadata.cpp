@@ -55,7 +55,15 @@ std::vector<std::string> BitcodeMetadata::GetDylibs() const {
   if (node != nullptr) {
     return util::xml::GetTextFromNodesWithName(node->children, "lib");
   }
-  return std::vector<std::string>();
+  return {};
+}
+
+std::vector<std::string> BitcodeMetadata::GetWeakDylibs() const {
+  auto node = util::xml::FindNodeWithName(_root, "dylibs");
+  if (node != nullptr) {
+    return util::xml::GetTextFromNodesWithName(node->children, "weak");
+  }
+  return {};
 }
 
 std::vector<std::string> BitcodeMetadata::GetLinkOptions() const {
@@ -63,7 +71,7 @@ std::vector<std::string> BitcodeMetadata::GetLinkOptions() const {
   if (node != nullptr) {
     return util::xml::GetTextFromNodesWithName(node->children, "option");
   }
-  return std::vector<std::string>();
+  return {};
 }
 
 std::vector<std::string> BitcodeMetadata::GetCommands(std::string fileName, std::string nodeName) const {
@@ -74,7 +82,7 @@ std::vector<std::string> BitcodeMetadata::GetCommands(std::string fileName, std:
       return util::xml::GetTextFromNodesWithName(node->children, "cmd");
     }
   }
-  return std::vector<std::string>();
+  return {};
 }
 
 std::vector<std::string> BitcodeMetadata::GetClangCommands(std::string fileName) const {
