@@ -27,4 +27,4 @@ std::unique_ptr<EmbeddedFile> EmbeddedFileFactory::CreateEmbeddedFile(std::strin
 
   return std::make_unique<EmbeddedFile>(file);
 }
-}
+}  // namespace ebc

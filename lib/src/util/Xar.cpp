@@ -135,6 +135,6 @@ bool HasXar() {
   return false;
 #endif
 }
-}
-}
-}
+}  // namespace xar
+}  // namespace util
+}  // namespace ebc

@@ -23,6 +23,6 @@ std::array<std::uint8_t, 16> GenerateUUID() {
   std::copy(uuid, uuid + 16, data.begin());
   return data;
 }
-}
+}  // namespace uuid
 }  // namespace util
 }  // namespace ebc

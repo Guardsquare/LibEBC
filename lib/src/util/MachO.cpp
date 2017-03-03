@@ -35,6 +35,6 @@ bool IsMachOFile(std::string file) {
   input.read(buffer, 4);
   return IsMachO(*reinterpret_cast<std::uint32_t*>(buffer));
 }
-}
-}
-}
+}  // namespace macho
+}  // namespace util
+}  // namespace ebc
