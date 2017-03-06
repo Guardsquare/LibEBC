@@ -34,6 +34,7 @@ class InternalEbcError : public llvm::ErrorInfo<InternalEbcError> {
   static char ID;
 
   InternalEbcError(std::string msg) : _msg(std::move(msg)) {}
+  ~InternalEbcError(){};
 
   const std::string &getMessage() const {
     return _msg;
@@ -101,7 +102,7 @@ class BitcodeRetriever::Impl {
   ///
   /// @return True if the architecture matches the set architure or when no
   /// architecture is set. False otherwise.
-  bool processArch(std::string arch) const {
+  bool processArch(const std::string &arch) const {
     return _arch.empty() ? true : (_arch == arch);
   }
 
@@ -123,7 +124,10 @@ class BitcodeRetriever::Impl {
           if (!container) {
             return container.takeError();
           }
-          bitcodeContainers.push_back(std::move(container.get()));
+          // Check for nullptr for when we only consider one architecture.
+          if (container.get()) {
+            bitcodeContainers.push_back(std::move(*container));
+          }
           continue;
         } else {
           llvm::consumeError(machOObject.takeError());
@@ -152,13 +156,19 @@ class BitcodeRetriever::Impl {
       if (!container) {
         return container.takeError();
       }
-      bitcodeContainers.push_back(std::move(*container));
+      // Check for nullptr for when we only consider one architecture.
+      if (container.get()) {
+        bitcodeContainers.push_back(std::move(*container));
+      }
     } else if (const auto object = dyn_cast<ObjectFile>(&binary)) {
       auto container = GetBitcodeContainerFromObject(object);
       if (!container) {
         return container.takeError();
       }
-      bitcodeContainers.push_back(std::move(*container));
+      // Check for nullptr for when we only consider one architecture.
+      if (container.get()) {
+        bitcodeContainers.push_back(std::move(*container));
+      }
     } else if (const auto archive = dyn_cast<Archive>(&binary)) {
       // We can return early to prevent moving all containers in the vector.
       return GetBitcodeContainersFromArchive(*archive);
