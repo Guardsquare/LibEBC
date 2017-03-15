@@ -22,6 +22,7 @@ extern "C" {
 #include <iostream>
 #include <memory>
 #include <streambuf>
+#include <utility>
 
 using namespace ebc::util;
 
@@ -34,6 +35,22 @@ BitcodeArchive::BitcodeArchive(const char *data, std::uint32_t size)
 
 BitcodeArchive::BitcodeArchive(BitcodeArchive &&bitcodeArchive) noexcept : BitcodeContainer(std::move(bitcodeArchive)) {
   SetMetadata();
+}
+
+std::unique_ptr<BitcodeContainer> BitcodeArchive::BitcodeArchiveFromFile(std::string path) {
+  if (path.empty()) {
+    return nullptr;
+  }
+
+  std::ifstream input(path, std::ifstream::binary);
+
+  if (!input) {
+    std::cerr << "Unable to open " << path << std::endl;
+    return nullptr;
+  }
+
+  std::vector<char> buffer((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+  return std::unique_ptr<BitcodeContainer>(new BitcodeArchive(&buffer[0], buffer.size()));
 }
 
 bool BitcodeArchive::IsArchive() const {
@@ -64,7 +81,8 @@ std::vector<std::unique_ptr<EmbeddedFile>> BitcodeArchive::GetEmbeddedFiles() co
     std::string path = filePair.first;
     std::string file = filePair.second;
 
-    auto embeddedFile = EmbeddedFileFactory::CreateEmbeddedFile(file);
+    auto fileType = _metadata->GetFileType(path);
+    auto embeddedFile = EmbeddedFileFactory::CreateEmbeddedFile(file, fileType);
 
     if (!embeddedFile) continue;
 

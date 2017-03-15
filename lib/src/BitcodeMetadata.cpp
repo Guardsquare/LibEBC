@@ -92,4 +92,13 @@ std::vector<std::string> BitcodeMetadata::GetClangCommands(std::string fileName)
 std::vector<std::string> BitcodeMetadata::GetSwiftCommands(std::string fileName) const {
   return GetCommands(fileName, "swift");
 }
+
+std::string BitcodeMetadata::GetFileType(std::string fileName) const {
+  auto node = util::xml::FindNodeWithNameAndContent(_root, "name", fileName);
+  if (node != nullptr) {
+    return util::xml::GetContent(util::xml::FindNodeWithName(node, "file-type"));
+  }
+  return {};
+}
+
 }  // namespace ebc

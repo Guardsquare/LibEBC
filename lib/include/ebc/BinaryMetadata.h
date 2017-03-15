@@ -8,6 +8,7 @@ namespace ebc {
 /// Abstraction of the meta data linked to a binary object or archive.
 class BinaryMetadata {
  public:
+  BinaryMetadata();
   std::string GetFileFormatName() const;
   void SetFileFormatName(std::string fileFormatName);
 

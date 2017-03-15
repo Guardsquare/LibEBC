@@ -31,10 +31,12 @@ static std::string filePrefix(const EmbeddedFile& file) {
     }
     case EmbeddedFile::Type::Xar:
       return "Xar:";
-    case EmbeddedFile::Type::MachO:
-      return "Mach-O:";
+    case EmbeddedFile::Type::Object:
+      return "Object:";
     case EmbeddedFile::Type::File:
       return "File:";
+    case EmbeddedFile::Type::Exports:
+      return "Exports:";
   }
 }
 
