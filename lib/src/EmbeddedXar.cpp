@@ -1,30 +1,13 @@
 #include "ebc/EmbeddedXar.h"
 
 #include "ebc/BitcodeArchive.h"
-#include "ebc/BitcodeMetadata.h"
-
-#include <fstream>
-#include <iostream>
-#include <utility>
+#include "ebc/BitcodeContainer.h"
 
 namespace ebc {
 
-std::unique_ptr<BitcodeArchive> EmbeddedXar::GetAsBitcodeArchive() const {
-  const std::string file = GetName();
-
-  if (file.empty()) {
-    return nullptr;
-  }
-
-  std::ifstream input(file, std::ifstream::binary);
-
-  if (!input) {
-    std::cerr << "Unable to open " << file << std::endl;
-    return nullptr;
-  }
-
-  std::vector<char> buffer((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
-
-  return std::make_unique<BitcodeArchive>(&buffer[0], buffer.size());
+std::unique_ptr<BitcodeContainer> EmbeddedXar::GetAsBitcodeArchive() const {
+  auto bitcodeArchive = BitcodeArchive::BitcodeArchiveFromFile(GetName());
+  bitcodeArchive->GetBinaryMetadata().SetFileName(GetName());
+  return bitcodeArchive;
 }
 }  // namespace ebc

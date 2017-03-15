@@ -8,8 +8,9 @@ class EmbeddedFile {
  public:
   enum class Type {
     Bitcode,
-    MachO,
+    Exports,
     File,
+    Object,
     Xar,
   };
 

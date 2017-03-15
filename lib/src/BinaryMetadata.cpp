@@ -5,6 +5,8 @@
 #include <algorithm>
 
 namespace ebc {
+BinaryMetadata::BinaryMetadata()
+    : _fileFormatName(), _fileName(), _arch(), _uuid({{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}) {}
 
 std::string BinaryMetadata::GetFileFormatName() const {
   return _fileFormatName;

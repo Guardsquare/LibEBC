@@ -2,7 +2,10 @@
 
 #include "ebc/BitcodeArchive.h"
 #include "ebc/BitcodeContainer.h"
+#include "ebc/BitcodeMetadata.h"
 #include "ebc/EbcError.h"
+
+#include "ebc/util/Xar.h"
 
 #include "llvm/ADT/Triple.h"
 #include "llvm/Object/ELFObjectFile.h"
@@ -22,7 +25,7 @@ using namespace llvm::object;
 namespace ebc {
 
 /// Strip path from file name.
-static std::string StripFileName(std::string fileName) {
+static std::string GetFileName(std::string fileName) {
   auto pos = fileName.rfind('/');
   return pos == std::string::npos ? fileName : fileName.substr(pos + 1);
 }
@@ -83,7 +86,16 @@ class BitcodeRetriever::Impl {
   BitcodeContainers GetBitcodeContainers() {
     auto binaryOrErr = createBinary(_objectPath);
     if (!binaryOrErr) {
-      throw ToEbcError(binaryOrErr.takeError());
+      if (util::xar::IsXarFile(_objectPath)) {
+        llvm::consumeError(binaryOrErr.takeError());
+        auto bitcodeContainers = GetBitcodeContainersFromXar(_objectPath);
+        if (!bitcodeContainers) {
+          throw ToEbcError(bitcodeContainers.takeError());
+        }
+        return std::move(*bitcodeContainers);
+      } else {
+        throw ToEbcError(binaryOrErr.takeError());
+      }
     }
 
     auto bitcodeContainers = GetBitcodeContainers(*binaryOrErr->getBinary());
@@ -104,6 +116,17 @@ class BitcodeRetriever::Impl {
   /// architecture is set. False otherwise.
   bool processArch(const std::string &arch) const {
     return _arch.empty() ? true : (_arch == arch);
+  }
+
+  llvm::Expected<BitcodeContainers> GetBitcodeContainersFromXar(const std::string &xar) {
+    auto bitcodeArchive = BitcodeArchive::BitcodeArchiveFromFile(xar);
+    if (bitcodeArchive) {
+      bitcodeArchive->GetBinaryMetadata().SetFileName(GetFileName(xar));
+      auto bitcodeContainers = std::vector<std::unique_ptr<BitcodeContainer>>();
+      bitcodeContainers.push_back(std::move(bitcodeArchive));
+      return std::move(bitcodeContainers);
+    }
+    return llvm::make_error<InternalEbcError>("Could not create bitcode archive form Xar.");
   }
 
   /// Obtains all bitcode from an object. The method basically determines the
@@ -254,7 +277,7 @@ class BitcodeRetriever::Impl {
     bitcodeContainer->SetCommands(commands);
 
     // Set binary metadata
-    bitcodeContainer->GetBinaryMetadata().SetFileName(StripFileName(objectFile->getFileName()));
+    bitcodeContainer->GetBinaryMetadata().SetFileName(GetFileName(objectFile->getFileName()));
     bitcodeContainer->GetBinaryMetadata().SetFileFormatName(objectFile->getFileFormatName());
     bitcodeContainer->GetBinaryMetadata().SetArch(arch);
     bitcodeContainer->GetBinaryMetadata().SetUuid(objectFile->getUuid().data());
@@ -297,7 +320,7 @@ class BitcodeRetriever::Impl {
     bitcodeContainer->SetCommands(commands);
 
     // Set binary metadata
-    bitcodeContainer->GetBinaryMetadata().SetFileName(StripFileName(objectFile->getFileName()));
+    bitcodeContainer->GetBinaryMetadata().SetFileName(GetFileName(objectFile->getFileName()));
     bitcodeContainer->GetBinaryMetadata().SetFileFormatName(objectFile->getFileFormatName());
     bitcodeContainer->GetBinaryMetadata().SetArch(arch);
 

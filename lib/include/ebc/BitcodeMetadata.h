@@ -60,6 +60,13 @@ class BitcodeMetadata {
   /// @return The comands passed to the swift front end for the given file.
   std::vector<std::string> GetSwiftCommands(std::string fileName) const;
 
+  /// Get the file type for the given file.
+  ///
+  /// @param fileName The file.
+  ///
+  /// @return The file type of the given file.
+  std::string GetFileType(std::string fileName) const;
+
  private:
   std::vector<std::string> GetCommands(std::string fileName, std::string nodeName) const;
 
