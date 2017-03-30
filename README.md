@@ -96,10 +96,10 @@ Error: No bitcode section in nobitcode.o
 
 This project uses CMake as its build system. It has the following dependencies:
 
- - CMake 3.0
+ - CMake 3.0 or later.
  - LibXML2
- - LibXar (optional, but necessary to process Apple generated Mach-O's)
- - LLVM 3.9
+ - LibXar (optional, but required for Apple's embedded bitcode)
+ - LLVM 3.9 or LLVM 4.0
 
 ```shell
 $ git clone https://github.com/JDevlieghere/LibEBC.git && cd LibEBC
