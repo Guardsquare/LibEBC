@@ -211,6 +211,10 @@ class BitcodeRetriever::Impl {
     Error err = Error::success();
     auto bitcodeContainers = std::vector<std::unique_ptr<BitcodeContainer>>();
     for (const auto &child : archive.children(err)) {
+      if (err) {
+        return std::move(err);
+      }
+
       auto childOrErr = child.getAsBinary();
       if (!childOrErr) {
         return childOrErr.takeError();
@@ -221,10 +225,6 @@ class BitcodeRetriever::Impl {
       }
       bitcodeContainers.reserve(bitcodeContainers.size() + containers->size());
       std::move(containers->begin(), containers->end(), std::back_inserter(bitcodeContainers));
-    }
-
-    if (err) {
-      return std::move(err);
     }
 
     return std::move(bitcodeContainers);
