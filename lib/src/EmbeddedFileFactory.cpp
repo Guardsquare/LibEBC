@@ -21,6 +21,8 @@ static EmbeddedFile::Type GetTypeFromString(std::string fileType) {
     return EmbeddedFile::Type::Exports;
   } else if (fileType == "Bundle") {
     return EmbeddedFile::Type::Xar;
+  } else if (fileType == "LTO") {
+    return EmbeddedFile::Type::LTO;
   } else if (fileType == "Object") {
     return EmbeddedFile::Type::Object;
   }
@@ -51,6 +53,8 @@ std::unique_ptr<EmbeddedFile> EmbeddedFileFactory::CreateEmbeddedFile(std::strin
 
   const auto type = GetTypeFromString(std::move(fileType));
   switch (type) {
+    case EmbeddedFile::Type::LTO:
+      return std::unique_ptr<EmbeddedFile>(new EmbeddedBitcode(std::move(file), BitcodeType::LTO));
     case EmbeddedFile::Type::Bitcode: {
       BitcodeType bitcodeType = util::bitcode::GetBitcodeType(file);
       if (bitcodeType != BitcodeType::Unknown) {

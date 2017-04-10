@@ -10,6 +10,7 @@ class EmbeddedFile {
     Bitcode,
     Exports,
     File,
+    LTO,
     Object,
     Xar,
   };

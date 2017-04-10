@@ -25,12 +25,16 @@ static std::string filePrefix(const EmbeddedFile& file) {
           return "Wrapper:";
         case BitcodeType::IR:
           return "IR:";
+        case BitcodeType::LTO:
+          return "LTO:";
         default:
           return "Bitcode:";
       }
     }
     case EmbeddedFile::Type::Xar:
       return "Xar:";
+    case EmbeddedFile::Type::LTO:
+      return "LTO:";
     case EmbeddedFile::Type::Object:
       return "Object:";
     case EmbeddedFile::Type::File:
