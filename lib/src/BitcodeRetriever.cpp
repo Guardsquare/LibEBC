@@ -37,23 +37,27 @@ class InternalEbcError : public llvm::ErrorInfo<InternalEbcError> {
   static char ID;
 
   InternalEbcError(std::string msg) : _msg(std::move(msg)) {}
-  ~InternalEbcError(){};
+  ~InternalEbcError() {}
 
   const std::string &getMessage() const {
     return _msg;
   }
 
-  std::error_code convertToErrorCode() const override {
-    llvm_unreachable("Not implemented");
-  }
+  std::error_code convertToErrorCode() const override;
 
-  void log(llvm::raw_ostream &OS) const override {
-    OS << _msg;
-  }
+  void log(llvm::raw_ostream &OS) const override;
 
  private:
   std::string _msg;
 };
+
+std::error_code InternalEbcError::convertToErrorCode() const {
+  llvm_unreachable("Not implemented");
+}
+
+void InternalEbcError::log(llvm::raw_ostream &OS) const {
+  OS << _msg;
+}
 
 char InternalEbcError::ID = 0;
 
@@ -332,12 +336,11 @@ class BitcodeRetriever::Impl {
   /// @param section The section from which the data should be obtained.
   ///
   /// @return A pair with the data and the size of the data.
-  static std::pair<const char *, std::uint32_t> GetSectionData(const llvm::object::SectionRef &section) {
+  static std::pair<const char *, std::size_t> GetSectionData(const llvm::object::SectionRef &section) {
     StringRef bytesStr;
     section.getContents(bytesStr);
     const char *sect = reinterpret_cast<const char *>(bytesStr.data());
-    uint32_t sect_size = bytesStr.size();
-    return std::make_pair(sect, sect_size);
+    return {sect, bytesStr.size()};
   }
 
   /// Obtains compiler commands from a section. It automatically parses the

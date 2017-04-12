@@ -29,7 +29,7 @@ BitcodeType GetBitcodeType(std::string file);
 /// @param data Bitcode binary data.
 /// @param size Bitcode binary data size.
 /// @param fileName The desired filename for the bitcode file.
-void WriteToFile(const char *data, std::uint32_t size, std::string file);
+void WriteToFile(const char *data, std::size_t size, std::string file);
 }
 }
 }

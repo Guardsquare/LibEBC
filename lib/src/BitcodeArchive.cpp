@@ -28,8 +28,7 @@ using namespace ebc::util;
 
 namespace ebc {
 
-BitcodeArchive::BitcodeArchive(const char *data, std::uint32_t size)
-    : BitcodeContainer(data, size), _metadata(nullptr) {
+BitcodeArchive::BitcodeArchive(const char *data, std::size_t size) : BitcodeContainer(data, size), _metadata(nullptr) {
   SetMetadata();
 }
 

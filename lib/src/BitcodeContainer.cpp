@@ -14,7 +14,7 @@
 
 namespace ebc {
 
-BitcodeContainer::BitcodeContainer(const char *data, std::uint32_t size)
+BitcodeContainer::BitcodeContainer(const char *data, std::size_t size)
     : _data(nullptr), _size(size), _commands(), _prefix() {
   SetData(data, size);
 }
@@ -52,14 +52,14 @@ void BitcodeContainer::SetCommands(const std::vector<std::string> &commands) {
   _commands = commands;
 }
 
-void BitcodeContainer::SetData(const char *data, std::uint32_t size) noexcept {
+void BitcodeContainer::SetData(const char *data, std::size_t size) noexcept {
   if (size > 0) {
     _data = new char[size];
     std::copy(data, data + size, _data);
   }
 }
 
-std::pair<const char *, std::uint32_t> BitcodeContainer::GetData() const {
+std::pair<const char *, std::size_t> BitcodeContainer::GetData() const {
   return std::make_pair(_data, _size);
 }
 
@@ -81,10 +81,10 @@ std::vector<std::unique_ptr<EmbeddedFile>> BitcodeContainer::GetEmbeddedFiles() 
 
   std::vector<std::unique_ptr<EmbeddedFile>> files;
   auto offsets = GetEmbeddedFileOffsets();
-  for (std::uint32_t i = 0; i < offsets.size() - 1; ++i) {
-    auto begin = offsets[i];
-    auto end = offsets[i + 1];
-    auto size = end - begin;
+  for (std::size_t i = 0; i < offsets.size() - 1; ++i) {
+    std::size_t begin = offsets[i];
+    std::size_t end = offsets[i + 1];
+    std::size_t size = end - begin;
 
     auto fileName = _prefix + util::uuid::UuidToString(util::uuid::GenerateUUID());
     util::bitcode::WriteToFile(_data + begin, size, fileName);
@@ -97,9 +97,9 @@ std::vector<std::unique_ptr<EmbeddedFile>> BitcodeContainer::GetEmbeddedFiles() 
   return files;
 }
 
-std::vector<std::uint32_t> BitcodeContainer::GetEmbeddedFileOffsets() const {
-  std::vector<std::uint32_t> offsets;
-  for (std::uint32_t i = 0; i <= (_size - 8); i++) {
+std::vector<std::size_t> BitcodeContainer::GetEmbeddedFileOffsets() const {
+  std::vector<std::size_t> offsets;
+  for (std::size_t i = 0; i <= (_size - 8); i++) {
     if (util::bitcode::GetBitcodeType(*reinterpret_cast<std::uint64_t *>(_data + i)) != BitcodeType::Unknown) {
       offsets.push_back(i);
     }

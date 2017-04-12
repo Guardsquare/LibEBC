@@ -12,7 +12,7 @@ namespace ebc {
 class EmbeddedFile;
 class BitcodeContainer {
  public:
-  BitcodeContainer(const char* data, std::uint32_t size);
+  BitcodeContainer(const char* data, std::size_t size);
 
   BitcodeContainer(BitcodeContainer&& bitcodeArchive) noexcept;
 
@@ -59,14 +59,14 @@ class BitcodeContainer {
   void SetPrefix(std::string prefix);
 
  protected:
-  void SetData(const char* data, std::uint32_t size) noexcept;
-  std::pair<const char*, std::uint32_t> GetData() const;
+  void SetData(const char* data, std::size_t size) noexcept;
+  std::pair<const char*, std::size_t> GetData() const;
 
  private:
-  std::vector<std::uint32_t> GetEmbeddedFileOffsets() const;
+  std::vector<std::size_t> GetEmbeddedFileOffsets() const;
 
   char* _data;
-  std::uint32_t _size;
+  std::size_t _size;
 
   std::vector<std::string> _commands;
   BinaryMetadata _binaryMetadata;

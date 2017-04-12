@@ -18,7 +18,7 @@ class BitcodeMetadata;
 /// files. Additional metadata is part of the archive's table of content.
 class BitcodeArchive : public BitcodeContainer {
  public:
-  BitcodeArchive(const char* data, std::uint32_t size);
+  BitcodeArchive(const char* data, std::size_t size);
 
   BitcodeArchive(BitcodeArchive&& bitcodeArchive) noexcept;
 

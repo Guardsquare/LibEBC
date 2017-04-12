@@ -38,7 +38,7 @@ BitcodeType GetBitcodeType(std::string file) {
   return GetBitcodeType(*reinterpret_cast<std::uint64_t *>(buffer));
 }
 
-void WriteToFile(const char *data, std::uint32_t size, std::string file) {
+void WriteToFile(const char *data, std::size_t size, std::string file) {
   std::ofstream output(file, std::ofstream::binary);
 
   if (!output) {
@@ -46,7 +46,7 @@ void WriteToFile(const char *data, std::uint32_t size, std::string file) {
     return;
   }
 
-  output.write(data, size);
+  output.write(data, static_cast<std::streamsize>(size));
   output.close();
 }
 
