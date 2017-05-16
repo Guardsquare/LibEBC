@@ -231,6 +231,12 @@ class BitcodeRetriever::Impl {
       std::move(containers->begin(), containers->end(), std::back_inserter(bitcodeContainers));
     }
 
+    // Don't forget to check error one last time, in case there were no
+    // children and body of the for loop was never executed.
+    if (err) {
+      return std::move(err);
+    }
+
     return std::move(bitcodeContainers);
   }
 
