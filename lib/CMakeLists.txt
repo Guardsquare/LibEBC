@@ -47,6 +47,8 @@ configure_file (
 # UUID
 if(UNIX AND NOT APPLE)
   set(UUID_LIBRARY "uuid")
+else()
+  set(ICONV_LIBRARY "iconv")
 endif()
 
 # LibEBC
@@ -58,6 +60,7 @@ file(GLOB_RECURSE SOURCE_FILES ${SOURCE_DIR}/*.cpp)
 add_library(ebc ${SOURCE_FILES})
 target_link_libraries(ebc
   ${UUID_LIBRARY}
+  ${ICONV_LIBRARY}
   ${XAR_LIBRARY}
   ${LLVM_LINK_LIBRARIES}
   ${LIBXML2_LIBRARIES}
