@@ -78,8 +78,8 @@ class BitcodeRetriever::Impl {
   /// Set the architecture for which to retrieve bitcode. This is relevant to
   /// 'fat' object files containing multiple architectures. If no architecture
   /// is set, bitcode is retrieved for all present architectures.
-  void SetArch(std::string arch) {
-    _arch = std::move(arch);
+  void SetArchs(std::vector<std::string> archs) {
+    _archs = std::move(archs);
   }
 
   /// Perform the actual bitcode retrieval. Depending on the type of the object
@@ -119,7 +119,7 @@ class BitcodeRetriever::Impl {
   /// @return True if the architecture matches the set architure or when no
   /// architecture is set. False otherwise.
   bool processArch(const std::string &arch) const {
-    return _arch.empty() ? true : (_arch == arch);
+    return _archs.empty() ? true : std::find(_archs.cbegin(), _archs.cend(), arch) != _archs.cend();
   }
 
   llvm::Expected<BitcodeContainers> GetBitcodeContainersFromXar(const std::string &xar) {
@@ -373,14 +373,14 @@ class BitcodeRetriever::Impl {
   }
 
   std::string _objectPath;
-  std::string _arch;
+  std::vector<std::string> _archs;
 };
 
 BitcodeRetriever::BitcodeRetriever(std::string objectPath) : _impl(std::make_unique<Impl>(std::move(objectPath))) {}
 BitcodeRetriever::~BitcodeRetriever() = default;
 
-void BitcodeRetriever::SetArch(std::string arch) {
-  _impl->SetArch(std::move(arch));
+void BitcodeRetriever::SetArchs(std::vector<std::string> archs) {
+  _impl->SetArchs(std::move(archs));
 }
 
 std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeContainers() {

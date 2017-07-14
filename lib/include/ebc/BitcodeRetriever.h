@@ -16,12 +16,12 @@ class BitcodeRetriever {
   BitcodeRetriever(std::string objectPath);
   ~BitcodeRetriever();
 
-  /// Set the architecture for which to retrieve bitcode. This is relevant to
+  /// Set the architectures for which to retrieve bitcode. This is relevant to
   /// 'fat' object files containing multiple architectures. If no architecture
   /// is set, bitcode is retrieved for all present architectures.
   ///
   /// @param arch The architecture.
-  void SetArch(std::string arch);
+  void SetArchs(std::vector<std::string> archs);
 
   /// Perform the actual bitcode retrieval. Depending on the type of the object
   /// file the resulting list contains plain bitcode containers or bitcode

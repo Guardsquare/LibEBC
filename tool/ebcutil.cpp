@@ -141,12 +141,10 @@ int main(int argc, char* argv[]) {
     BitcodeRetriever bitcodeRetriever(fileArg.getValue());
 
     if (archArg.isSet()) {
-      bitcodeRetriever.SetArch(archArg.getValue());
+      bitcodeRetriever.SetArchs({archArg.getValue()});
     }
 
     auto bitcodeContainers = bitcodeRetriever.GetBitcodeContainers();
-    if (bitcodeContainers.empty()) {
-    }
     for (auto& bitcodeContainer : bitcodeContainers) {
       if (prefixArg.isSet()) {
         bitcodeContainer->SetPrefix(prefixArg.getValue());
