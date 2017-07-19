@@ -71,38 +71,20 @@ static EbcError ToEbcError(llvm::Error &&e) {
 
 class BitcodeRetriever::Impl {
  public:
-  typedef std::vector<std::unique_ptr<BitcodeContainer>> BitcodeContainers;
-
   Impl(std::string objectPath) : _objectPath(std::move(objectPath)) {}
-
-  /// Set the architecture for which to retrieve bitcode. This is relevant to
-  /// 'fat' object files containing multiple architectures. If no architecture
-  /// is set, bitcode is retrieved for all present architectures.
-  void SetArchs(std::vector<std::string> archs) {
-    _archs = std::move(archs);
-  }
 
   /// Perform the actual bitcode retrieval. Depending on the type of the object
   /// file the resulting list contains plain bitcode containers or bitcode
   /// archives.
   ///
   /// @return A list of bitcode containers.
-  BitcodeContainers GetBitcodeContainers() {
+  std::vector<BitcodeInfo> GetBitcodeInfo() {
     auto binaryOrErr = createBinary(_objectPath);
     if (!binaryOrErr) {
-      if (util::xar::IsXarFile(_objectPath)) {
-        llvm::consumeError(binaryOrErr.takeError());
-        auto bitcodeContainers = GetBitcodeContainersFromXar(_objectPath);
-        if (!bitcodeContainers) {
-          throw ToEbcError(bitcodeContainers.takeError());
-        }
-        return std::move(*bitcodeContainers);
-      } else {
-        throw ToEbcError(binaryOrErr.takeError());
-      }
+      throw ToEbcError(binaryOrErr.takeError());
     }
 
-    auto bitcodeContainers = GetBitcodeContainers(*binaryOrErr->getBinary());
+    auto bitcodeContainers = GetBitcodeInfo(*binaryOrErr->getBinary());
     if (!bitcodeContainers) {
       throw ToEbcError(bitcodeContainers.takeError());
     }
@@ -111,36 +93,14 @@ class BitcodeRetriever::Impl {
   }
 
  private:
-  /// Helper method for determining whether the given architecture should be
-  /// handled.
-  ///
-  /// @param arch The architecture.
-  ///
-  /// @return True if the architecture matches the set architure or when no
-  /// architecture is set. False otherwise.
-  bool processArch(const std::string &arch) const {
-    return _archs.empty() ? true : std::find(_archs.cbegin(), _archs.cend(), arch) != _archs.cend();
-  }
-
-  llvm::Expected<BitcodeContainers> GetBitcodeContainersFromXar(const std::string &xar) {
-    auto bitcodeArchive = BitcodeArchive::BitcodeArchiveFromFile(xar);
-    if (bitcodeArchive) {
-      bitcodeArchive->GetBinaryMetadata().SetFileName(GetFileName(xar));
-      auto bitcodeContainers = std::vector<std::unique_ptr<BitcodeContainer>>();
-      bitcodeContainers.push_back(std::move(bitcodeArchive));
-      return std::move(bitcodeContainers);
-    }
-    return llvm::make_error<InternalEbcError>("Could not create bitcode archive form Xar.");
-  }
-
   /// Obtains all bitcode from an object. The method basically determines the
   /// kind of object and dispatches the actual work to the specialized method.
   ///
   /// @param binary The binary object.
   ///
   /// @return A list of bitcode containers.
-  llvm::Expected<BitcodeContainers> GetBitcodeContainers(const llvm::object::Binary &binary) const {
-    auto bitcodeContainers = std::vector<std::unique_ptr<BitcodeContainer>>();
+  llvm::Expected<std::vector<BitcodeInfo>> GetBitcodeInfo(const llvm::object::Binary &binary) const {
+    auto bitcodeContainers = std::vector<BitcodeInfo>();
 
     if (const auto *universalBinary = dyn_cast<MachOUniversalBinary>(&binary)) {
       // A fat binary consists either of Mach-O objects or static library (ar)
@@ -150,16 +110,13 @@ class BitcodeRetriever::Impl {
         if (!machOObject) {
           llvm::consumeError(machOObject.takeError());
         } else {
-          auto container = GetBitcodeContainerFromMachO(machOObject->get());
+          auto container = GetBitcodeInfoFromMachO(machOObject->get());
 
           if (!container) {
             return container.takeError();
           }
 
-          // Check for nullptr for when we only consider one architecture.
-          if (container.get()) {
-            bitcodeContainers.push_back(std::move(*container));
-          }
+          bitcodeContainers.push_back(std::move(*container));
           continue;
         }
 
@@ -167,7 +124,7 @@ class BitcodeRetriever::Impl {
         if (!archive) {
           llvm::consumeError(archive.takeError());
         } else {
-          auto containers = GetBitcodeContainersFromArchive(*archive->get());
+          auto containers = GetBitcodeInfoFromArchive(*archive->get());
 
           if (!containers) {
             return containers.takeError();
@@ -176,35 +133,28 @@ class BitcodeRetriever::Impl {
           // We have to move all valid containers so we can move on to the next
           // architecture.
           bitcodeContainers.reserve(bitcodeContainers.size() + containers->size());
-          std::copy_if(std::make_move_iterator(containers->begin()), std::make_move_iterator(containers->end()),
-                       std::back_inserter(bitcodeContainers),
-                       [](const auto &uniquePtr) { return uniquePtr != nullptr; });
+          std::copy(std::make_move_iterator(containers->begin()), std::make_move_iterator(containers->end()),
+                    std::back_inserter(bitcodeContainers));
           continue;
         }
       }
     } else if (const auto machOObjectFile = dyn_cast<MachOObjectFile>(&binary)) {
-      auto container = GetBitcodeContainerFromMachO(machOObjectFile);
+      auto container = GetBitcodeInfoFromMachO(machOObjectFile);
       if (!container) {
         return container.takeError();
       }
 
-      // Check for nullptr for when we only consider one architecture.
-      if (container.get()) {
-        bitcodeContainers.push_back(std::move(*container));
-      }
+      bitcodeContainers.push_back(std::move(*container));
     } else if (const auto object = dyn_cast<ObjectFile>(&binary)) {
-      auto container = GetBitcodeContainerFromObject(object);
+      auto container = GetBitcodeInfoFromObject(object);
       if (!container) {
         return container.takeError();
       }
 
-      // Check for nullptr for when we only consider one architecture.
-      if (container.get()) {
-        bitcodeContainers.push_back(std::move(*container));
-      }
+      bitcodeContainers.push_back(std::move(*container));
     } else if (const auto archive = dyn_cast<Archive>(&binary)) {
       // We can return early to prevent moving all containers in the vector.
-      return GetBitcodeContainersFromArchive(*archive);
+      return GetBitcodeInfoFromArchive(*archive);
     } else {
       return llvm::make_error<InternalEbcError>("Unsupported binary");
     }
@@ -217,9 +167,9 @@ class BitcodeRetriever::Impl {
   /// @param archive The object archive.
   ///
   /// @return A list of bitcode containers.
-  llvm::Expected<BitcodeContainers> GetBitcodeContainersFromArchive(const llvm::object::Archive &archive) const {
+  llvm::Expected<std::vector<BitcodeInfo>> GetBitcodeInfoFromArchive(const llvm::object::Archive &archive) const {
     Error err = Error::success();
-    auto bitcodeContainers = std::vector<std::unique_ptr<BitcodeContainer>>();
+    auto bitcodeContainers = std::vector<BitcodeInfo>();
     // Archives consist of object files.
     for (const auto &child : archive.children(err)) {
       if (err) {
@@ -230,10 +180,12 @@ class BitcodeRetriever::Impl {
       if (!childOrErr) {
         return childOrErr.takeError();
       }
-      auto containers = GetBitcodeContainers(*(*childOrErr));
+
+      auto containers = GetBitcodeInfo(*(*childOrErr));
       if (!containers) {
         return containers.takeError();
       }
+
       bitcodeContainers.reserve(bitcodeContainers.size() + containers->size());
       std::move(containers->begin(), containers->end(), std::back_inserter(bitcodeContainers));
     }
@@ -252,16 +204,11 @@ class BitcodeRetriever::Impl {
   /// @param objectFile The Mach O object file.
   ///
   /// @return The bitcode container.
-  llvm::Expected<std::unique_ptr<BitcodeContainer>> GetBitcodeContainerFromMachO(
-      const llvm::object::MachOObjectFile *objectFile) const {
+  llvm::Expected<BitcodeInfo> GetBitcodeInfoFromMachO(const llvm::object::MachOObjectFile *objectFile) const {
     // For MachO return the correct arch tripple.
     const std::string arch = objectFile->getArchTriple(nullptr).getArchName();
 
-    if (!processArch(arch)) {
-      return nullptr;
-    }
-
-    auto bitcodeContainer = GetBitcodeContainer(objectFile->section_begin(), objectFile->section_end());
+    auto bitcodeContainer = GetBitcodeInfo(objectFile->section_begin(), objectFile->section_end());
 
     if (bitcodeContainer != nullptr) {
       // Set binary metadata
@@ -271,7 +218,7 @@ class BitcodeRetriever::Impl {
       bitcodeContainer->GetBinaryMetadata().SetUuid(objectFile->getUuid().data());
     }
 
-    return std::move(bitcodeContainer);
+    return BitcodeInfo(arch, std::move(bitcodeContainer));
   }
 
   /// Reads bitcode from a plain object file.
@@ -279,14 +226,10 @@ class BitcodeRetriever::Impl {
   /// @param objectFile The Mach O object file.
   ///
   /// @return The bitcode container.
-  llvm::Expected<std::unique_ptr<BitcodeContainer>> GetBitcodeContainerFromObject(
-      const llvm::object::ObjectFile *objectFile) const {
+  llvm::Expected<BitcodeInfo> GetBitcodeInfoFromObject(const llvm::object::ObjectFile *objectFile) const {
     const auto arch = llvm::Triple::getArchTypeName(static_cast<Triple::ArchType>(objectFile->getArch()));
-    if (!processArch(arch)) {
-      return nullptr;
-    }
 
-    auto bitcodeContainer = GetBitcodeContainer(objectFile->section_begin(), objectFile->section_end());
+    auto bitcodeContainer = GetBitcodeInfo(objectFile->section_begin(), objectFile->section_end());
 
     if (bitcodeContainer != nullptr) {
       // Set binary metadata
@@ -295,7 +238,7 @@ class BitcodeRetriever::Impl {
       bitcodeContainer->GetBinaryMetadata().SetArch(arch);
     }
 
-    return std::move(bitcodeContainer);
+    return BitcodeInfo(arch, std::move(bitcodeContainer));
   }
 
   /// Obtains data from a section.
@@ -333,7 +276,7 @@ class BitcodeRetriever::Impl {
     return cmds;
   }
 
-  static std::unique_ptr<BitcodeContainer> GetBitcodeContainer(section_iterator begin, section_iterator end) {
+  static std::unique_ptr<BitcodeContainer> GetBitcodeInfo(section_iterator begin, section_iterator end) {
     std::unique_ptr<BitcodeContainer> bitcodeContainer;
     std::vector<std::string> commands;
 
@@ -359,18 +302,13 @@ class BitcodeRetriever::Impl {
   }
 
   std::string _objectPath;
-  std::vector<std::string> _archs;
 };
 
 BitcodeRetriever::BitcodeRetriever(std::string objectPath) : _impl(std::make_unique<Impl>(std::move(objectPath))) {}
 BitcodeRetriever::~BitcodeRetriever() = default;
 
-void BitcodeRetriever::SetArchs(std::vector<std::string> archs) {
-  _impl->SetArchs(std::move(archs));
-}
-
-std::vector<std::unique_ptr<BitcodeContainer>> BitcodeRetriever::GetBitcodeContainers() {
-  return _impl->GetBitcodeContainers();
+std::vector<BitcodeRetriever::BitcodeInfo> BitcodeRetriever::GetBitcodeInfo() {
+  return _impl->GetBitcodeInfo();
 }
 
 }  // namespace ebc

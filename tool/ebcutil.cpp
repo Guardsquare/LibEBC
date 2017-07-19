@@ -140,26 +140,24 @@ int main(int argc, char* argv[]) {
 
     BitcodeRetriever bitcodeRetriever(fileArg.getValue());
 
-    if (archArg.isSet()) {
-      bitcodeRetriever.SetArchs({archArg.getValue()});
-    }
+    for (auto& bitcodeInfo : bitcodeRetriever.GetBitcodeInfo()) {
+      if (archArg.isSet() && archArg.getValue() != bitcodeInfo.arch) {
+        continue;
+      }
 
-    auto bitcodeContainers = bitcodeRetriever.GetBitcodeContainers();
+      if (!bitcodeInfo.bitcodeContainer) {
+        std::cout << "No bitcode for architecture '" << bitcodeInfo.arch << "'" << std::endl;
+        continue;
+      }
 
-    if (bitcodeContainers.empty()) {
-      std::cerr << rang::fg::red << "Error: " << rang::fg::reset << "No bitcode in " << fileArg.getValue() << std::endl;
-      return EXIT_FAILURE;
-    }
-
-    for (auto& bitcodeContainer : bitcodeContainers) {
       if (prefixArg.isSet()) {
-        bitcodeContainer->SetPrefix(prefixArg.getValue());
+        bitcodeInfo.bitcodeContainer->SetPrefix(prefixArg.getValue());
       }
 
       if (simpleArg.getValue()) {
-        printSimple(*bitcodeContainer, extract);
+        printSimple(*bitcodeInfo.bitcodeContainer, extract);
       } else {
-        printDetailled(*bitcodeContainer, extract);
+        printDetailled(*bitcodeInfo.bitcodeContainer, extract);
       }
     }
   } catch (TCLAP::ArgException& e) {

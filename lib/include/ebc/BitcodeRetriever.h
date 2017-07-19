@@ -10,25 +10,25 @@ class BitcodeContainer;
 /// Retrieves bitcode form an object file.
 class BitcodeRetriever {
  public:
+  struct BitcodeInfo {
+    std::string arch;
+    std::unique_ptr<BitcodeContainer> bitcodeContainer;
+    BitcodeInfo(std::string arch, std::unique_ptr<BitcodeContainer> bitcodeContainer)
+        : arch(std::move(arch)), bitcodeContainer(std::move(bitcodeContainer)) {}
+  };
+
   /// Creates an instance of the bitcode retriever for the given object file.
   ///
   /// @param objectPath The file from which to retrieve bitcode.
   BitcodeRetriever(std::string objectPath);
   ~BitcodeRetriever();
 
-  /// Set the architectures for which to retrieve bitcode. This is relevant to
-  /// 'fat' object files containing multiple architectures. If no architecture
-  /// is set, bitcode is retrieved for all present architectures.
-  ///
-  /// @param arch The architecture.
-  void SetArchs(std::vector<std::string> archs);
-
   /// Perform the actual bitcode retrieval. Depending on the type of the object
   /// file the resulting list contains plain bitcode containers or bitcode
   /// archives.
   ///
   /// @return A list of bitcode containers.
-  std::vector<std::unique_ptr<BitcodeContainer>> GetBitcodeContainers();
+  std::vector<BitcodeInfo> GetBitcodeInfo();
 
  private:
   class Impl;
