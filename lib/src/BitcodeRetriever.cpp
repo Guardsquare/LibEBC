@@ -143,26 +143,32 @@ class BitcodeRetriever::Impl {
     auto bitcodeContainers = std::vector<std::unique_ptr<BitcodeContainer>>();
 
     if (const auto *universalBinary = dyn_cast<MachOUniversalBinary>(&binary)) {
-      // Iterate over all objects (i.e. architectures):
+      // A fat binary consists either of Mach-O objects or static library (ar)
+      // archives for different architectures.
       for (auto object : universalBinary->objects()) {
         Expected<std::unique_ptr<MachOObjectFile>> machOObject = object.getAsObjectFile();
-        if (machOObject) {
+        if (!machOObject) {
+          llvm::consumeError(machOObject.takeError());
+        } else {
           auto container = GetBitcodeContainerFromMachO(machOObject->get());
+
           if (!container) {
             return container.takeError();
           }
+
           // Check for nullptr for when we only consider one architecture.
           if (container.get()) {
             bitcodeContainers.push_back(std::move(*container));
           }
           continue;
-        } else {
-          llvm::consumeError(machOObject.takeError());
         }
 
         Expected<std::unique_ptr<Archive>> archive = object.getAsArchive();
-        if (archive) {
+        if (!archive) {
+          llvm::consumeError(archive.takeError());
+        } else {
           auto containers = GetBitcodeContainersFromArchive(*archive->get());
+
           if (!containers) {
             return containers.takeError();
           }
@@ -174,8 +180,6 @@ class BitcodeRetriever::Impl {
                        std::back_inserter(bitcodeContainers),
                        [](const auto &uniquePtr) { return uniquePtr != nullptr; });
           continue;
-        } else {
-          llvm::consumeError(archive.takeError());
         }
       }
     } else if (const auto machOObjectFile = dyn_cast<MachOObjectFile>(&binary)) {
@@ -183,6 +187,7 @@ class BitcodeRetriever::Impl {
       if (!container) {
         return container.takeError();
       }
+
       // Check for nullptr for when we only consider one architecture.
       if (container.get()) {
         bitcodeContainers.push_back(std::move(*container));
@@ -192,6 +197,7 @@ class BitcodeRetriever::Impl {
       if (!container) {
         return container.takeError();
       }
+
       // Check for nullptr for when we only consider one architecture.
       if (container.get()) {
         bitcodeContainers.push_back(std::move(*container));
@@ -214,6 +220,7 @@ class BitcodeRetriever::Impl {
   llvm::Expected<BitcodeContainers> GetBitcodeContainersFromArchive(const llvm::object::Archive &archive) const {
     Error err = Error::success();
     auto bitcodeContainers = std::vector<std::unique_ptr<BitcodeContainer>>();
+    // Archives consist of object files.
     for (const auto &child : archive.children(err)) {
       if (err) {
         return std::move(err);
@@ -249,50 +256,22 @@ class BitcodeRetriever::Impl {
       const llvm::object::MachOObjectFile *objectFile) const {
     // For MachO return the correct arch tripple.
     const std::string arch = objectFile->getArchTriple(nullptr).getArchName();
+
     if (!processArch(arch)) {
       return nullptr;
     }
 
-    BitcodeContainer *bitcodeContainer = nullptr;
+    auto bitcodeContainer = GetBitcodeContainer(objectFile->section_begin(), objectFile->section_end());
 
-    const std::string name = objectFile->getFileFormatName().str();
-    std::vector<std::string> commands;
-    for (const SectionRef &section : objectFile->sections()) {
-      // Get section name
-      DataRefImpl dataRef = section.getRawDataRefImpl();
-      StringRef segName = objectFile->getSectionFinalSegmentName(dataRef);
-
-      if (segName == "__LLVM") {
-        StringRef sectName;
-        section.getName(sectName);
-        if (sectName == "__bundle") {
-          // Embedded bitcode in universal binary.
-          auto data = GetSectionData(section);
-          bitcodeContainer = new BitcodeArchive(data.first, data.second);
-        } else if (sectName == "__bitcode") {
-          // Embedded bitcode in single MachO object.
-          auto data = GetSectionData(section);
-          bitcodeContainer = new BitcodeContainer(data.first, data.second);
-        } else if (sectName == "__cmd" || sectName == "__cmdline") {
-          commands = GetCommands(section);
-        }
-      }
+    if (bitcodeContainer != nullptr) {
+      // Set binary metadata
+      bitcodeContainer->GetBinaryMetadata().SetFileName(GetFileName(objectFile->getFileName()));
+      bitcodeContainer->GetBinaryMetadata().SetFileFormatName(objectFile->getFileFormatName());
+      bitcodeContainer->GetBinaryMetadata().SetArch(arch);
+      bitcodeContainer->GetBinaryMetadata().SetUuid(objectFile->getUuid().data());
     }
 
-    if (bitcodeContainer == nullptr) {
-      return llvm::make_error<InternalEbcError>("No bitcode section in " + objectFile->getFileName().str());
-    }
-
-    // Set commands
-    bitcodeContainer->SetCommands(commands);
-
-    // Set binary metadata
-    bitcodeContainer->GetBinaryMetadata().SetFileName(GetFileName(objectFile->getFileName()));
-    bitcodeContainer->GetBinaryMetadata().SetFileFormatName(objectFile->getFileFormatName());
-    bitcodeContainer->GetBinaryMetadata().SetArch(arch);
-    bitcodeContainer->GetBinaryMetadata().SetUuid(objectFile->getUuid().data());
-
-    return std::unique_ptr<BitcodeContainer>(bitcodeContainer);
+    return std::move(bitcodeContainer);
   }
 
   /// Reads bitcode from a plain object file.
@@ -307,34 +286,16 @@ class BitcodeRetriever::Impl {
       return nullptr;
     }
 
-    BitcodeContainer *bitcodeContainer = nullptr;
+    auto bitcodeContainer = GetBitcodeContainer(objectFile->section_begin(), objectFile->section_end());
 
-    std::vector<std::string> commands;
-    for (const SectionRef &section : objectFile->sections()) {
-      StringRef sectName;
-      section.getName(sectName);
-
-      if (sectName == ".llvmbc") {
-        auto data = GetSectionData(section);
-        bitcodeContainer = new BitcodeContainer(data.first, data.second);
-      } else if (sectName == ".llvmcmd") {
-        commands = GetCommands(section);
-      }
+    if (bitcodeContainer != nullptr) {
+      // Set binary metadata
+      bitcodeContainer->GetBinaryMetadata().SetFileName(GetFileName(objectFile->getFileName()));
+      bitcodeContainer->GetBinaryMetadata().SetFileFormatName(objectFile->getFileFormatName());
+      bitcodeContainer->GetBinaryMetadata().SetArch(arch);
     }
 
-    if (bitcodeContainer == nullptr) {
-      return llvm::make_error<InternalEbcError>("No bitcode section in " + objectFile->getFileName().str());
-    }
-
-    // Set commands
-    bitcodeContainer->SetCommands(commands);
-
-    // Set binary metadata
-    bitcodeContainer->GetBinaryMetadata().SetFileName(GetFileName(objectFile->getFileName()));
-    bitcodeContainer->GetBinaryMetadata().SetFileFormatName(objectFile->getFileFormatName());
-    bitcodeContainer->GetBinaryMetadata().SetArch(arch);
-
-    return std::unique_ptr<BitcodeContainer>(bitcodeContainer);
+    return std::move(bitcodeContainer);
   }
 
   /// Obtains data from a section.
@@ -370,6 +331,31 @@ class BitcodeRetriever::Impl {
     } while (p < end);
 
     return cmds;
+  }
+
+  static std::unique_ptr<BitcodeContainer> GetBitcodeContainer(section_iterator begin, section_iterator end) {
+    std::unique_ptr<BitcodeContainer> bitcodeContainer;
+    std::vector<std::string> commands;
+
+    for (auto it = begin; it != end; ++it) {
+      StringRef sectName;
+      it->getName(sectName);
+
+      if (sectName == ".llvmbc" || sectName == "__bitcode") {
+        assert(!bitcodeContainer && "Multiple bitcode sections!");
+        auto data = GetSectionData(*it);
+        bitcodeContainer = std::make_unique<BitcodeContainer>(data.first, data.second);
+      } else if (sectName == "__bundle") {
+        assert(!bitcodeContainer && "Multiple bitcode sections!");
+        auto data = GetSectionData(*it);
+        bitcodeContainer = std::unique_ptr<BitcodeContainer>(new BitcodeArchive(data.first, data.second));
+      } else if (sectName == "__cmd" || sectName == "__cmdline" || sectName == ".llvmcmd") {
+        assert(commands.empty() && "Multiple command sections!");
+        commands = GetCommands(*it);
+      }
+    }
+
+    return bitcodeContainer;
   }
 
   std::string _objectPath;

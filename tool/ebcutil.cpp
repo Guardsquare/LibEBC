@@ -145,6 +145,12 @@ int main(int argc, char* argv[]) {
     }
 
     auto bitcodeContainers = bitcodeRetriever.GetBitcodeContainers();
+
+    if (bitcodeContainers.empty()) {
+      std::cerr << rang::fg::red << "Error: " << rang::fg::reset << "No bitcode in " << fileArg.getValue() << std::endl;
+      return EXIT_FAILURE;
+    }
+
     for (auto& bitcodeContainer : bitcodeContainers) {
       if (prefixArg.isSet()) {
         bitcodeContainer->SetPrefix(prefixArg.getValue());
