@@ -76,7 +76,15 @@ static void printArchiveInfo(const BitcodeArchive& bitcodeArchive) {
 }
 
 static void printEmbeddedFiles(const BitcodeContainer& bitcodeContainer, bool extract) {
-  for (auto& embeddedFile : bitcodeContainer.GetEmbeddedFiles()) {
+  auto embeddedFiles = bitcodeContainer.GetEmbeddedFiles();
+
+  if (embeddedFiles.empty()) {
+    std::cout << std::setw(WIDTH) << "Bitcode:"
+              << " marker only" << std::endl;
+    return;
+  }
+
+  for (auto& embeddedFile : embeddedFiles) {
     std::cout << std::setw(WIDTH) << filePrefix(*embeddedFile) << " " << embeddedFile->GetName() << std::endl;
 
     if (!extract) {
@@ -96,10 +104,12 @@ static void printEmbeddedFiles(const BitcodeContainer& bitcodeContainer, bool ex
 
 static void printDetailled(const BitcodeContainer& bitcodeContainer, bool extract) {
   printContainerInfo(bitcodeContainer);
+
   if (bitcodeContainer.IsArchive()) {
     const auto& bitcodeArchive = static_cast<const BitcodeArchive&>(bitcodeContainer);
     printArchiveInfo(bitcodeArchive);
   }
+
   printEmbeddedFiles(bitcodeContainer, extract);
 }
 
@@ -107,7 +117,14 @@ static void printSimple(const BitcodeContainer& bitcodeContainer, bool extract) 
   std::cout << bitcodeContainer.GetBinaryMetadata().GetFileName() << " ("
             << bitcodeContainer.GetBinaryMetadata().GetArch() << "): ";
 
-  for (auto& embeddedFile : bitcodeContainer.GetEmbeddedFiles()) {
+  auto embeddedFiles = bitcodeContainer.GetEmbeddedFiles();
+
+  if (embeddedFiles.empty()) {
+    std::cout << "Bitcode marker only" << std::endl;
+    return;
+  }
+
+  for (auto& embeddedFile : embeddedFiles) {
     std::cout << embeddedFile->GetName() << " ";
 
     if (!extract) {
