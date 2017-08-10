@@ -4,7 +4,7 @@ project (LibEBC)
 
 # Version
 set(VERSION_MAJOR 1)
-set(VERSION_MINOR 1)
+set(VERSION_MINOR 2)
 
 # Git commit hash
 execute_process(
