@@ -298,6 +298,11 @@ class BitcodeRetriever::Impl {
       }
     }
 
+    if(!commands.empty()){
+      assert(bitcodeContainer != nullptr && "Expected bitcode container!");
+      bitcodeContainer->SetCommands(commands);
+    }
+
     return bitcodeContainer;
   }
 
