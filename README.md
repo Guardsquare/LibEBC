@@ -1,6 +1,6 @@
 # LibEBC
 
-[![Build Status](https://travis-ci.org/JDevlieghere/LibEBC.svg?branch=master)](https://travis-ci.org/JDevlieghere/LibEBC)
+[![Build Status](https://api.travis-ci.org/Guardsquare/LibEBC.svg?branch=master)](https://travis-ci.org/Guardsquare/LibEBC)
 
 Library and tool for retrieving embedded bitcode from binaries end libraries.
 It supports all types of objects files (Mach-O, ELF, COFF, ...) as well as Mach-O
